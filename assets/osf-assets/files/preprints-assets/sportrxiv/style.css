@@ -1,0 +1,103 @@
+a,
+.preprint-form-section header {
+  color: #2B5163 ; }
+
+.preprint-header {
+  background-color: #8dbd7d ;
+  color: #fff;
+}
+  .preprint-header a:not(.btn) {
+    color: #fff; }
+
+.preprint-navbar,
+.preprint-navbar .nav > li > a.active {
+  background-color: #2B5163 ;
+  color: #fff; }
+
+.preprint-navbar .navbar-toggle .icon-bar {
+  background-color: #fff; }
+
+.preprint-navbar a {
+  color: #fff; }
+
+.preprint-navbar a.navbar-brand {
+  color: #fff ; }
+
+.preprint-navbar .navbar-brand:hover,
+.preprint-navbar .nav > li > a:hover {
+  background-color: #2B5163 ;
+}
+
+.preprint-navbar .nav > li.open,
+.preprint-navbar .nav > li.open > a,
+.preprint-navbar .nav > li.open > a:hover,
+.preprint-navbar .nav > li.open > a:focus:not(.active):hover,
+.preprint-navbar .nav > li > a:focus:not(.active):hover {
+  background-color: #2B5163;
+  color: #fff; }
+
+#preprint-form-subjects .subject,
+#preprint-form-subjects .subject > .fa,
+#preprint-form-subjects ul li.selected,
+#preprint-form-subjects ul li:active {
+  background-color: #2B5163 ;
+  color: #fff; }
+
+#preprint-form-subjects .subject:hover,
+#preprint-form-subjects .subject:hover > .fa,
+#preprint-form-subjects ul li:hover {
+  background-color: #8dbd7d;
+  color: #fff; }
+
+#preprint-form-subjects .subject b:after {
+  border-left-color: #2B5163; }
+
+#preprint-form-subjects .subject:hover > b:after {
+  border-left-color: #8dbd7d; }
+
+#preprint-form-subjects .subject .right-arrow:before {
+  border-left: 1.4rem solid #2B5163; }
+
+#preprint-form-subjects .subject:hover .right-arrow:before {
+  border-left-color: #8dbd7d; }
+
+.dropdown-menu > li > a:hover {
+  color: #8dbd7d; }
+
+.subject-item > .btn-primary {
+  color:#fff;
+  background-color:#2B5163;
+  border-color: #8dbd7d; }
+
+.subject-item > .btn-primary:hover {
+  background-color: #8dbd7d ;
+  border-color: #2B5163; }
+
+.preprint-filter,
+.preprint-filter .fa {
+  color: #fff; }
+
+.preprint-error-page,
+.preprint-advisory,
+.preprint-submit-header,
+.search-header,
+.provider-filter {
+  background: #8dbd7d;
+  color: #fff; }
+
+.subject-filter,
+.subject-filter .fa {
+  background-color: #8dbd7d; }
+
+  .preprint-error-page a:not(.btn),
+  .preprint-advisory a:not(.btn) {
+    color: #2B5163;
+}
+
+/* This needs to be in every style.css to have discover page show right logo */
+.provider-brand {
+    background-image: url('./wide_color.png');
+}
+
+.search-header .share-logo {
+  background-image: url("./powered_by_share.png"); }

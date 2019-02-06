@@ -1,0 +1,25 @@
+.search-header,
+.submit-header {
+    background: #0fa2ff;
+    color: #fff;
+}
+
+.navbar,
+.navbar > .container,
+.navbar-default .navbar-brand {
+    background: #578ca2;
+    color: #fff;
+}
+
+.navbar a {
+    color: #fff !important;
+}
+
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #fff
+}
+
+ul.navbar-nav > li > a:hover,
+ul.navbar-nav > li > a:focus {
+    color: #000;
+}
