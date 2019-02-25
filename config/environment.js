@@ -31,6 +31,7 @@ const {
     MIRAGE_ENABLED = false,
     OAUTH_SCOPES: scope,
     ORCID_CLIENT_ID: orcidClientId,
+    OSF_PAGE_NAME: pageName = 'OSF',
     OSF_STATUS_COOKIE: statusCookie = 'osf_status',
     OSF_COOKIE_DOMAIN: cookieDomain = 'localhost',
     OSF_URL: url = 'http://localhost:5000/',
@@ -143,6 +144,7 @@ module.exports = function(environment) {
             },
         },
         OSF: {
+            pageName,
             clientId,
             scope,
             apiNamespace: 'v2', // URL suffix (after host)

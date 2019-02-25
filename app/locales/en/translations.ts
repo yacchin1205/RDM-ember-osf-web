@@ -1,8 +1,9 @@
 /* tslint:disable:object-literal-sort-keys max-line-length */
+import config from 'ember-get-config';
 
 export default {
     general: {
-        OSF: 'OSF',
+        OSF: config.OSF.pageName,
         share: 'Share',
         embed: 'Embed',
         download: 'Download',

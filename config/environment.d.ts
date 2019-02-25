@@ -65,6 +65,7 @@ declare const config: {
         } | undefined };
     };
     OSF: {
+        pageName: string;
         clientId?: string;
         scope?: string;
         apiNamespace: string;
