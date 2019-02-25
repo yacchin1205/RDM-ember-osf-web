@@ -153,6 +153,14 @@ declare const config: {
     home: {
         youtubeId: string;
     };
+    navbar: {
+        useDropdown: boolean;
+        useQuickfiles: boolean;
+        useRegistrations: boolean;
+        useSupport: boolean;
+        useDonate: boolean;
+        useSignup: boolean;
+    },
     secondaryNavbarId: string;
     'ember-a11y-testing'?: {
         componentOptions: {

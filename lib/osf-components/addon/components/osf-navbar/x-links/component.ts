@@ -23,6 +23,11 @@ export default class XLinks extends Component {
     myRegistrationsURL: string = defaultTo(this.myRegistrationsURL, `${osfURL}myprojects/#registrations`);
     onLinkClicked: () => void = defaultTo(this.onLinkClicked, () => null);
 
+    useNavQuickfiles: boolean = config.navbar.useQuickfiles;
+    useNavRegistrations: boolean = config.navbar.useRegistrations;
+    useNavSupport: boolean = config.navbar.useSupport;
+    useNavDonate: boolean = config.navbar.useDonate;
+
     @computed('router.currentRouteName')
     get supportURL() {
         return this.onInstitutions ? 'http://help.osf.io/m/institutions' : 'support';

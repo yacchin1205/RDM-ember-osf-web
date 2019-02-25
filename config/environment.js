@@ -53,6 +53,12 @@ const {
     SHARE_API_URL: shareApiUrl = 'https://staging-share.osf.io/api/v2',
     SHARE_SEARCH_URL: shareSearchUrl = 'https://staging-share.osf.io/api/v2/search/creativeworks/_search',
     SOURCEMAPS_ENABLED: sourcemapsEnabled = true,
+    NAV_DROPDOWN_ENABLED = true,
+    NAV_QUICKFILES_ENABLED = true,
+    NAV_REGISTRATIONS_ENABLED = true,
+    NAV_SUPPORT_ENABLED = true,
+    NAV_DONATE_ENABLED = true,
+    NAV_SIGNUP_ENABLED = true,
 } = { ...process.env, ...localConfig };
 
 module.exports = function(environment) {
@@ -240,6 +246,14 @@ module.exports = function(environment) {
         home: {
             youtubeId: '2TV21gOzfhw',
         },
+	navbar: {
+	    useDropdown: Boolean(NAV_DROPDOWN_ENABLED),
+	    useQuickfiles: Boolean(NAV_QUICKFILES_ENABLED),
+	    useRegistrations: Boolean(NAV_REGISTRATIONS_ENABLED),
+	    useSupport: Boolean(NAV_SUPPORT_ENABLED),
+	    useDonate: Boolean(NAV_DONATE_ENABLED),
+	    useSignup: Boolean(NAV_SIGNUP_ENABLED),
+	},
         secondaryNavbarId: '__secondaryOSFNavbar__',
         engines: {
             // App Engines should always be enabled in production builds

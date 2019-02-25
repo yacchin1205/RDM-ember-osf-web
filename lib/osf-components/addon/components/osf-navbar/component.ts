@@ -41,6 +41,10 @@ export default class OsfNavbar extends Component {
     activeService: OSFService = defaultTo(this.activeService, OSFService.HOME);
     services: Array<{name: OSFService, route: string}> = defaultTo(this.services, OSF_SERVICES);
 
+    useNavDropdown: boolean = config.navbar.useDropdown;
+    useNavSupport: boolean = config.navbar.useSupport;
+    useNavDonate: boolean = config.navbar.useDonate;
+
     @computed('activeService', 'router.currentRouteName')
     get _activeService() {
         let { activeService } = this;

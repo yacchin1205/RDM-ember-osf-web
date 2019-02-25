@@ -55,6 +55,9 @@ export default class NavbarAuthDropdown extends Component {
     signUpURL: string = defaultTo(this.signUpURL, pathJoin(baseUrl, 'register'));
     onLinkClicked?: () => void;
 
+    useNavSupport: boolean = config.navbar.useSupport;
+    useNavSignUp: boolean = config.navbar.useSignup;
+
     @computed('router.currentURL')
     get signUpNext() {
         return pathJoin(baseUrl, this.router.currentURL);

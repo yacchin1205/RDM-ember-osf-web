@@ -6,6 +6,7 @@
         hidden=(or
             this.onInstitutions
             (not this.session.isAuthenticated)
+            (not useNavQuickfiles)
         )
         tagName='li'
         text=(t 'navbar.my_quick_files')
@@ -22,7 +23,10 @@
     myregistrations=(component 'hyper-link'
         this.myRegistrationsURL
         analyticsLabel='Navbar - navbar.my_registrations'
-        hidden=(not this.session.isAuthenticated)
+        hidden=(or
+            (not this.session.isAuthenticated)
+            (not useNavRegistrations)
+        )
         tagName='li'
         text=(t 'navbar.my_registrations')
         onClicked=this.onLinkClicked
@@ -37,6 +41,7 @@
     support=(component 'hyper-link'
         this.supportURL
         analyticsLabel='Navbar - navbar.support'
+        hidden=(not useNavSupport)
         tagName='li'
         text=(t 'navbar.support')
         onClicked=this.onLinkClicked
@@ -45,6 +50,7 @@
         'https://cos.io/donate'
         analyticsLabel='Navbar - navbar.donate'
         classNames='navbar-donate-button'
+        hidden=(not useNavDonate)
         tagName='li'
         text=(t 'navbar.donate')
         onClicked=this.onLinkClicked

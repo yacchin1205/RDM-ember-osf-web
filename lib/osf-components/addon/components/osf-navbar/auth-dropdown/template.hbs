@@ -1,9 +1,11 @@
 {{#if (not session.isAuthenticated) }}
     <li class='sign-in'>
         <div>
+            {{#if useNavSignup}}
             {{#hyper-link this.signUpRoute queryParams=this.signUpQueryParams class='btn btn-success btn-top-signup m-l-sm m-r-xs' analyticsLabel='Navbar - SignUp' testSelectorVal='sign-up-button'}}
                 {{t 'auth_dropdown.sign_up'}}
             {{/hyper-link}}
+            {{/if}}
             <a {{action 'login'}} data-test-sign-in-button onclick={{action 'click' 'button' 'Navbar - SignIn' target=analytics}} class="btn btn-info btn-top-login m-r-xs" role="button">
                 {{t 'auth_dropdown.sign_in'}}
             </a>
@@ -31,12 +33,14 @@
                     {{t 'auth_dropdown.my_profile'}}
                 </a>
             {{/ddm.item}}
+            {{#if useNavSupport}}
             {{#ddm.item (html-attributes role='menuitem')}}
                 {{#global-link-to 'support' click=(action '_onLinkClicked' 'Navbar - Support')}}
                     <i class="fa fa-life-ring fa-lg p-r-xs"></i>
                     {{t 'auth_dropdown.osf_support'}}
                 {{/global-link-to}}
             {{/ddm.item}}
+            {{/if}}
             {{#ddm.item (html-attributes role='menuitem')}}
                 <a href="{{settingsURL}}" onclick={{action '_onLinkClicked' 'Navbar - Settings'}}>
                     <i class="fa fa-cog fa-lg p-r-xs"></i>
