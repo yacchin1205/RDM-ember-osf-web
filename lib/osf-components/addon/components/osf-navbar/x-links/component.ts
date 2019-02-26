@@ -10,6 +10,15 @@ import layout from './template';
 
 const osfURL = config.OSF.url;
 
+const {
+    navbar: {
+        useQuickfiles,
+	useRegistrations,
+	useSupport,
+	useDonate,
+    },
+} = config;
+
 @tagName('') // Don't wrap this component in a div
 export default class XLinks extends Component {
     layout = layout;
@@ -23,10 +32,10 @@ export default class XLinks extends Component {
     myRegistrationsURL: string = defaultTo(this.myRegistrationsURL, `${osfURL}myprojects/#registrations`);
     onLinkClicked: () => void = defaultTo(this.onLinkClicked, () => null);
 
-    useNavQuickfiles: boolean = config.navbar.useQuickfiles;
-    useNavRegistrations: boolean = config.navbar.useRegistrations;
-    useNavSupport: boolean = config.navbar.useSupport;
-    useNavDonate: boolean = config.navbar.useDonate;
+    useNavQuickfiles: boolean = useQuickfiles;
+    useNavRegistrations: boolean = useRegistrations;
+    useNavSupport: boolean = useSupport;
+    useNavDonate: boolean = useDonate;
 
     @computed('router.currentRouteName')
     get supportURL() {

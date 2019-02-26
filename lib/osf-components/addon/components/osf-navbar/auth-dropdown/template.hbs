@@ -1,7 +1,7 @@
 {{#if (not session.isAuthenticated) }}
     <li class='sign-in'>
         <div>
-            {{#if useNavSignup}}
+            {{#if useNavSignUp}}
             {{#hyper-link this.signUpRoute queryParams=this.signUpQueryParams class='btn btn-success btn-top-signup m-l-sm m-r-xs' analyticsLabel='Navbar - SignUp' testSelectorVal='sign-up-button'}}
                 {{t 'auth_dropdown.sign_up'}}
             {{/hyper-link}}

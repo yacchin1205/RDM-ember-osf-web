@@ -27,6 +27,12 @@ export const OSF_SERVICES = [
     { name: OSFService.INSTITUTIONS, route: 'institutions' },
 ];
 
+const {
+    navbar: {
+        useDropdown,
+    },
+} = config;
+
 export default class OsfNavbar extends Component {
     layout = layout;
     styles = styles;
@@ -41,9 +47,7 @@ export default class OsfNavbar extends Component {
     activeService: OSFService = defaultTo(this.activeService, OSFService.HOME);
     services: Array<{name: OSFService, route: string}> = defaultTo(this.services, OSF_SERVICES);
 
-    useNavDropdown: boolean = config.navbar.useDropdown;
-    useNavSupport: boolean = config.navbar.useSupport;
-    useNavDonate: boolean = config.navbar.useDonate;
+    useNavDropdown: boolean = useDropdown;
 
     @computed('activeService', 'router.currentRouteName')
     get _activeService() {

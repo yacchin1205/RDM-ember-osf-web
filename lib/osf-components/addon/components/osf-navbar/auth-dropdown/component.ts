@@ -19,6 +19,13 @@ import layout from './template';
 
 const { OSF: { url: baseUrl }, featureFlagNames } = config;
 
+const {
+    navbar: {
+        useSupport,
+	useSignup,
+    },
+} = config;
+
 /**
  * Display the login dropdown on the navbar
  *
@@ -55,8 +62,8 @@ export default class NavbarAuthDropdown extends Component {
     signUpURL: string = defaultTo(this.signUpURL, pathJoin(baseUrl, 'register'));
     onLinkClicked?: () => void;
 
-    useNavSupport: boolean = config.navbar.useSupport;
-    useNavSignUp: boolean = config.navbar.useSignup;
+    useNavSupport: boolean = useSupport;
+    useNavSignUp: boolean = useSignup;
 
     @computed('router.currentURL')
     get signUpNext() {
