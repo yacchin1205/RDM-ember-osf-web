@@ -3,6 +3,14 @@ import setupMirage from 'ember-cli-mirage/test-support/setup-mirage';
 import { setupApplicationTest } from 'ember-qunit';
 import { module, test } from 'qunit';
 
+import config from 'ember-get-config';
+
+const {
+    OSF: {
+        simplePage,
+    },
+} = config;
+
 module('Acceptance | logged-out home page', hooks => {
     setupApplicationTest(hooks);
     setupMirage(hooks);
@@ -23,6 +31,10 @@ module('Acceptance | logged-out home page', hooks => {
 
         // Check footer.
         assert.dom('footer').exists();
+
+        if (simplePage) {
+            return;
+        }
 
         // Check sign-up form.
         assert.dom('[data-test-sign-up-form] .has-error').doesNotExist('Sign up form: no premature validation');

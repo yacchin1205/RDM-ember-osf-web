@@ -6,6 +6,12 @@ import UserRegistration from 'ember-osf-web/models/user-registration';
 import Analytics from 'ember-osf-web/services/analytics';
 import chunkArray from 'ember-osf-web/utils/chunk-array';
 
+const {
+    OSF: {
+        simplePage,
+    },
+} = config;
+
 export default class Home extends Controller {
     @service analytics!: Analytics;
 
@@ -28,6 +34,8 @@ export default class Home extends Controller {
         'workflow',
         'registration',
     ];
+
+    useSimplePage: boolean = simplePage;
 
     @computed('featuresList')
     get features(this: Home): string[][] {

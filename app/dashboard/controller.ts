@@ -17,6 +17,9 @@ import CurrentUser from 'ember-osf-web/services/current-user';
 
 // TODO pull these from the database
 const {
+    OSF: {
+        simplePage,
+    },
     dashboard: {
         noteworthyNode,
         popularNode,
@@ -45,6 +48,7 @@ export default class Dashboard extends Controller {
     nodes?: QueryHasManyResult<Node>;
     noteworthy!: QueryHasManyResult<Node>;
     popular!: QueryHasManyResult<Node>;
+    useSimplePage: boolean = simplePage;
 
     setupTask = task(function *(this: Dashboard) {
         this.set('filter', null);

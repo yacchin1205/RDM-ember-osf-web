@@ -60,6 +60,7 @@ const {
     NAV_SUPPORT_ENABLED = true,
     NAV_DONATE_ENABLED = true,
     NAV_SIGNUP_ENABLED = true,
+    USE_SIMPLE_PAGE = false,
 } = { ...process.env, ...localConfig };
 
 module.exports = function(environment) {
@@ -181,6 +182,7 @@ module.exports = function(environment) {
             },
             orcidClientId,
             casUrl,
+            simplePage: Boolean(USE_SIMPLE_PAGE),
         },
         social: {
             twitter: {
