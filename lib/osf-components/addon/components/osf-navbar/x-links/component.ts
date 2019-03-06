@@ -13,9 +13,9 @@ const osfURL = config.OSF.url;
 const {
     navbar: {
         useQuickfiles,
-	useRegistrations,
-	useSupport,
-	useDonate,
+        useRegistrations,
+        useSupport,
+        useDonate,
     },
 } = config;
 

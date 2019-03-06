@@ -22,7 +22,7 @@ const { OSF: { url: baseUrl }, featureFlagNames } = config;
 const {
     navbar: {
         useSupport,
-	useSignup,
+        useSignup,
     },
 } = config;
 

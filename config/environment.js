@@ -248,14 +248,14 @@ module.exports = function(environment) {
         home: {
             youtubeId: '2TV21gOzfhw',
         },
-	navbar: {
-	    useDropdown: Boolean(NAV_DROPDOWN_ENABLED),
-	    useQuickfiles: Boolean(NAV_QUICKFILES_ENABLED),
-	    useRegistrations: Boolean(NAV_REGISTRATIONS_ENABLED),
-	    useSupport: Boolean(NAV_SUPPORT_ENABLED),
-	    useDonate: Boolean(NAV_DONATE_ENABLED),
-	    useSignup: Boolean(NAV_SIGNUP_ENABLED),
-	},
+        navbar: {
+            useDropdown: Boolean(NAV_DROPDOWN_ENABLED),
+            useQuickfiles: Boolean(NAV_QUICKFILES_ENABLED),
+            useRegistrations: Boolean(NAV_REGISTRATIONS_ENABLED),
+            useSupport: Boolean(NAV_SUPPORT_ENABLED),
+            useDonate: Boolean(NAV_DONATE_ENABLED),
+            useSignup: Boolean(NAV_SIGNUP_ENABLED),
+        },
         secondaryNavbarId: '__secondaryOSFNavbar__',
         engines: {
             // App Engines should always be enabled in production builds
