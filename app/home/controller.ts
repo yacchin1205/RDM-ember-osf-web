@@ -37,6 +37,10 @@ export default class Home extends Controller {
 
     useSimplePage: boolean = simplePage;
 
+    get heroStyle(): string {
+        return simplePage ? 'height: 600px !important;' : 'min-height: auto;';
+    }
+
     @computed('featuresList')
     get features(this: Home): string[][] {
         const featuresList = this.get('featuresList');
