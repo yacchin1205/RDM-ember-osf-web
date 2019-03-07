@@ -592,7 +592,7 @@ export default {
         linkedin: 'LinkedIn',
     },
     institutions: {
-    description: `${shortBrand} Institutions is a free scholarly web tool that enhances transparency, fosters collaboration, and increases the visibility of research outputs at the institutional level.`,
+        description: `${shortBrand} Institutions is a free scholarly web tool that enhances transparency, fosters collaboration, and increases the visibility of research outputs at the institutional level.`,
         read_more: 'Read more',
         footer: `Interested in setting up an ${shortBrand} Institutions page for your research institution?`,
         contact_us: 'Contact us',
