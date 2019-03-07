@@ -13,6 +13,7 @@ try {
 }
 
 const {
+    ORGANIZATION: organization = 'Center for Open Science',
     A11Y_AUDIT = 'true',
     ASSETS_PREFIX: assetsPrefix = '/ember_osf_web/',
     BACKEND: backend = 'local',
@@ -32,6 +33,8 @@ const {
     OAUTH_SCOPES: scope,
     ORCID_CLIENT_ID: orcidClientId,
     OSF_PAGE_NAME: pageName = 'OSF',
+    OSF_SHORT_BRAND: shortBrand = 'OSF',
+    OSF_LONG_BRAND: longBrand = 'Open Science Framework',
     OSF_STATUS_COOKIE: statusCookie = 'osf_status',
     OSF_COOKIE_DOMAIN: cookieDomain = 'localhost',
     OSF_URL: url = 'http://localhost:5000/',
@@ -67,6 +70,7 @@ module.exports = function(environment) {
     const devMode = environment !== 'production';
 
     const ENV = {
+        organization,
         modulePrefix: 'ember-osf-web',
         environment,
         lintOnBuild,
@@ -146,6 +150,8 @@ module.exports = function(environment) {
         },
         OSF: {
             pageName,
+            shortBrand,
+            longBrand,
             clientId,
             scope,
             apiNamespace: 'v2', // URL suffix (after host)
