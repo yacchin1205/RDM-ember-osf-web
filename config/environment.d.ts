@@ -18,6 +18,7 @@ export interface KeenConfig {
 }
 
 declare const config: {
+    organization: string;
     environment: any;
     lintOnBuild: boolean;
     sourcemapsEnabled: boolean;
@@ -66,6 +67,8 @@ declare const config: {
     };
     OSF: {
         pageName: string;
+        shortBrand: string;
+        longBrand: string;
         clientId?: string;
         scope?: string;
         apiNamespace: string;
