@@ -10,10 +10,13 @@
                 <div class="service-name">
                     {{#hyper-link _activeService.route}}
                         <span class="hidden-xs"> {{t 'general.OSF'}} </span>
+                        {{#if useNavDropdown}}
                         <span class="current-service"><strong>{{_activeService.name}}</strong></span>
+                        {{/if}}
                     {{/hyper-link}}
                 </div>
 
+                {{#if useNavDropdown}}
                 {{! App list dropdown }}
                 {{#bs-dropdown
                     classNames='dropdown primary-nav'
@@ -36,6 +39,7 @@
                         {{/each}}
                     {{/dd.menu}}
                 {{/bs-dropdown}}
+                {{/if}}
 
                 {{! Navigation toggle - XS screen }}
                 <a

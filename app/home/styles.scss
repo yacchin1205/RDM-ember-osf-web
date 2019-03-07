@@ -66,6 +66,8 @@
     height: 900px;
     color: #fff;
     position: relative;
+    overflow: hidden;
+    flex: 3 0 auto;
 
     h1 {
         padding-top: 100px;

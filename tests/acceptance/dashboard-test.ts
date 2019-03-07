@@ -7,6 +7,9 @@ import { module, test } from 'qunit';
 import config from 'ember-get-config';
 
 const {
+    OSF: {
+        simplePage,
+    },
     dashboard: {
         noteworthyNode,
         popularNode,
@@ -47,6 +50,9 @@ module('Acceptance | dashboard', hooks => {
     });
 
     test('institutions carousel', async assert => {
+        if (simplePage) {
+            return;
+        }
         server.create('user', 'loggedIn');
         const institutions = server.createList('institution', 20);
 
@@ -66,6 +72,9 @@ module('Acceptance | dashboard', hooks => {
     });
 
     test('popular projects and new/noteworthy titles', async assert => {
+        if (simplePage) {
+            return;
+        }
         server.create('user', 'loggedIn');
         const nodes = server.createList('node', 10, {}, 'withContributors');
         server.create('node', {

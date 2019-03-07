@@ -31,6 +31,7 @@ const {
     MIRAGE_ENABLED = false,
     OAUTH_SCOPES: scope,
     ORCID_CLIENT_ID: orcidClientId,
+    OSF_PAGE_NAME: pageName = 'OSF',
     OSF_STATUS_COOKIE: statusCookie = 'osf_status',
     OSF_COOKIE_DOMAIN: cookieDomain = 'localhost',
     OSF_URL: url = 'http://localhost:5000/',
@@ -53,6 +54,13 @@ const {
     SHARE_API_URL: shareApiUrl = 'https://staging-share.osf.io/api/v2',
     SHARE_SEARCH_URL: shareSearchUrl = 'https://staging-share.osf.io/api/v2/search/creativeworks/_search',
     SOURCEMAPS_ENABLED: sourcemapsEnabled = true,
+    NAV_DROPDOWN_ENABLED = true,
+    NAV_QUICKFILES_ENABLED = true,
+    NAV_REGISTRATIONS_ENABLED = true,
+    NAV_SUPPORT_ENABLED = true,
+    NAV_DONATE_ENABLED = true,
+    NAV_SIGNUP_ENABLED = true,
+    USE_SIMPLE_PAGE = false,
 } = { ...process.env, ...localConfig };
 
 module.exports = function(environment) {
@@ -137,6 +145,7 @@ module.exports = function(environment) {
             },
         },
         OSF: {
+            pageName,
             clientId,
             scope,
             apiNamespace: 'v2', // URL suffix (after host)
@@ -173,6 +182,7 @@ module.exports = function(environment) {
             },
             orcidClientId,
             casUrl,
+            simplePage: Boolean(USE_SIMPLE_PAGE),
         },
         social: {
             twitter: {
@@ -239,6 +249,14 @@ module.exports = function(environment) {
         },
         home: {
             youtubeId: '2TV21gOzfhw',
+        },
+        navbar: {
+            useDropdown: Boolean(NAV_DROPDOWN_ENABLED),
+            useQuickfiles: Boolean(NAV_QUICKFILES_ENABLED),
+            useRegistrations: Boolean(NAV_REGISTRATIONS_ENABLED),
+            useSupport: Boolean(NAV_SUPPORT_ENABLED),
+            useDonate: Boolean(NAV_DONATE_ENABLED),
+            useSignup: Boolean(NAV_SIGNUP_ENABLED),
         },
         secondaryNavbarId: '__secondaryOSFNavbar__',
         engines: {

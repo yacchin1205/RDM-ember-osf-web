@@ -25,12 +25,13 @@
         }}
     {{/modal.body}}
 {{/bs-modal}}
-<div id="home-hero">
+<div id="home-hero" style="{{heroStyle}}">
     <div class="container text-center">
         <div local-class="network-bg"></div>
         <h1 local-class="hero-brand">{{t 'home.brand'}}</h1>
         <h3 local-class="hero-tagline">{{t 'home.tagline'}}</h3>
         {{osf-logo animate=true}}
+        {{#if (not useSimplePage)}}
         <div id="signUp" class="anchor"></div>
         <div id="hero-signup" class="container">
             <div class="row">
@@ -48,8 +49,10 @@
                 </div>
             </div>
         </div>
+        {{/if}}
     </div>
 </div>
+{{#if (not useSimplePage)}}
 <div class="container" local-class="grey-pullout space-top space-bottom">
     <div class="row" local-class="space-bottom">
         <div class="col-xs-12 text-center">
@@ -261,3 +264,4 @@
         </div>
     </div>
 </div>
+{{/if}}
