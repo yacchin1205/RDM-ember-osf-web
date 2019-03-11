@@ -63,7 +63,10 @@ const {
     NAV_SUPPORT_ENABLED = true,
     NAV_DONATE_ENABLED = true,
     NAV_SIGNUP_ENABLED = true,
+    NAV_EMBEDDEDDS_ENABLED = false,
     USE_SIMPLE_PAGE = false,
+    EMBEDDEDDS_URL: dsUrl = 'https://test-ds.gakunin.nii.ac.jp/WAYF/embedded-wayf.js',
+    EMBEDDEDDS_CONFIG: dsConfig = '',
 } = { ...process.env, ...localConfig };
 
 module.exports = function(environment) {
@@ -263,6 +266,11 @@ module.exports = function(environment) {
             useSupport: Boolean(NAV_SUPPORT_ENABLED),
             useDonate: Boolean(NAV_DONATE_ENABLED),
             useSignup: Boolean(NAV_SIGNUP_ENABLED),
+            useEmbeddedDS: Boolean(NAV_EMBEDDEDDS_ENABLED),
+        },
+        embeddedDS: {
+            dsUrl,
+            dsConfig,
         },
         secondaryNavbarId: '__secondaryOSFNavbar__',
         engines: {

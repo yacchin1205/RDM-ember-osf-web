@@ -16,6 +16,7 @@ import pathJoin from 'ember-osf-web/utils/path-join';
 import Session from 'ember-simple-auth/services/session';
 import styles from './styles';
 import layout from './template';
+import { htmlSafe } from '@ember/string';
 
 const { OSF: { url: baseUrl }, featureFlagNames } = config;
 
@@ -23,6 +24,11 @@ const {
     navbar: {
         useSupport,
         useSignup,
+        useEmbeddedDS,
+    },
+    embeddedDS: {
+        dsUrl,
+        dsConfig,
     },
 } = config;
 
@@ -64,6 +70,8 @@ export default class NavbarAuthDropdown extends Component {
 
     useNavSupport: boolean = useSupport;
     useNavSignUp: boolean = useSignup;
+    useNavEmbeddedDS: boolean = useEmbeddedDS;
+    currentDate = (new Date().getTime());
 
     @computed('router.currentURL')
     get signUpNext() {
@@ -109,5 +117,19 @@ export default class NavbarAuthDropdown extends Component {
         if (this.onLinkClicked) {
             this.onLinkClicked();
         }
+    }
+
+    @computed('currentDate')
+    get dsURL(): string {
+        return `${dsUrl}?${this.currentDate}`;
+    }
+
+    @computed('dsConfig')
+    get dsCONFIG() {
+        return htmlSafe(`
+            <script>
+                ${dsConfig}
+            </script>
+        `);
     }
 }

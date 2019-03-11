@@ -165,6 +165,11 @@ declare const config: {
         useSupport: boolean;
         useDonate: boolean;
         useSignup: boolean;
+        useEmbeddedDS: boolean;
+    },
+    embeddedDS: {
+        dsUrl: string;
+        dsConfig: string;
     },
     secondaryNavbarId: string;
     'ember-a11y-testing'?: {
