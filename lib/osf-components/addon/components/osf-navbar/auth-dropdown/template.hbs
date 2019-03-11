@@ -12,10 +12,11 @@
             </a>
             {{else}}
             <div id="wayfInMenu" style="float: right; clear: right; position: relative;">
-                {{dsCONFIG}}
-                <script type="text/javascript" charset="UTF-8"><!--
+                <script type="text/javascript" charset="UTF-8">
+                    {{#each dsCONFIGs as |dsConfig|}}
+                    <script type="text/javascript" src="{{dsConfig}}"></script>
+                    {{/each}}
                     <script type="text/javascript" src="{{dsURL}}"></script>
-                    //-->
                 </script>
             </div>
             {{/if}}

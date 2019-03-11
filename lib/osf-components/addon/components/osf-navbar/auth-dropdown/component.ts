@@ -4,7 +4,6 @@ import { alias } from '@ember-decorators/object/computed';
 import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
 import { Registry as Services } from '@ember/service';
-import { htmlSafe } from '@ember/string';
 import Features from 'ember-feature-flags/services/features';
 import config from 'ember-get-config';
 import I18N from 'ember-i18n/services/i18n';
@@ -21,6 +20,7 @@ import layout from './template';
 const { OSF: { url: baseUrl }, featureFlagNames } = config;
 
 const {
+    assetsPrefix,
     navbar: {
         useSupport,
         useSignup,
@@ -28,7 +28,7 @@ const {
     },
     embeddedDS: {
         dsUrl,
-        dsConfig,
+        dsConfigs,
     },
 } = config;
 
@@ -124,12 +124,19 @@ export default class NavbarAuthDropdown extends Component {
         return `${dsUrl}?${this.currentDate}`;
     }
 
-    @computed('dsConfig')
-    get dsCONFIG() {
-        return htmlSafe(`
-            <script>
-                ${dsConfig}
-            </script>
-        `);
+    @computed('dsConfigs')
+    get dsCONFIGs(): string[] {
+        return dsConfigs.map((v: string) => {
+            if (/^https?:\/\//.test(v)) {
+                return v;
+            } else {
+                return `${assetsPrefix}/${v}`
+                    .replace(/[/]+/g, '/')
+                    .replace(/^(.+):\//, '$1://')
+                    .replace(/\/(\?|&|#[^!])/g, '$1')
+                    .replace(/\?/g, '&')
+                    .replace('&', '?');
+            }
+        });
     }
 }
