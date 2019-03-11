@@ -4,6 +4,7 @@ import { alias } from '@ember-decorators/object/computed';
 import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
 import { Registry as Services } from '@ember/service';
+import { htmlSafe } from '@ember/string';
 import Features from 'ember-feature-flags/services/features';
 import config from 'ember-get-config';
 import I18N from 'ember-i18n/services/i18n';
@@ -16,7 +17,6 @@ import pathJoin from 'ember-osf-web/utils/path-join';
 import Session from 'ember-simple-auth/services/session';
 import styles from './styles';
 import layout from './template';
-import { htmlSafe } from '@ember/string';
 
 const { OSF: { url: baseUrl }, featureFlagNames } = config;
 
