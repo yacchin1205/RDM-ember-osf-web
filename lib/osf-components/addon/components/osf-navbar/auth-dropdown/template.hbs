@@ -11,14 +11,7 @@
                 {{t 'auth_dropdown.sign_in'}}
             </a>
             {{else}}
-            <div id="wayfInMenu" style="float: right; clear: right; position: relative;">
-                <script type="text/javascript" charset="UTF-8">
-                    {{#each dsCONFIGs as |dsConfig|}}
-                    <script type="text/javascript" src="{{dsConfig}}"></script>
-                    {{/each}}
-                    <script type="text/javascript" src="{{dsURL}}"></script>
-                </script>
-            </div>
+            <iframe id="wayfIniframe" src="{{this.dsiFrame}}" scrolling=no></iframe>
             {{/if}}
         </div>
     </li>

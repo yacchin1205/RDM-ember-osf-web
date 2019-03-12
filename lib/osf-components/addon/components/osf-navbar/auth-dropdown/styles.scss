@@ -7,64 +7,8 @@
     right: 0 !important;
 }
 
-// for EmbeddedDS
-:global(#wayfInMenu) {
-    float: left !important;
-}
-
-:global(#wayf_div) {
-    padding: 5px !important;
-    width: auto !important;
-    max-width: 430px !important;
-}
-
-.wayf_col .wayf_col {
-    flex-direction: row !important;
-    padding-left: none !important;
-    padding-right: none !important;
-}
-
-.wayf_radioArea {
-    display: none !important;
-}
-
-.wayf_row {
-    padding-left: 5px !important;
-    padding-right: 5px !important;
-}
-
-.wayf_linkArea {
-    align-content: center !important;
-}
-
-:global(#IdPList table tbody) {
-    display: flex !important;
-    flex-direction: row !important;
-}
-
-:global(#IdPList table tbody tr td #clear_a) {
-    text-decoration: none;
-    margin-top: 10px;
-    margin-left: 5px;
-    margin-right: 3px;
-}
-
-@media only screen and (max-width: 768px) {
-    :global(#wayf_div .wayf_inputArea) {
-        flex-wrap: nowrap !important;
-    }
-
-    :global(#wayf_submit_div) {
-        width: auto !important;
-    }
-}
-
-@media only screen and (max-width: 767px) {
-    :global(#wayf_div .wayf_inputArea) {
-        flex-wrap: wrap !important;
-    }
-
-    :global(#wayf_submit_div) {
-        width: 100% !important;
-    }
+:global(#wayfIniframe) {
+    border: 0px;
+    height: 38px;
+    width: 430px;
 }

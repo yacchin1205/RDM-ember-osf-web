@@ -65,7 +65,7 @@ const {
     NAV_SIGNUP_ENABLED = true,
     NAV_EMBEDDEDDS_ENABLED = false,
     USE_SIMPLE_PAGE = false,
-    EMBEDDEDDS_URL: dsUrl = 'https://test-ds.gakunin.nii.ac.jp/WAYF/embedded-wayf.js',
+    EMBEDDEDDS_URL: dsUrl = '',
 } = { ...process.env, ...localConfig };
 
 module.exports = function(environment) {
@@ -269,7 +269,6 @@ module.exports = function(environment) {
         },
         embeddedDS: {
             dsUrl,
-            dsConfigs: [],
         },
         secondaryNavbarId: '__secondaryOSFNavbar__',
         engines: {

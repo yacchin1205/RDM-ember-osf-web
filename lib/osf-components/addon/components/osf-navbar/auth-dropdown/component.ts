@@ -28,7 +28,6 @@ const {
     },
     embeddedDS: {
         dsUrl,
-        dsConfigs,
     },
 } = config;
 
@@ -71,7 +70,6 @@ export default class NavbarAuthDropdown extends Component {
     useNavSupport: boolean = useSupport;
     useNavSignUp: boolean = useSignup;
     useNavEmbeddedDS: boolean = useEmbeddedDS;
-    currentDate = (new Date().getTime());
 
     @computed('router.currentURL')
     get signUpNext() {
@@ -119,24 +117,18 @@ export default class NavbarAuthDropdown extends Component {
         }
     }
 
-    @computed('currentDate')
-    get dsURL(): string {
-        return `${dsUrl}?${this.currentDate}`;
-    }
-
-    @computed('dsConfigs')
-    get dsCONFIGs(): string[] {
-        return dsConfigs.map((v: string) => {
-            if (/^https?:\/\//.test(v)) {
-                return v;
-            } else {
-                return `${assetsPrefix}/${v}`
-                    .replace(/[/]+/g, '/')
-                    .replace(/^(.+):\//, '$1://')
-                    .replace(/\/(\?|&|#[^!])/g, '$1')
-                    .replace(/\?/g, '&')
-                    .replace('&', '?');
-            }
-        });
+    @computed('dsUrl')
+    get dsiFrame(): string {
+        if (/^https?:\/\//.test(dsUrl)) {
+            return `${dsUrl}`.trim();
+        } else {
+            return `${assetsPrefix}/${dsUrl}`
+                .replace(/[/]+/g, '/')
+                .replace(/^(.+):\//, '$1://')
+                .replace(/\/(\?|&|#[^!])/g, '$1')
+                .replace(/\?/g, '&')
+                .replace('&', '?')
+                .trim();
+        }
     }
 }

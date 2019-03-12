@@ -169,7 +169,6 @@ declare const config: {
     },
     embeddedDS: {
         dsUrl: string;
-        dsConfigs: string[];
     },
     secondaryNavbarId: string;
     'ember-a11y-testing'?: {
