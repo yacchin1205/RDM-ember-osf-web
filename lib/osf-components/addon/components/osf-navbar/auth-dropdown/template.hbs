@@ -11,14 +11,37 @@
                 {{t 'auth_dropdown.sign_in'}}
             </a>
             {{else}}
-            <div id="wayfInMenu" style="float: right; clear: right; position: relative;">
-                <script type="text/javascript" charset="UTF-8">
-                    {{#each dsCONFIGs as |dsConfig|}}
-                    <script type="text/javascript" src="{{dsConfig}}"></script>
-                    {{/each}}
-                    <script type="text/javascript" src="{{dsURL}}"></script>
-                </script>
-            </div>
+            <iframe id="wayfIniframe"></iframe>
+            <script>
+                let iframe = document.getElementById('wayfIniframe');
+                let iframeDoc = iframe.contentWindow.document;
+                let iframeBody = iframe.contentWindow.document.body;
+
+                let wayfBody = iframeDoc.createElement('div');
+                wayfBody.id = "wayfInMenu";
+                wayfBody.style = "float: right; clear: right; position: relative;";
+                iframeBody.appendChild(wayfBody);
+
+                let wrapperScript = iframeDoc.createElement('script');
+                wrapperScript.type = "text/javascript";
+                wrapperScript.charset = "UTF-8";
+
+                {{#each dsCONFIGs as |dsConfig|}}
+                {
+                    let wayfConfig = iframeDoc.createElement('script');
+                    wayfConfig.type = "text/javascript";
+                    wayfConfig.src = "{{dsConfig}}";
+                    wrapperScript.appendChild(wayfConfig);
+                }
+                {{/each}}
+
+                let dsBody = iframeDoc.createElement('script');
+                dsBody.type = "text/javascript";
+                dsBody.src = "{{dsURL}}";
+                wrapperScript.appendChild(dsBody);
+                console.log(iframe);
+                wayfBody.appendChild(wrapperScript);
+            </script>
             {{/if}}
         </div>
     </li>
