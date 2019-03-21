@@ -21,6 +21,7 @@ import { Permission } from './osf-model';
 import Preprint from './preprint';
 import Region from './region';
 import Registration from './registration';
+import User from './user';
 import Wiki from './wiki';
 
 const Validations = buildValidations({
@@ -114,6 +115,7 @@ export default class Node extends BaseFileItem.extend(Validations, CollectableVa
     affiliatedInstitutions!: DS.PromiseManyArray<Institution> | Institution[];
     @hasMany('comment', { inverse: 'node' }) comments!: DS.PromiseManyArray<Comment>;
     @belongsTo('citation') citation!: DS.PromiseObject<Citation> & Citation;
+    @belongsTo('user') creator!: DS.PromiseObject<User> & User;
 
     @belongsTo('license', { inverse: null }) license!: DS.PromiseObject<License> & License;
 

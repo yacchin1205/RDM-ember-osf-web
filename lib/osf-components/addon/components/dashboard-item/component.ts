@@ -2,6 +2,7 @@ import { computed } from '@ember-decorators/object';
 import { alias } from '@ember-decorators/object/computed';
 import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
+import { htmlSafe } from '@ember/string';
 import { allSettled, task } from 'ember-concurrency';
 import I18N from 'ember-i18n/services/i18n';
 import Contributor from 'ember-osf-web/models/contributor';
@@ -63,6 +64,15 @@ export default class DashboardItem extends Component.extend({
     @computed('node.dateModified')
     get date(): string | undefined {
         return this.node ? moment(this.node.dateModified).format('YYYY-MM-DD h:mm A') : undefined;
+    }
+
+    get quotaNotice() {
+        return htmlSafe('<b>Alert</b><div>Used more than 90%</div>');
+    }
+
+    @computed('node.creator')
+    get administrator(): string | undefined {
+        return this.node ? this.node.creator.get('fullName') : undefined;
     }
 
     didReceiveAttrs(this: DashboardItem) {
