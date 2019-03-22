@@ -72,7 +72,8 @@ export default class DashboardItem extends Component.extend({
             if (this.node.quotaRate > 1) {
                 return htmlSafe('<b>Warning</b><div>Surpassed max quota</div>');
             } else if (this.node.quotaRate > this.node.quotaThreshold) {
-                return htmlSafe('<b>Alert</b><div>Used more than 90%</div>');
+                const threshold = Math.round(this.node.quotaThreshold * 100);
+                return htmlSafe(`<b>Alert</b><div>Used more than ${threshold}%</div>`);
             }
         }
         return htmlSafe('');
