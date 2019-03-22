@@ -116,6 +116,8 @@ export default class Node extends BaseFileItem.extend(Validations, CollectableVa
     @hasMany('comment', { inverse: 'node' }) comments!: DS.PromiseManyArray<Comment>;
     @belongsTo('citation') citation!: DS.PromiseObject<Citation> & Citation;
     @belongsTo('user') creator!: DS.PromiseObject<User> & User;
+    @attr('number') quotaRate!: number;
+    @attr('number') quotaThreshold!: number;
 
     @belongsTo('license', { inverse: null }) license!: DS.PromiseObject<License> & License;
 

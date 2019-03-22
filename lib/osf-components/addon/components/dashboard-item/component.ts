@@ -66,8 +66,16 @@ export default class DashboardItem extends Component.extend({
         return this.node ? moment(this.node.dateModified).format('YYYY-MM-DD h:mm A') : undefined;
     }
 
+    @computed('node.quotaThreshold', 'node.quotaRate')
     get quotaNotice() {
-        return htmlSafe('<b>Alert</b><div>Used more than 90%</div>');
+        if (this.node) {
+            if (this.node.quotaRate > 1) {
+                return htmlSafe('<b>Warning</b><div>Surpassed max quota</div>');
+            } else if (this.node.quotaRate > this.node.quotaThreshold) {
+                return htmlSafe('<b>Alert</b><div>Used more than 90%</div>');
+            }
+        }
+        return htmlSafe('');
     }
 
     @computed('node.creator')
