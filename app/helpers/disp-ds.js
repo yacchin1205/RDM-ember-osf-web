@@ -2,10 +2,10 @@ import { helper } from '@ember/component/helper';
 import { htmlSafe } from '@ember/template';
 import $ from 'jquery';
 
-var wayf_URL = "https://ds.gakunin.nii.ac.jp/WAYF";
-var wayf_sp_entityID = "https://accounts.rdm.nii.ac.jp/shibboleth-sp";
-var wayf_sp_handlerURL = "https://accounts.rdm.nii.ac.jp/Shibboleth.sso";
-var wayf_return_url = "https://accounts.rdm.nii.ac.jp/login?service=https://rdm.nii.ac.jp/";
+var wayf_URL = "https://test-ds.gakunin.nii.ac.jp/WAYF";
+var wayf_sp_entityID = "https://accounts.test.rdm.nii.ac.jp/shibboleth-sp";
+var wayf_sp_handlerURL = "https://accounts.test.rdm.nii.ac.jp/Shibboleth.sso";
+var wayf_return_url = "https://accounts.test.rdm.nii.ac.jp/login?service=https://test.rdm.nii.ac.jp/";
 var wayf_width = 430;
 var wayf_height = "auto";
 var wayf_show_remember_checkbox = false;
