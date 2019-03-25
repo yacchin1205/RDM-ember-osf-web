@@ -11,7 +11,8 @@
                 {{t 'auth_dropdown.sign_in'}}
             </a>
             {{else}}
-            <iframe id="wayfIniframe" src="{{this.dsiFrame}}" scrolling=no></iframe>
+              {{disp-ds 'true'}}
+              {{disp-ds 'false'}}
             {{/if}}
         </div>
     </li>
