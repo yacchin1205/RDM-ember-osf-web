@@ -1706,7 +1706,7 @@ export function dispDs(disp) {
   if(disp != 'true'){
     start();
     $("#IdPList").submit(submitForm());
-    retrun;
+    return;
   }
   
   var config_ok = true; 
