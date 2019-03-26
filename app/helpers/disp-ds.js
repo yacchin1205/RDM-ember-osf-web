@@ -68,7 +68,7 @@ var wayf_hide_idps;
 var wayf_unhide_idps;
 var wayf_show_remember_checkbox;
 //var wayf_force_remember_for_session;
-var wayf_additional_idps;
+//var wayf_additional_idps;
 var wayf_discofeed_url;
 var wayf_sp_cookie_path;
 var wayf_list_height;
