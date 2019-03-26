@@ -1705,7 +1705,7 @@ function decodeBase64(input) {
 export function dispDs(disp) {
   if(disp != 'true'){
     start();
-    $("#IdPList").submit(submitForm());
+    $("#wayf_submit_button").on('click', function(){submitForm()});
     return;
   }
   
