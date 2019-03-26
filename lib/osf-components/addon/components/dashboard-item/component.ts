@@ -81,7 +81,11 @@ export default class DashboardItem extends Component.extend({
 
     @computed('node.creator')
     get administrator(): string | undefined {
-        return this.node ? this.node.creator.get('fullName') : undefined;
+        return this.node ?
+            this.node.creator.get('familyName') ||
+            this.node.creator.get('givenName') ||
+            this.node.creator.get('fullName')
+            : undefined;
     }
 
     didReceiveAttrs(this: DashboardItem) {
