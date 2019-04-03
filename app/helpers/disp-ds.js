@@ -4589,6 +4589,60 @@ export function dispDs(disp) {
   writeHTML('</div>');
   writeHTML('<div style="clear:both;"></div>');
   
+  wayf_html += `
+<style>  
+div#wayfInMenu {
+ float: left !important;
+}
+div#wayf_div {
+ padding: 5px !important;
+ width: auto !important;
+ max-width: 430px !important;
+}
+.wayf_col .wayf_col {
+ flex-direction: row !important;
+ padding-left: 0px !important;
+ padding-right: 0px !important;
+}
+div.wayf_radioArea {
+ display: none !important;
+}
+div.wayf_row {
+ padding-left: 5px !important;
+ padding-right: 5px !important;
+}
+div.wayf_linkArea {
+ align-content: center !important;
+}
+form#IdPList table tbody {
+ display: flex !important;
+ flex-direction: row !important;
+}
+form#IdPList table tbody tr td div#clear_a {
+ text-decoration: none;
+ margin-top: 10px;
+ margin-left: 5px;
+ margin-right: 3px;
+}
+@media only screen and (max-width: 768px) {
+ #wayf_div .wayf_inputArea {
+  flex-wrap: nowrap !important;
+ }
+ #wayf_submit_div {
+  width: auto !important;
+ }
+}
+@media only screen and (max-width: 767px) {
+ #wayf_div .wayf_inputArea {
+  flex-wrap: wrap !important;
+ }
+ #wayf_submit_div {
+  width: 100% !important;
+ }
+}
+</style>
+  `;
+
   // Now output HTML all at once
   return htmlSafe(wayf_html);
 
