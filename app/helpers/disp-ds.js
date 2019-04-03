@@ -20,7 +20,6 @@ var wayf_border_color = '#00247D';
 var wayf_background_color = '#F4F7F7';
 var wayf_auto_login = true;
 var wayf_hide_after_login = false;
-var wayf_show_categories =  false;
 var wayf_hide_categories =  new Array("all");
 var wayf_unhide_idps = new Array(
       "https://openidp.nii.ac.jp/idp/shibboleth",
@@ -57,21 +56,21 @@ var wayf_use_discovery_service;
 //var wayf_border_color;
 //var wayf_font_color;
 //var wayf_font_size;
-var wayf_hide_logo;
+//var wayf_hide_logo;
 //var wayf_auto_login;
 var wayf_logged_in_messsage;
 //var wayf_hide_after_login;
 var wayf_most_used_idps;
 //var wayf_show_categories;
-var wayf_hide_categories;
+//var wayf_hide_categories;
 var wayf_hide_idps;
-var wayf_unhide_idps;
-var wayf_show_remember_checkbox;
+//var wayf_unhide_idps;
+//var wayf_show_remember_checkbox;
 //var wayf_force_remember_for_session;
 //var wayf_additional_idps;
 var wayf_discofeed_url;
-var wayf_sp_cookie_path;
-var wayf_list_height;
+//var wayf_sp_cookie_path;
+//var wayf_list_height;
 var wayf_sp_samlDSURL;
 var wayf_sp_samlACURL;
 var wayf_html = "";
@@ -1420,8 +1419,7 @@ var favorite_idp_group = "Most often used Home Organisations";
 var hint_idp_group = 'ヒント！所属機関';
 
 // Define functions
-function submitForm(){
-
+var submit = function submitForm(){
   var NonFedEntityID;
   var idp_name = document.getElementById('keytext').value.toLowerCase();
   var chkFlg = false;
@@ -1705,7 +1703,7 @@ function decodeBase64(input) {
 export function dispDs(disp) {
   if(disp != 'true'){
     start();
-    $("#wayf_submit_button").on('click', function(){submitForm()});
+    $("#IdPList").on('submit', submit);
     return;
   }
   
