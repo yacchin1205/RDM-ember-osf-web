@@ -1,7 +1,8 @@
 import { helper } from '@ember/component/helper';
 import { htmlSafe } from '@ember/template';
 import $ from 'jquery';
-import dsconfig from './dsconfig';
+import ENV from 'ember-ds/config/environment';
+var dsconfig = ENV.dsconfig
 
 var wayf_overwrite_submit_button_text = dsconfig['wayf_overwrite_submit_button_text'];
 var wayf_overwrite_checkbox_label_text = dsconfig['wayf_overwrite_checkbox_label_text'];
