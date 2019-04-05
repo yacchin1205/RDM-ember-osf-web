@@ -36,6 +36,7 @@ var wayf_sp_cookie_path = dsconfig['wayf_sp_cookie_path'];
 var wayf_list_height = dsconfig['wayf_list_height'];
 var wayf_sp_samlDSURL = dsconfig['wayf_sp_samlDSURL'];
 var wayf_sp_samlACURL = dsconfig['wayf_sp_samlACURL'];
+var wayf_overwrite_intro_text = dsconfig['wayf_overwrite_intro_text'];
 
 var wayf_html = "";
 
