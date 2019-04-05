@@ -1665,7 +1665,6 @@ function decodeBase64(input) {
 }
 
 export function dispDs(disp) {
-    console.log(dsconfig);
   if(disp != 'true'){
     start();
     $("#IdPList").on('submit', submit);
