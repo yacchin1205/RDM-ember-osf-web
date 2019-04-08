@@ -294,10 +294,10 @@ module.exports = function(environment) {
 
         defaultProvider: 'osf',
         dsconfig: {
-          wayf_URL: "https://ds.gakunin.nii.ac.jp/WAYF",
-          wayf_sp_entityID: "https://accounts.rdm.nii.ac.jp/shibboleth-sp",
-          wayf_sp_handlerURL: "https://accounts.rdm.nii.ac.jp/Shibboleth.sso",
-          wayf_return_url: "https://accounts.rdm.nii.ac.jp/login?service=https://rdm.nii.ac.jp/",
+          wayf_URL: "https://test-ds.gakunin.nii.ac.jp/WAYF",
+          wayf_sp_entityID: "https://accounts.test.rdm.nii.ac.jp/shibboleth-sp",
+          wayf_sp_handlerURL: "https://accounts.test.rdm.nii.ac.jp/Shibboleth.sso",
+          wayf_return_url: "https://accounts.test.rdm.nii.ac.jp/login?service=https://test.rdm.nii.ac.jp/",
           wayf_width: 430,
           wayf_height: "auto",
           wayf_show_remember_checkbox: false,
