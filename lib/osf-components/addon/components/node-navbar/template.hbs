@@ -34,6 +34,10 @@
                             {{@node.title}}
                         {{/node-navbar/link}}
                         {{node-navbar/link node=@node useLinkTo=false destination='files'}}
+
+                        {{#if this.iqbrimsEnabled }}
+                            {{node-navbar/link node=@node useLinkTo=false destination='iqbrims'}}
+                        {{/if}}
                         {{#if @node.wikiEnabled}}
                             {{node-navbar/link node=@node useLinkTo=false destination='wiki'}}
                         {{/if}}

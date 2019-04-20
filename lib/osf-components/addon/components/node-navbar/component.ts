@@ -37,6 +37,15 @@ export default class NodeNavbar extends Component {
         return null;
     }
 
+    @computed('node.addons.[]')
+    get iqbrimsEnabled(): boolean {
+        if (!this.node) {
+            return false;
+        }
+        const iqbrims = this.node.addons.filter(addon => addon.id === 'iqbrims');
+        return iqbrims.length > 0;
+    }
+
     @action
     toggleNav() {
         this.toggleProperty('collapsedNav');

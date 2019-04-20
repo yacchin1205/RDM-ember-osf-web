@@ -504,6 +504,7 @@ export default {
     node_navbar: {
         toggle: 'Toggle navigation',
         project_nav: 'Project Navigation',
+        iqbrims: 'IQB-RIMS',
         wiki: 'Wiki',
         analytics: 'Analytics',
         registrations: 'Registrations',

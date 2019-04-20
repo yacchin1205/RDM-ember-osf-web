@@ -19,6 +19,7 @@ import FileProviderModel from './file-provider';
 import InstitutionModel from './institution';
 import LicenseModel from './license';
 import LogModel from './log';
+import NodeAddonModel from './node-addon';
 import { Permission } from './osf-model';
 import PreprintModel from './preprint';
 import RegionModel from './region';
@@ -214,6 +215,17 @@ export default class NodeModel extends BaseFileItem.extend(Validations, Collecta
     @computed('title')
     get unsafeTitle() {
         return htmlSafe(this.title);
+    }
+
+    addonsCache?: DS.PromiseArray<NodeAddonModel>;
+
+    get addons(): DS.PromiseArray<NodeAddonModel> {
+        if (this.addonsCache !== undefined) {
+            return this.addonsCache;
+        }
+        this.addonsCache = this.store.query('node-addon',
+            { context: { node: this.id } });
+        return this.addonsCache!;
     }
 
     // BaseFileItem override
