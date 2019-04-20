@@ -19,6 +19,7 @@ import IdentifierModel from './identifier';
 import InstitutionModel from './institution';
 import LicenseModel from './license';
 import LogModel from './log';
+import NodeAddonModel from './node-addon';
 import { Permission } from './osf-model';
 import PreprintModel from './preprint';
 import RegionModel from './region';
@@ -167,6 +168,9 @@ export default class NodeModel extends BaseFileItem.extend(Validations, Collecta
 
     @hasMany('identifier', { inverse: null })
     identifiers!: DS.PromiseManyArray<IdentifierModel>;
+
+    @hasMany('node-addon', { inverse: 'node' })
+    addons!: DS.PromiseManyArray<NodeAddonModel>;
 
     // These are only computeds because maintaining separate flag values on
     // different classes would be a headache TODO: Improve.

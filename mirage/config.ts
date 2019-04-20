@@ -62,6 +62,7 @@ export default function(this: Server) {
         only: ['related', 'add', 'remove'],
         path: '/nodes/:parentID/relationships/institutions',
     });
+    osfNestedResource(this, 'node', 'addons', { only: ['index'] });
 
     osfResource(this, 'registration', { except: ['show'] });
     this.get('/registrations/:id', registrationDetail);
