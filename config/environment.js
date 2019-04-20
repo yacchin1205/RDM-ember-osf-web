@@ -145,6 +145,7 @@ module.exports = function(environment) {
             backend,
             redirectUri,
             url,
+            webApiNamespace: 'api/v1',
             apiUrl,
             apiVersion,
             apiHeaders: {

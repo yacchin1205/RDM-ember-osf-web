@@ -1,0 +1,28 @@
+{{! using unsafeTitle here to avoid double encoding because the title helper does its own }}
+{{title (t 'forks.page_title' nodeTitle=this.model.taskInstance.value.unsafeTitle)}}
+<div class='container' local-class='IQBRIMS'>
+    <div local-class='IQBRIMS__editor'>
+        {{#if this.modeDeposit}}
+        {{else if this.modeCheck}}
+        {{else}}
+            <div class='form-group'>
+                <OsfButton @type='primary'
+                           @onClick={{action this.startDeposit}}>
+                    {{t 'iqbrims.deposit_button'}}
+                </OsfButton>
+                <small class='form-text text-muted'>
+                    {{t 'iqbrims.deposit_help'}}
+                </small>
+            </div>
+            <div class='form-group'>
+                <OsfButton @type='primary'
+                           @onClick={{action this.startCheck}}>
+                    {{t 'iqbrims.check_button'}}
+                </OsfButton>
+                <small class='form-text text-muted'>
+                    {{t 'iqbrims.check_help'}}
+                </small>
+            </div>
+        {{/if}}
+    </div>
+</div>

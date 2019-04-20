@@ -120,6 +120,7 @@ Router.map(function() {
     this.route('guid-node', { path: '--node/:guid' }, function() {
         this.mount('analytics-page', { as: 'analytics' });
         this.route('forks');
+        this.route('iqbrims');
         this.route('registrations');
     });
 
