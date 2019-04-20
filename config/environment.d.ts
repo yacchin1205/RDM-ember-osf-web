@@ -78,6 +78,7 @@ declare const config: {
         backend: string;
         redirectUri?: string;
         url: string;
+        webApiNamespace: string;
         apiUrl: string;
         apiVersion: string;
         apiHeaders: { [k: string]: string };

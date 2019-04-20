@@ -1743,4 +1743,10 @@ export default {
             show_url_bar: 'Show URL bar -- navigate by URL without reloading',
         },
     },
+    iqbrims: {
+        deposit_button: 'Deposit Manuscript & Data',
+        check_button: 'Image Scan Service',
+        deposit_help: '論文登録を行い承認を得るための申請手続きを実行',
+        check_help: '論文登録前に画像のみのスキャンサービスを実行',
+    },
 };
