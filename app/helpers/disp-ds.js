@@ -2,7 +2,9 @@ import { helper } from '@ember/component/helper';
 import { htmlSafe } from '@ember/template';
 import $ from 'jquery';
 import ENV from '../config/environment';
-var dsconfig = ENV.dsconfig
+
+var dsconfig = ENV.dsconfig;
+var modulePrefix = ENV.modulePrefix;
 
 var wayf_overwrite_submit_button_text = dsconfig['wayf_overwrite_submit_button_text'];
 var wayf_overwrite_checkbox_label_text = dsconfig['wayf_overwrite_checkbox_label_text'];
@@ -71,7 +73,7 @@ var location_dic = {
   kyushu: '九州',
   others: '他のフェデレーションから'
 };
-var metadata_url = '/gakunin-metadata.xml';
+var metadata_url = '/' + modulePrefix + '/gakunin-metadata.xml';
 
 export function dispDs(disp) {
   if(disp != 'true'){
