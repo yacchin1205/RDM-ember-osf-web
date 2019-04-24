@@ -62,6 +62,8 @@ export default class FileBrowser extends Component {
     @requiredAction addFile!: (fileId: string) => void;
     @requiredAction deleteFiles!: (files: File[]) => void;
 
+    dzUploadButtonClass: string = 'dz-upload-button';
+
     clickHandler?: JQuery.EventHandlerBase<HTMLElement, JQuery.Event>;
     dismissPop?: () => void;
     canEdit: boolean = defaultTo(this.canEdit, false);
@@ -166,7 +168,7 @@ export default class FileBrowser extends Component {
         }
 
         return [
-            '.dz-upload-button',
+            `.${this.dzUploadButtonClass}`,
             this.hasItems ? '' : '.file-browser-list',
         ].filter(item => item.length);
     }

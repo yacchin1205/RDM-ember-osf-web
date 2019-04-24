@@ -30,7 +30,7 @@
         </div>
         <div class='col-xs-3'>
             <OsfButton
-                data-test-close-rename 
+                data-test-close-rename
                 local-class='action-button'
                 aria-label={{t 'general.close'}}
                 @onClick={{action this.closeRename}}
@@ -43,7 +43,7 @@
                 aria-label={{t 'general.rename'}}
                 local-class='action-button'
                 @onClick={{action this.rename}}
-                @class='pull-right' 
+                @class='pull-right'
             >
                 {{fa-icon 'pencil'}}
             </OsfButton>
@@ -54,7 +54,7 @@
                 <OsfButton
                     local-class='action-button'
                     @bubble={{true}}
-                    @class='dz-upload-button'
+                    @class='{{this.dzUploadButtonClass}}'
                     @disabled={{this.isUploading}}
                 >
                     {{fa-icon 'upload'}}
@@ -64,10 +64,10 @@
             {{#if this.selectedItems}}
                 {{! TODO: show available actions for selected files }}
                 {{#if (eq this.selectedItems.length 1)}}
-                    <OsfButton 
+                    <OsfButton
                         data-test-share-dialog-button
-                        local-class='action-button' 
-                        @class='popover-toggler' 
+                        local-class='action-button'
+                        @class='popover-toggler'
                         @onClick={{action this.openSharePopup}}
                     >
                         {{fa-icon 'share-alt'}}
@@ -88,7 +88,7 @@
                             {{/if}}
                         </BsPopover>
                     </OsfButton>
-                    <OsfButton 
+                    <OsfButton
                         data-test-download-button
                         local-class='action-button'
                         @bubble={{true}}
@@ -117,7 +117,7 @@
                             {{t 'general.move'}}
                         </OsfButton>
                         <OsfButton
-                            data-test-delete-button 
+                            data-test-delete-button
                             local-class='action-button'
                             @bubble={{true}}
                             @onClick={{action (mut this.currentModal) 'delete'}}
@@ -149,7 +149,7 @@
                     {{/if}}
                 {{/if}}
             {{else if this.hasItems}}
-                <OsfButton 
+                <OsfButton
                     data-test-download-zip-button
                     local-class='action-button'
                     @bubble={{true}}
@@ -201,7 +201,7 @@
     </div>
     <div class='col-lg-2 col-md-2 col-sm-3 hidden-xs' local-class='file-browser-header header'>
         <span local-class='sortable-column'>{{t 'general.modified'}}</span>
-        <SortButton 
+        <SortButton
             @sortAction={{action (mut this.sort)}}
             @sort={{this.sort}}
             @sortBy='modified'
@@ -256,7 +256,7 @@
         >
             {{t 'general.cancel'}}
         </OsfButton>
-        <OsfButton 
+        <OsfButton
             @onClick={{action this.deleteItems}}
             @type='danger'
         >

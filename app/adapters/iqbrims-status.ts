@@ -17,10 +17,10 @@ export default class IQBRIMSStatusAdapter extends OsfAdapter {
         _: string | undefined,
         id: string | null,
         __: DS.Snapshot | null,
-        requestType: string,
-        ___?: {},
+        ___: string,
+        ____?: {},
     ): string {
-        const nodeUrl = super.buildURL('node', null, null, requestType, {});
+        const nodeUrl = super.buildURL('node', null, null, 'findRecord', {});
         const url = nodeUrl.replace(/\/nodes\/$/, '/project/');
         return `${url}${id}/iqbrims/status`;
     }
