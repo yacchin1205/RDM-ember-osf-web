@@ -36,17 +36,7 @@ export default class GuidNodeIQBRIMS extends Controller {
     dataFiles = new IQBRIMSFileBrowser(this, '生データ(Temp)');
     checklistFiles = new IQBRIMSFileBrowser(this, 'チェックリスト(Temp)');
 
-    contributorType?: string;
     laboId?: string;
-
-    @action
-    contributorTypeChanged(this: GuidNodeIQBRIMS, contributorType: string) {
-        if (!this.status) {
-            throw new EmberError('Illegal status');
-        }
-        const status = this.status.content as IQBRIMSStatusModel;
-        status.set('contributorType', contributorType);
-    }
 
     @action
     laboChanged(this: GuidNodeIQBRIMS, laboId: string) {

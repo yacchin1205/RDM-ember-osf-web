@@ -1762,10 +1762,6 @@ export default {
         submit_manuscripts: 'データ提出 - 最終原稿・組図',
         submit_data: 'データ提出 - 生データ',
         submit_checklist: 'データ提出 - チェックリスト',
-        contributor_types: {
-            first_author: 'First Author',
-            second_author: 'Second Author',
-        },
         placeholders: {
             accepted_date: 'YYYY/MM/DD',
             journal_name: 'Journal Name',

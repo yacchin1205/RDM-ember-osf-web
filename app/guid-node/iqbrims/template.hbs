@@ -15,14 +15,6 @@
                     <div>
                         {{this.owner.fullName}}
                     </div>
-                    <select class='form-control' onchange={{action this.contributorTypeChanged value='target.value'}}>
-                        <option selected={{if (eq this.contributorType 'first-author') 'selected'}} value='first-author'>
-                            {{t 'iqbrims.contributor_types.first_author'}}
-                        </option>
-                        <option selected={{if (eq this.contributorType 'second-author') 'selected'}} value='second-author'>
-                            {{t 'iqbrims.contributor_types.second_author'}}
-                        </option>
-                    </select>
                     {{#each this.otherContributors as |item|}}
                         <div>
                             {{item.fullName}}
