@@ -185,14 +185,23 @@
                 />
             </div>
             <div class='text-right'>
-                <OsfButton @type='default'
-                           @onClick={{action this.discardInput}}>
-                    {{t 'iqbrims.discard_button'}}
-                </OsfButton>
-                <OsfButton @type='success'
-                           @onClick={{action this.saveInput}}>
-                    {{t 'iqbrims.save_button'}}
-                </OsfButton>
+                {{#if this.submitting}}
+                    <OsfButton @type='default'>
+                        {{t 'iqbrims.discard_button'}}
+                    </OsfButton>
+                    <OsfButton @type='default'>
+                        {{t 'iqbrims.processing_submit_button'}}
+                    </OsfButton>
+                {{else}}
+                    <OsfButton @type='default'
+                               @onClick={{action this.discardInput}}>
+                        {{t 'iqbrims.discard_button'}}
+                    </OsfButton>
+                    <OsfButton @type='success'
+                               @onClick={{action this.saveInput}}>
+                        {{t 'iqbrims.submit_button'}}
+                    </OsfButton>
+                {{/if}}
             </div>
         {{else if this.modeCheck}}
         {{else}}

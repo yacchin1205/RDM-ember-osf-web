@@ -29,6 +29,8 @@ export default class GuidNodeIQBRIMS extends Controller {
     @reads('model.taskInstance.value')
     node?: Node;
 
+    submitting = false;
+
     statusCache?: DS.PromiseObject<IQBRIMSStatusModel>;
     manuscriptFiles = new IQBRIMSFileBrowser(this, '最終原稿・組図(Temp)');
     dataFiles = new IQBRIMSFileBrowser(this, '生データ(Temp)');
@@ -60,6 +62,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         if (!this.status) {
             throw new EmberError('Illegal status');
         }
+        this.set('submitting', true);
         const status = this.status.content as IQBRIMSStatusModel;
         if (this.modeDeposit) {
             status.set('state', 'deposit');
@@ -97,6 +100,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }).catch(() => {
             const message = this.i18n.t('iqbrims.failed_to_submit');
             this.toast.error(message);
+            this.set('submitting', false);
         });
     }
 
