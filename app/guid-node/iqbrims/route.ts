@@ -14,6 +14,9 @@ function preventDrop(e: DragEvent) {
     if ((e.target as HTMLDivElement).id === 'data-dropzone') {
         return;
     }
+    if ((e.target as HTMLDivElement).id === 'checklist-dropzone') {
+        return;
+    }
 
     e.preventDefault();
     e.dataTransfer!.effectAllowed = 'none';
