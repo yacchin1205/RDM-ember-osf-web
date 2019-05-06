@@ -1372,6 +1372,7 @@ export default {
         submit_data: 'データ提出 - 生データ',
         submit_checklist: 'データ提出 - チェックリスト',
         placeholders: {
+            labo: '所属ラボを選択',
             accepted_date: 'YYYY/MM/DD',
             journal_name: 'Journal Name',
             doi: 'https://doi.org/XX.XXXX/Y.YYYYYY',

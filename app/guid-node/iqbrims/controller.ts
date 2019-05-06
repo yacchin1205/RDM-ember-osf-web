@@ -36,8 +36,6 @@ export default class GuidNodeIQBRIMS extends Controller {
     dataFiles = new IQBRIMSFileBrowser(this, '生データ(Temp)');
     checklistFiles = new IQBRIMSFileBrowser(this, 'チェックリスト(Temp)');
 
-    laboId?: string;
-
     @action
     laboChanged(this: GuidNodeIQBRIMS, laboId: string) {
         if (!this.status) {
@@ -45,6 +43,19 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('laboId', laboId);
+        this.notifyPropertyChange('isFilled');
+    }
+
+    @computed('status.state')
+    get laboId() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return null;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (!status.laboId) {
+            return '';
+        }
+        return status.laboId;
     }
 
     @action
@@ -103,6 +114,24 @@ export default class GuidNodeIQBRIMS extends Controller {
         status.rollbackAttributes();
     }
 
+    @computed('status.state')
+    get isFilled() {
+        if (!this.status) {
+            return false;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (!status.journalName || status.journalName.length === 0) {
+            return false;
+        }
+        if (!status.acceptedDate || status.acceptedDate.length === 0) {
+            return false;
+        }
+        if (!status.laboId || status.laboId.length === 0) {
+            return false;
+        }
+        return true;
+    }
+
     @computed('node.title')
     get paperTitle() {
         if (!this.node) {
@@ -129,6 +158,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('acceptedDate', v === null ? '' : v.toISOString());
+        this.notifyPropertyChange('isFilled');
     }
 
     @computed('status.state')
@@ -149,6 +179,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('journalName', v);
+        this.notifyPropertyChange('isFilled');
     }
 
     @computed('status.state')

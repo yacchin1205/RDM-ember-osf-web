@@ -23,9 +23,14 @@
                 </div>
             </div>
             <div class='form-group row'>
-                <label class='col-sm-2' for='labo'>{{t 'iqbrims.labo'}}</label>
+                <label class='col-sm-2' for='labo'>
+                    {{t 'iqbrims.labo'}} <span local-class='IQBRIMS__required'>*</span>
+                </label>
                 <div class='col-sm-10'>
                     <select class='form-control' onchange={{action this.laboChanged value='target.value'}}>
+                        <option selected={{if (eq this.laboId '') 'selected'}} value=''>
+                            {{t 'iqbrims.placeholders.labo'}}
+                        </option>
                         {{#each this.laboList as |item|}}
                             <option selected={{if (eq this.laboId item.id) 'selected'}} value='{{item.id}}'>
                                 {{item.text}}
@@ -45,7 +50,9 @@
                 </div>
             </div>
             <div class='form-group row'>
-                <label class='col-sm-2' for='accepted_date'>{{t 'iqbrims.accepted_date'}}</label>
+                <label class='col-sm-2' for='accepted_date'>
+                    {{t 'iqbrims.accepted_date'}} <span local-class='IQBRIMS__required'>*</span>
+                </label>
                 <div class='col-sm-10'>
                     {{validated-input/date
                         model=this
@@ -55,7 +62,9 @@
                 </div>
             </div>
             <div class='form-group row'>
-                <label class='col-sm-2' for='journal_name'>{{t 'iqbrims.journal_name'}}</label>
+                <label class='col-sm-2' for='journal_name'>
+                    {{t 'iqbrims.journal_name'}} <span local-class='IQBRIMS__required'>*</span>
+                </label>
                 <div class='col-sm-10'>
                     {{input
                         name='journal_name'
@@ -182,10 +191,12 @@
                     </OsfButton>
                 {{else}}
                     <OsfButton @type='default'
+                               @disabled={{not this.status.hasDirtyAttributes}}
                                @onClick={{action this.discardInput}}>
                         {{t 'iqbrims.discard_button'}}
                     </OsfButton>
                     <OsfButton @type='success'
+                               @disabled={{not (and this.isFilled this.status.hasDirtyAttributes)}}
                                @onClick={{action this.saveInput}}>
                         {{t 'iqbrims.submit_button'}}
                     </OsfButton>
