@@ -124,21 +124,21 @@ export default class GuidNodeIQBRIMS extends Controller {
     @computed('status.state')
     get acceptedDate() {
         if (!this.status || !this.status.get('isFulfilled')) {
-            return '';
+            return null;
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (!status.acceptedDate) {
-            return '';
+            return null;
         }
-        return status.acceptedDate;
+        return new Date(status.acceptedDate);
     }
 
-    set acceptedDate(v: string) {
+    set acceptedDate(v: Date | null) {
         if (!this.status) {
             throw new EmberError('Illegal status');
         }
         const status = this.status.content as IQBRIMSStatusModel;
-        status.set('acceptedDate', v);
+        status.set('acceptedDate', v === null ? '' : v.toISOString());
     }
 
     @computed('status.state')
@@ -184,21 +184,21 @@ export default class GuidNodeIQBRIMS extends Controller {
     @computed('status.state')
     get publishDate() {
         if (!this.status || !this.status.get('isFulfilled')) {
-            return '';
+            return null;
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (!status.publishDate) {
-            return '';
+            return null;
         }
-        return status.publishDate;
+        return new Date(status.publishDate);
     }
 
-    set publishDate(v: string) {
+    set publishDate(v: Date | null) {
         if (!this.status) {
             throw new EmberError('Illegal status');
         }
         const status = this.status.content as IQBRIMSStatusModel;
-        status.set('publishDate', v);
+        status.set('publishDate', v === null ? '' : v.toISOString());
     }
 
     @computed('status.state')

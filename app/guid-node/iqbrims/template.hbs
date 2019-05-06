@@ -55,12 +55,10 @@
             <div class='form-group row'>
                 <label class='col-sm-2' for='accepted_date'>{{t 'iqbrims.accepted_date'}}</label>
                 <div class='col-sm-10'>
-                    {{input
-                        name='accepted_date'
-                        placeholder=(t 'iqbrims.placeholders.accepted_date')
-                        class='form-control'
-                        value=this.acceptedDate
-                        type='text'
+                    {{validated-input/date
+                        model=this
+                        valuePath='acceptedDate'
+                        shouldShowMessages=@didValidate
                     }}
                 </div>
             </div>
@@ -91,12 +89,10 @@
             <div class='form-group row'>
                 <label class='col-sm-2' for='publish_date'>{{t 'iqbrims.publish_date'}}</label>
                 <div class='col-sm-10'>
-                    {{input
-                        name='publish_date'
-                        placeholder=(t 'iqbrims.placeholders.publish_date')
-                        class='form-control'
-                        value=this.publishDate
-                        type='text'
+                    {{validated-input/date
+                        model=this
+                        valuePath='publishDate'
+                        shouldShowMessages=@didValidate
                     }}
                 </div>
             </div>
