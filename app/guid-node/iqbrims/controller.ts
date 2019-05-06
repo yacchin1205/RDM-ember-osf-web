@@ -30,8 +30,9 @@ export default class GuidNodeIQBRIMS extends Controller {
     node?: Node;
 
     statusCache?: DS.PromiseObject<IQBRIMSStatusModel>;
-    manuscriptFiles = new IQBRIMSFileBrowser(this, '最終原稿・組図(Draft)');
-    dataFiles = new IQBRIMSFileBrowser(this, '生データ(Draft)');
+    manuscriptFiles = new IQBRIMSFileBrowser(this, '最終原稿・組図(Temp)');
+    dataFiles = new IQBRIMSFileBrowser(this, '生データ(Temp)');
+    checklistFiles = new IQBRIMSFileBrowser(this, 'チェックリスト(Temp)');
 
     contributorType?: string;
     laboId?: string;
@@ -65,7 +66,38 @@ export default class GuidNodeIQBRIMS extends Controller {
         } else if (this.modeCheck) {
             status.set('state', 'check');
         }
-        status.save();
+        status.save().then(() => {
+            const mfiles = this.manuscriptFiles.files;
+            if (mfiles != null) {
+                mfiles.forEach(f => {
+                    f.moveOnCurrentProject('iqbrims', '/最終原稿・組図/');
+                });
+            }
+            const dfiles = this.dataFiles.files;
+            if (dfiles != null) {
+                dfiles.forEach(f => {
+                    f.moveOnCurrentProject('iqbrims', '/生データ/');
+                });
+            }
+            const cfiles = this.checklistFiles.files;
+            if (cfiles != null) {
+                cfiles.forEach(f => {
+                    f.moveOnCurrentProject('iqbrims', '/チェックリスト/');
+                });
+            }
+            let url = window.location.href;
+            if (url.endsWith('/')) {
+                url = url.substring(0, url.length - 1);
+            }
+            const pos = url.lastIndexOf('/');
+            if (pos > 0) {
+                url = url.substring(0, pos + 1);
+            }
+            window.location.href = url;
+        }).catch(() => {
+            const message = this.i18n.t('iqbrims.failed_to_submit');
+            this.toast.error(message);
+        });
     }
 
     @action
@@ -314,6 +346,11 @@ export default class GuidNodeIQBRIMS extends Controller {
     @action
     buildDataFileUrl(files: File[]) {
         return this.dataFiles.buildUrl(files);
+    }
+
+    @action
+    buildChecklistFileUrl(files: File[]) {
+        return this.checklistFiles.buildUrl(files);
     }
 }
 

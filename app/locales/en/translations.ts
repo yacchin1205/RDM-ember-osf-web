@@ -1370,6 +1370,7 @@ export default {
         page_number: 'ページ番号',
         submit_manuscripts: 'データ提出 - 最終原稿・組図',
         submit_data: 'データ提出 - 生データ',
+        submit_checklist: 'データ提出 - チェックリスト',
         contributor_types: {
             first_author: 'First Author',
             second_author: 'Second Author',
@@ -1384,5 +1385,6 @@ export default {
         },
         save_button: 'Save',
         discard_button: 'Discard Changes',
+        failed_to_submit: 'データの保存に失敗しました',
     },
 };
