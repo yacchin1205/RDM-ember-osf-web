@@ -173,33 +173,8 @@ declare const config: {
     },
     secondaryNavbarId: string;
     dsconfig: {
-        wayf_URL: string;
-        wayf_sp_entityID: string;
-        wayf_sp_handlerURL: string;
-        wayf_return_url: string;
-        wayf_width: number;
-        wayf_height: string;
-        wayf_show_remember_checkbox: boolean;
-        wayf_force_remember_for_session: boolean;
-        wayf_use_small_logo: boolean;
-        wayf_hide_logo: boolean;
-        wayf_show_categories: boolean;
-        wayf_overwrite_intro_text: string;
-        wayf_font_size: number;
-        wayf_font_color: string;
-        wayf_border_color: string;
-        wayf_background_color: string;
-        wayf_auto_login: boolean;
-        wayf_hide_after_login: boolean;
-        wayf_hide_categories:  string[];
-        wayf_unhide_idps: string[];
-        wayf_additional_idps: Array<{
-            name: string;
-            entityID: string;
-            SAML1SSOurl: string;
-        }>;
-        wayf_sp_cookie_path: string;
-        wayf_list_height: number;
+        settingFile: string;
+        wayfScript: string;
     }; 
     'ember-a11y-testing'?: {
         componentOptions: {

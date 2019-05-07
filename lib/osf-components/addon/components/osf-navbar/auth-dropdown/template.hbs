@@ -11,8 +11,8 @@
                 {{t 'auth_dropdown.sign_in'}}
             </a>
             {{else}}
-              {{disp-ds 'true'}}
-              {{disp-ds 'false'}}
+            <div id='embDS' />
+            {{embedded-ds 'embDS'}}
             {{/if}}
         </div>
     </li>
