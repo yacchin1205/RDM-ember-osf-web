@@ -1961,7 +1961,7 @@ function decodeBase64(input) {
     writeHTML('<link rel="stylesheet" href="https://ds.gakunin.nii.ac.jp/GakuNinDS/incsearch/suggest.css" type="text/css" />');
     writeHTML('<script type="text/javascript" src="https://ds.gakunin.nii.ac.jp/GakuNinDS/incsearch/jquery.js"></script>');
     writeHTML('<script type="text/javascript" src="https://ds.gakunin.nii.ac.jp/GakuNinDS/incsearch/jquery.flickable.js"></script>');
-    writeHTML('<script type="text/javascript" src="/suggest.js"></script>');
+    writeHTML('<script type="text/javascript" src="/ember_osf_web/suggest_js"></script>');
 
     writeHTML(form_start);
     writeHTML('<input name="request_type" type="hidden" value="embedded">');

@@ -296,8 +296,8 @@ module.exports = function(environment) {
 
         defaultProvider: 'osf',
         dsconfig: {
-            settingFile: '/ember-osf-web/dsconfig.js',
-            wayfScript: '/ember-osf-web/embedded-wayf.js',
+            settingFile: '/ember_osf_web/dsconfig_js',
+            wayfScript: '/ember_osf_web/embedded-wayf_js',
         },
     };
 
