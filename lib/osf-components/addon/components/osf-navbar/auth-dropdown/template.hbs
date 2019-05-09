@@ -6,9 +6,14 @@
                 {{t 'auth_dropdown.sign_up'}}
             {{/hyper-link}}
             {{/if}}
+            {{#if (not useNavEmbeddedDS)}}
             <a {{action 'login'}} data-test-sign-in-button onclick={{action 'click' 'button' 'Navbar - SignIn' target=analytics}} class="btn btn-info btn-top-login m-r-xs" role="button">
                 {{t 'auth_dropdown.sign_in'}}
             </a>
+            {{else}}
+            <div id='embDS' />
+            {{embedded-ds 'embDS'}}
+            {{/if}}
         </div>
     </li>
 {{else}}

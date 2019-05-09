@@ -166,8 +166,16 @@ declare const config: {
         useSupport: boolean;
         useDonate: boolean;
         useSignup: boolean;
+        useEmbeddedDS: boolean;
+    },
+    embeddedDS: {
+        dsUrl: string;
     },
     secondaryNavbarId: string;
+    dsconfig: {
+        settingFile: string;
+        wayfScript: string;
+    }; 
     'ember-a11y-testing'?: {
         componentOptions: {
             turnAuditOff: boolean,

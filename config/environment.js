@@ -64,7 +64,9 @@ const {
     NAV_SUPPORT_ENABLED = true,
     NAV_DONATE_ENABLED = true,
     NAV_SIGNUP_ENABLED = true,
+    NAV_EMBEDDEDDS_ENABLED = false,
     USE_SIMPLE_PAGE = false,
+    EMBEDDEDDS_URL: dsUrl = '',
 } = { ...process.env, ...localConfig };
 
 module.exports = function(environment) {
@@ -265,6 +267,10 @@ module.exports = function(environment) {
             useSupport: Boolean(NAV_SUPPORT_ENABLED),
             useDonate: Boolean(NAV_DONATE_ENABLED),
             useSignup: Boolean(NAV_SIGNUP_ENABLED),
+            useEmbeddedDS: Boolean(NAV_EMBEDDEDDS_ENABLED),
+        },
+        embeddedDS: {
+            dsUrl,
         },
         secondaryNavbarId: '__secondaryOSFNavbar__',
         engines: {
@@ -289,6 +295,10 @@ module.exports = function(environment) {
         },
 
         defaultProvider: 'osf',
+        dsconfig: {
+            settingFile: '/ember_osf_web/dsconfig_js',
+            wayfScript: '/ember_osf_web/embedded-wayf_js',
+        },
     };
 
     if (environment === 'development') {
