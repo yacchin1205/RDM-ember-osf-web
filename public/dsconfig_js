@@ -19,10 +19,7 @@ var wayf_hide_after_login = false;
 var wayf_hide_categories =  new Array("all");
 var wayf_unhide_idps = new Array(
      "https://openidp.nii.ac.jp/idp/shibboleth",
-     "https://idp.rdm.nii.ac.jp/idp/shibboleth",
-     "https://idp.nii.ac.jp/idp/shibboleth",
-     "https://shib.nagoya-u.ac.jp/idp/shibboleth",
-     "https://authidp1.iimc.kyoto-u.ac.jp/idp/shibboleth"
+     "https://idp.rdm.nii.ac.jp/idp/shibboleth"
 );
 var wayf_additional_idps = [
      {name: "OpenIdP",

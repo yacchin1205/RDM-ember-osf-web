@@ -20,14 +20,10 @@ import layout from './template';
 const { OSF: { url: baseUrl }, featureFlagNames } = config;
 
 const {
-    assetsPrefix,
     navbar: {
         useSupport,
         useSignup,
         useEmbeddedDS,
-    },
-    embeddedDS: {
-        dsUrl,
     },
 } = config;
 
@@ -114,21 +110,6 @@ export default class NavbarAuthDropdown extends Component {
         this.analytics.click('link', analyticsLabel);
         if (this.onLinkClicked) {
             this.onLinkClicked();
-        }
-    }
-
-    @computed('dsUrl')
-    get dsiFrame(): string {
-        if (/^https?:\/\//.test(dsUrl)) {
-            return `${dsUrl}`.trim();
-        } else {
-            return `${assetsPrefix}/${dsUrl}`
-                .replace(/[/]+/g, '/')
-                .replace(/^(.+):\//, '$1://')
-                .replace(/\/(\?|&|#[^!])/g, '$1')
-                .replace(/\?/g, '&')
-                .replace('&', '?')
-                .trim();
         }
     }
 }

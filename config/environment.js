@@ -66,7 +66,6 @@ const {
     NAV_SIGNUP_ENABLED = true,
     NAV_EMBEDDEDDS_ENABLED = false,
     USE_SIMPLE_PAGE = false,
-    EMBEDDEDDS_URL: dsUrl = '',
 } = { ...process.env, ...localConfig };
 
 module.exports = function(environment) {
@@ -268,9 +267,6 @@ module.exports = function(environment) {
             useDonate: Boolean(NAV_DONATE_ENABLED),
             useSignup: Boolean(NAV_SIGNUP_ENABLED),
             useEmbeddedDS: Boolean(NAV_EMBEDDEDDS_ENABLED),
-        },
-        embeddedDS: {
-            dsUrl,
         },
         secondaryNavbarId: '__secondaryOSFNavbar__',
         engines: {

@@ -168,9 +168,6 @@ declare const config: {
         useSignup: boolean;
         useEmbeddedDS: boolean;
     },
-    embeddedDS: {
-        dsUrl: string;
-    },
     secondaryNavbarId: string;
     dsconfig: {
         settingFile: string;
