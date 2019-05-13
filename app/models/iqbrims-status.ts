@@ -11,6 +11,7 @@ export default class IQBRIMSStatusModel extends OsfModel {
     @attr('string') publishDate?: string;
     @attr('string') volume?: string;
     @attr('string') pageNumber?: string;
+    @attr('fixstringarray') laboList?: string[];
 }
 
 declare module 'ember-data/types/registries/model' {
