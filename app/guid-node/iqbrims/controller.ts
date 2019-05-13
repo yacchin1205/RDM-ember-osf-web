@@ -289,11 +289,21 @@ export default class GuidNodeIQBRIMS extends Controller {
         return conts.map(c => c.users.content as UserModel);
     }
 
+    @computed('status.laboList')
     get laboList() {
-        const labos = [];
-        labos.push({ id: 'rna', text: 'RNA分野' });
-        labos.push({ id: 'xxx', text: 'XXX分野' });
-        labos.push({ id: 'yyy', text: 'YYY分野' });
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return [];
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (!status.laboList) {
+            return [];
+        }
+        const labos = status.laboList.map(labo => {
+            return {
+                id: labo.substring(0, labo.indexOf(':')),
+                text: labo.substring(labo.indexOf(':') + 1),
+            };
+        });
         return labos;
     }
 
