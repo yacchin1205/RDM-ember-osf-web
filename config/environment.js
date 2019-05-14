@@ -66,6 +66,7 @@ const {
     NAV_SIGNUP_ENABLED = true,
     NAV_EMBEDDEDDS_ENABLED = false,
     USE_SIMPLE_PAGE = false,
+    MAKE_PROJECT_AFFILIATE = true,
 } = { ...process.env, ...localConfig };
 
 module.exports = function(environment) {
@@ -191,6 +192,7 @@ module.exports = function(environment) {
             orcidClientId,
             casUrl,
             simplePage: Boolean(USE_SIMPLE_PAGE),
+            projectAffiliate: Boolean(MAKE_PROJECT_AFFILIATE),
         },
         social: {
             twitter: {

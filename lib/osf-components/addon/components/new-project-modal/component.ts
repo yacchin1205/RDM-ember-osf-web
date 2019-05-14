@@ -18,6 +18,9 @@ import styles from './styles';
 import layout from './template';
 
 const {
+    OSF: {
+        projectAffiliate,
+    },
     featureFlagNames: {
         storageI18n,
     },
@@ -64,6 +67,8 @@ export default class NewProjectModal extends Component.extend({
     selectedRegion?: Region;
     institutions: Institution[] = [];
     regions: Region[] = [];
+
+    makeProjectAffiliate: boolean = projectAffiliate;
 
     @oneWay('institutions') selectedInstitutions!: Institution[];
 

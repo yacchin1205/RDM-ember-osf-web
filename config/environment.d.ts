@@ -104,6 +104,7 @@ declare const config: {
         orcidClientId?: string;
         casUrl: string;
         simplePage: boolean;
+        projectAffiliate: boolean;
     };
     social: {
         twitter: {
