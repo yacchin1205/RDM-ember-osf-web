@@ -1357,6 +1357,7 @@ export default {
         loading: '申請のためのフォルダを準備しています...',
         deposit_button: 'Deposit Manuscript & Data',
         check_button: 'Image Scan Service',
+        edit_button: 'Edit',
         deposit_help: '論文登録を行い承認を得るための申請手続きを実行',
         check_help: '論文登録前に画像のみのスキャンサービスを実行',
         paper_title: '論文タイトル',

@@ -477,9 +477,7 @@ export default class GuidNodeIQBRIMS extends Controller {
     @action
     startEdit(this: GuidNodeIQBRIMS) {
         window.location.hash = '#edit';
-        this.notifyPropertyChange('modeCheck');
-        this.notifyPropertyChange('modeDeposit');
-        this.notifyPropertyChange('modeEdit');
+        window.location.reload();
     }
 
     @action
