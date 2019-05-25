@@ -6,6 +6,8 @@ import EmberError from '@ember/error';
 
 import DS from 'ember-data';
 
+import { later } from '@ember/runloop';
+
 import I18N from 'ember-i18n/services/i18n';
 import File from 'ember-osf-web/models/file';
 import FileProviderModel from 'ember-osf-web/models/file-provider';
@@ -32,9 +34,11 @@ export default class GuidNodeIQBRIMS extends Controller {
     submitting = false;
 
     statusCache?: DS.PromiseObject<IQBRIMSStatusModel>;
-    manuscriptFiles = new IQBRIMSFileBrowser(this, '最終原稿・組図(Temp)');
-    dataFiles = new IQBRIMSFileBrowser(this, '生データ(Temp)');
-    checklistFiles = new IQBRIMSFileBrowser(this, 'チェックリスト(Temp)');
+    manuscriptFiles = new IQBRIMSFileBrowser(this, '最終原稿・組図');
+    dataFiles = new IQBRIMSFileBrowser(this, '生データ');
+    checklistFiles = new IQBRIMSFileBrowser(this, 'チェックリスト');
+    newFolderRequest?: object;
+    workingFolderName = 'IQB-RIMS Temporary files';
 
     @action
     laboChanged(this: GuidNodeIQBRIMS, laboId: string) {
@@ -347,6 +351,43 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const providers = this.node.files.filter(f => f.name === 'osfstorage');
         return providers[0];
+    }
+
+    @computed('defaultStorage.files.[]')
+    get workingDirectory(): File | undefined {
+        const provider = this.defaultStorage;
+        if (!provider) {
+            return undefined;
+        }
+        return this.findWorkingDirectory(provider);
+    }
+
+    findWorkingDirectory(defaultStorage: FileProviderModel) {
+        if (!defaultStorage.files.isFulfilled && !defaultStorage.files.isRejected) {
+            later(() => {
+                this.findWorkingDirectory(defaultStorage);
+            }, 500);
+            return undefined;
+        }
+        const files = defaultStorage.files.filter(f => f.name === this.workingFolderName);
+        if (files.length === 0) {
+            this.createWorkingDirectory(defaultStorage);
+            return undefined;
+        }
+        return files[0];
+    }
+
+    createWorkingDirectory(defaultStorage: FileProviderModel) {
+        if (this.newFolderRequest) {
+            return;
+        }
+        const newFolderUrl = defaultStorage.links.new_folder;
+        this.newFolderRequest = this.currentUser.authenticatedAJAX({
+            url: `${newFolderUrl}&name=${encodeURIComponent(this.workingFolderName)}`,
+            type: 'PUT',
+        }).then(() => {
+            window.location.reload();
+        });
     }
 
     @computed('node')
