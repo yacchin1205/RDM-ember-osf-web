@@ -323,6 +323,15 @@ export default class GuidNodeIQBRIMS extends Controller {
     }
 
     @computed('status.state')
+    get modeUnknown() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @computed('status.state')
     get modeDeposit() {
         if (!this.status || !this.status.get('isFulfilled')) {
             return false;

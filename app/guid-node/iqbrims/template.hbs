@@ -2,7 +2,8 @@
 {{title (t 'iqbrims.page_title' nodeTitle=this.model.taskInstance.value.unsafeTitle)}}
 <div class='container' local-class='IQBRIMS'>
     <div local-class='IQBRIMS__editor'>
-        {{#if this.modeDeposit}}
+        {{#if this.modeUnknown}}
+        {{else if this.modeDeposit}}
             {{#if this.loading}}
                 {{t 'iqbrims.loading'}}
             {{/if}}
