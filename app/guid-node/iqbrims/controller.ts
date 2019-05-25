@@ -46,8 +46,11 @@ export default class GuidNodeIQBRIMS extends Controller {
                || this.checklistFiles.get('loading');
     }
 
-    @computed('loading')
+    @computed('modeEdit', 'loading')
     get panelStatus(): string {
+        if (!this.modeEdit) {
+            return 'loaded';
+        }
         return this.loading ? 'loading' : 'loaded';
     }
 
@@ -73,6 +76,19 @@ export default class GuidNodeIQBRIMS extends Controller {
         return status.laboId;
     }
 
+    @computed('laboId', 'laboList')
+    get laboName() {
+        const { laboId, laboList } = this;
+        if (!laboId || !laboList) {
+            return undefined;
+        }
+        const laboNames = laboList.filter(o => o.id === laboId).map(o => o.text);
+        if (laboNames.length === 0) {
+            return null;
+        }
+        return laboNames[0];
+    }
+
     @action
     saveInput(this: GuidNodeIQBRIMS) {
         if (!this.status) {
@@ -80,6 +96,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         this.set('submitting', true);
         const status = this.status.content as IQBRIMSStatusModel;
+        const prevState = status.get('state');
         if (this.modeDeposit) {
             status.set('state', 'deposit');
         } else if (this.modeCheck) {
@@ -112,10 +129,13 @@ export default class GuidNodeIQBRIMS extends Controller {
             if (pos > 0) {
                 url = url.substring(0, pos + 1);
             }
-            window.location.href = url;
+            this.set('submitting', false);
+            window.location.hash = '';
+            window.location.reload();
         }).catch(() => {
             const message = this.i18n.t('iqbrims.failed_to_submit');
             this.toast.error(message);
+            status.set('state', prevState);
             this.set('submitting', false);
         });
     }
@@ -332,6 +352,22 @@ export default class GuidNodeIQBRIMS extends Controller {
     }
 
     @computed('status.state')
+    get modeEdit() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return false;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (this.submitting) {
+            return true;
+        }
+        if ((status.state === 'deposit' || status.state === 'check')
+            && window.location.hash !== '#edit') {
+            return false;
+        }
+        return true;
+    }
+
+    @computed('status.state')
     get modeDeposit() {
         if (!this.status || !this.status.get('isFulfilled')) {
             return false;
@@ -424,14 +460,26 @@ export default class GuidNodeIQBRIMS extends Controller {
 
     @action
     startDeposit(this: GuidNodeIQBRIMS) {
-        this.set('modeDeposit', true);
         window.location.hash = '#deposit';
+        this.notifyPropertyChange('modeCheck');
+        this.notifyPropertyChange('modeDeposit');
+        this.notifyPropertyChange('modeEdit');
     }
 
     @action
     startCheck(this: GuidNodeIQBRIMS) {
-        this.set('modeCheck', true);
         window.location.hash = '#check';
+        this.notifyPropertyChange('modeCheck');
+        this.notifyPropertyChange('modeDeposit');
+        this.notifyPropertyChange('modeEdit');
+    }
+
+    @action
+    startEdit(this: GuidNodeIQBRIMS) {
+        window.location.hash = '#edit';
+        this.notifyPropertyChange('modeCheck');
+        this.notifyPropertyChange('modeDeposit');
+        this.notifyPropertyChange('modeEdit');
     }
 
     @action
