@@ -6,7 +6,6 @@ import { later } from '@ember/runloop';
 import { all, task, timeout } from 'ember-concurrency';
 
 import File from 'ember-osf-web/models/file';
-import FileProviderModel from 'ember-osf-web/models/file-provider';
 import Node from 'ember-osf-web/models/node';
 
 import GuidNodeIQBRIMS from './controller';
@@ -126,15 +125,15 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         this.folderName = folderName;
     }
 
-    @computed('owner.defaultStorage.files.[]')
+    @computed('owner.workingDirectory.files.[]')
     get targetDirectory(): File | undefined {
-        if (!this.owner.defaultStorage) {
+        if (!this.owner.workingDirectory) {
             return undefined;
         }
-        return this.findTargetDirectory(this.owner.defaultStorage);
+        return this.findTargetDirectory(this.owner.workingDirectory);
     }
 
-    findTargetDirectory(defaultStorage: FileProviderModel) {
+    findTargetDirectory(defaultStorage: File) {
         if (!defaultStorage.files.isFulfilled && !defaultStorage.files.isRejected) {
             later(() => {
                 this.findTargetDirectory(defaultStorage);
@@ -149,7 +148,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         return files[0];
     }
 
-    createDirectory(defaultStorage: FileProviderModel) {
+    createDirectory(defaultStorage: File) {
         if (this.newFolderRequest) {
             return;
         }
