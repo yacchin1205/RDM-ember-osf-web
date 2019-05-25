@@ -23,11 +23,11 @@ function preventDrop(e: DragEvent) {
     e.dataTransfer!.dropEffect = 'none';
 }
 
-export default class GuidNodeForks extends Route {
+export default class GuidNodeIQBRIMS extends Route {
     @service analytics!: Analytics;
     @service ready!: Ready;
 
-    model(this: GuidNodeForks) {
+    model(this: GuidNodeIQBRIMS) {
         return this.modelFor('guid-node');
     }
 

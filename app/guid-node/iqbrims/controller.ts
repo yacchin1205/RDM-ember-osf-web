@@ -40,6 +40,17 @@ export default class GuidNodeIQBRIMS extends Controller {
     newFolderRequest?: object;
     workingFolderName = 'IQB-RIMS Temporary files';
 
+    @computed('manuscriptFiles.loading', 'dataFiles.loading', 'checklistFiles.loading')
+    get loading(): boolean {
+        return this.manuscriptFiles.get('loading') || this.dataFiles.get('loading')
+               || this.checklistFiles.get('loading');
+    }
+
+    @computed('loading')
+    get panelStatus(): string {
+        return this.loading ? 'loading' : 'loaded';
+    }
+
     @action
     laboChanged(this: GuidNodeIQBRIMS, laboId: string) {
         if (!this.status) {

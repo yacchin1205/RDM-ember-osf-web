@@ -1745,6 +1745,7 @@ export default {
     },
     iqbrims: {
         page_title: '{{nodeTitle}} IQB-RIMS',
+        loading: '申請のためのフォルダを準備しています...',
         deposit_button: 'Deposit Manuscript & Data',
         check_button: 'Image Scan Service',
         deposit_help: '論文登録を行い承認を得るための申請手続きを実行',

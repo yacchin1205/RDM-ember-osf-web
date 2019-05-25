@@ -18,6 +18,15 @@ export default class IQBRIMSFileBrowser extends EmberObject {
     sort: string = this.sort || 'name';
     newFolderRequest?: object;
 
+    @computed('allFiles.[]')
+    get loading(): boolean {
+        if (!this.get('allFiles')) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     updateFilter = task(function *(this: IQBRIMSFileBrowser, filter: string) {
         yield timeout(250);
         this.filter = filter;
@@ -145,6 +154,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             this.createDirectory(defaultStorage);
             return undefined;
         }
+        this.notifyPropertyChange('allFiles');
         return files[0];
     }
 
