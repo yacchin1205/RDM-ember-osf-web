@@ -149,6 +149,11 @@ export default class GuidNodeIQBRIMS extends Controller {
         status.rollbackAttributes();
     }
 
+    @computed('manuscriptFiles.changed', 'dataFiles.changed', 'checklistFiles.changed')
+    get hasChangedFiles() {
+        return this.manuscriptFiles.changed || this.dataFiles.changed || this.checklistFiles.changed;
+    }
+
     @computed('status.state')
     get isFilled() {
         if (!this.status) {

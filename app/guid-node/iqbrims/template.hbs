@@ -240,7 +240,7 @@
                                 {{t 'iqbrims.discard_button'}}
                             </OsfButton>
                             <OsfButton @type='success'
-                                       @disabled={{not (and this.isFilled this.status.hasDirtyAttributes)}}
+                                       @disabled={{not (and this.isFilled (or this.status.hasDirtyAttributes this.hasChangedFiles))}}
                                        @onClick={{action this.saveInput}}>
                                 {{t 'iqbrims.submit_button'}}
                             </OsfButton>

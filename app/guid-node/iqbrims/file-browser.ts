@@ -17,6 +17,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
     filter: string = this.filter || '';
     sort: string = this.sort || 'name';
     newFolderRequest?: object;
+    changed = false;
 
     @computed('allFiles.[]')
     get loading(): boolean {
@@ -53,6 +54,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         }
 
         allFiles.pushObject(file);
+        this.set('changed', true);
 
         if (duplicate) {
             return;
@@ -72,6 +74,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
                 return;
             }
             allFiles.removeObject(file);
+            this.set('changed', true);
         } catch (e) {
             yield this.get('flash').perform(file, this.owner.get('i18n').t('file_browser.delete_failed'), 'danger');
         }
@@ -92,6 +95,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
                 return;
             }
             allFiles.removeObject(file);
+            this.set('changed', true);
             return true;
         } catch (ex) {
             this.owner.get('toast').error(this.owner.get('i18n').t('move_to_project.could_not_move_file'));
@@ -111,6 +115,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
 
         try {
             yield file.rename(name, conflict);
+            this.set('changed', true);
 
             // intentionally not yielded
             flash.perform(file, 'Successfully renamed');
