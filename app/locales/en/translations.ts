@@ -1761,6 +1761,7 @@ export default {
         publish_date: '出版日',
         volume: '巻（号）',
         page_number: 'ページ番号',
+        workflow_overall_state: '審査状況',
         submit_manuscripts: 'データ提出 - 最終原稿・組図',
         submit_data: 'データ提出 - 生データ',
         submit_checklist: 'データ提出 - チェックリスト',
