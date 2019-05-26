@@ -302,6 +302,18 @@ export default class GuidNodeIQBRIMS extends Controller {
         status.set('pageNumber', v);
     }
 
+    @computed('status.state')
+    get workflowOverallState() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return '';
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (!status.workflowOverallState) {
+            return 'not_submitted';
+        }
+        return status.workflowOverallState;
+    }
+
     @computed('node.contributors.[]')
     get owner() {
         if (!this.node) {
