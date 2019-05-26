@@ -6,6 +6,7 @@ import { later } from '@ember/runloop';
 import { all, task, timeout } from 'ember-concurrency';
 
 import File from 'ember-osf-web/models/file';
+import FileProviderModel from 'ember-osf-web/models/file-provider';
 import Node from 'ember-osf-web/models/node';
 
 import GuidNodeIQBRIMS from './controller';
@@ -18,6 +19,8 @@ export default class IQBRIMSFileBrowser extends EmberObject {
     sort: string = this.sort || 'name';
     newFolderRequest?: object;
     changed = false;
+    gdLoading = true;
+    gdEmpty = false;
 
     @computed('allFiles.[]')
     get loading(): boolean {
@@ -156,14 +159,14 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         }
         const files = defaultStorage.files.filter(f => f.name === this.folderName);
         if (files.length === 0) {
-            this.createDirectory(defaultStorage);
+            this.createTargetDirectory(defaultStorage);
             return undefined;
         }
         this.notifyPropertyChange('allFiles');
         return files[0];
     }
 
-    createDirectory(defaultStorage: File) {
+    createTargetDirectory(defaultStorage: File) {
         if (this.newFolderRequest) {
             return;
         }
@@ -182,6 +185,51 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             return undefined;
         }
         const dir = this.targetDirectory;
+        return dir.files.map(f => f);
+    }
+
+    @computed('owner.gdProvider')
+    get gdTargetDirectory(): File | undefined | null {
+        if (this.owner.gdProvider === undefined) {
+            return undefined;
+        }
+        if (this.owner.gdProvider === null) {
+            this.set('gdLoading', false);
+            return null;
+        }
+        return this.findGDTargetDirectory(this.owner.gdProvider);
+    }
+
+    findGDTargetDirectory(defaultStorage: FileProviderModel) {
+        if (!defaultStorage.files.isFulfilled && !defaultStorage.files.isRejected) {
+            later(() => {
+                this.findGDTargetDirectory(defaultStorage);
+                this.notifyPropertyChange('gdTargetDirectory');
+            }, 500);
+            return undefined;
+        }
+        const files = defaultStorage.files.filter(f => f.name === this.folderName);
+        if (files.length === 0) {
+            return undefined;
+        }
+        this.notifyPropertyChange('gdTargetDirectory');
+        return files[0];
+    }
+
+    @computed('gdTargetDirectory.files.[]')
+    get gdAllFiles(): File[] | undefined {
+        if (this.gdTargetDirectory === undefined) {
+            return undefined;
+        }
+        if (this.gdTargetDirectory === null) {
+            this.set('gdEmpty', true);
+            return [];
+        }
+        if (!this.gdTargetDirectory.files.isFulfilled && !this.gdTargetDirectory.files.isRejected) {
+            return undefined;
+        }
+        this.set('gdLoading', false);
+        const dir = this.gdTargetDirectory;
         return dir.files.map(f => f);
     }
 
