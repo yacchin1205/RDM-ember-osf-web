@@ -414,6 +414,20 @@ export default class GuidNodeIQBRIMS extends Controller {
         return false;
     }
 
+    get gdProvider(): FileProviderModel | null | undefined {
+        if (!this.node) {
+            return undefined;
+        }
+        if (!this.node.files.get('isFulfilled')) {
+            return undefined;
+        }
+        const providers = this.node.files.filter(f => f.name === 'iqbrims');
+        if (providers.length === 0) {
+            return null;
+        }
+        return providers[0];
+    }
+
     @computed('node.files.[]')
     get defaultStorage(): FileProviderModel | undefined {
         if (!this.node) {
@@ -447,6 +461,8 @@ export default class GuidNodeIQBRIMS extends Controller {
             this.createWorkingDirectory(defaultStorage);
             return undefined;
         }
+        this.notifyPropertyChange('workingDirectory');
+        this.notifyPropertyChange('gdProvider');
         return files[0];
     }
 

@@ -1765,6 +1765,10 @@ export default {
         submit_manuscripts: 'データ提出 - 最終原稿・組図',
         submit_data: 'データ提出 - 生データ',
         submit_checklist: 'データ提出 - チェックリスト',
+        submitted_no_data: '提出済みデータはありません',
+        submitted_loading: '提出済みデータをロード中',
+        submitted_name: '名前',
+        submitted_modified: '更新日時',
         placeholders: {
             labo: '所属ラボを選択',
             accepted_date: 'YYYY/MM/DD',
