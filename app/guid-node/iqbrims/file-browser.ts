@@ -222,15 +222,15 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             return undefined;
         }
         if (this.gdTargetDirectory === null) {
+            this.set('gdLoading', false);
             this.set('gdEmpty', true);
             return [];
         }
-        if (!this.gdTargetDirectory.files.isFulfilled && !this.gdTargetDirectory.files.isRejected) {
-            return undefined;
-        }
         this.set('gdLoading', false);
         const dir = this.gdTargetDirectory;
-        return dir.files.map(f => f);
+        const files = dir.files.map(f => f);
+        this.set('gdEmpty', files.length === 0);
+        return files;
     }
 
     @computed('allFiles.[]', 'filter', 'sort')
