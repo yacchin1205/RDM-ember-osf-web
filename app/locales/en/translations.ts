@@ -1749,6 +1749,8 @@ export default {
         deposit_button: 'Deposit Manuscript & Data',
         check_button: 'Image Scan Service',
         edit_button: 'Edit',
+        management_project: 'Management Project',
+        flowable_task_service: 'Flowable Task Service',
         deposit_help: '論文登録を行い承認を得るための申請手続きを実行',
         check_help: '論文登録前に画像のみのスキャンサービスを実行',
         paper_title: '論文タイトル',

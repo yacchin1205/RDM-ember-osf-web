@@ -3,6 +3,11 @@
 <div class='container' local-class='IQBRIMS'>
     <div local-class='IQBRIMS__editor'>
         {{#if this.modeUnknown}}
+        {{else if this.modeAdmin}}
+            <i>{{t 'iqbrims.management_project'}}</i>
+            <div>
+                <a href='{{this.flowableTaskUrl}}' target='_blank' rel='noopener'>{{t 'iqbrims.flowable_task_service'}}</a>
+            </div>
         {{else if this.modeDeposit}}
             {{#if (and this.loading this.modeEdit)}}
                 {{t 'iqbrims.loading'}}
