@@ -54,6 +54,15 @@ export default class GuidNodeIQBRIMS extends Controller {
         return this.loading ? 'loading' : 'loaded';
     }
 
+    @computed('status.state')
+    get flowableTaskUrl() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return false;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        return status.taskUrl;
+    }
+
     @action
     laboChanged(this: GuidNodeIQBRIMS, laboId: string) {
         if (!this.status) {
@@ -402,6 +411,15 @@ export default class GuidNodeIQBRIMS extends Controller {
         } else {
             return false;
         }
+    }
+
+    @computed('status.state')
+    get modeAdmin() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return false;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        return status.isAdmin;
     }
 
     @computed('status.state')
