@@ -67,6 +67,7 @@ declare const config: {
     };
     OSF: {
         pageName: string;
+        simpleBrand: string;
         shortBrand: string;
         longBrand: string;
         clientId?: string;
