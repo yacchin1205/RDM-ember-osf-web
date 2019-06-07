@@ -62,6 +62,7 @@ const {
     NAV_REGISTRATIONS_ENABLED = true,
     NAV_SEARCH_ENABLED = true,
     NAV_SUPPORT_ENABLED = true,
+    NAV_GLOBAL_SUPPORT_ENABLED = false,
     NAV_DONATE_ENABLED = true,
     NAV_SIGNUP_ENABLED = true,
     NAV_EMBEDDEDDS_ENABLED = false,
@@ -217,6 +218,7 @@ module.exports = function(environment) {
             github: 'https://www.github.com/centerforopenscience',
         },
         support: {
+            globalUrl: '',
             preregUrl: 'https://cos.io/prereg/',
             statusPageUrl: 'https://status.cos.io',
             faqPageUrl: 'http://help.osf.io/m/faqs/l/726460-faqs',
@@ -266,6 +268,7 @@ module.exports = function(environment) {
             useRegistrations: Boolean(NAV_REGISTRATIONS_ENABLED),
             useSearch: Boolean(NAV_SEARCH_ENABLED),
             useSupport: Boolean(NAV_SUPPORT_ENABLED),
+            useGlobalSupport: Boolean(NAV_GLOBAL_SUPPORT_ENABLED),
             useDonate: Boolean(NAV_DONATE_ENABLED),
             useSignup: Boolean(NAV_SIGNUP_ENABLED),
             useEmbeddedDS: Boolean(NAV_EMBEDDEDDS_ENABLED),
