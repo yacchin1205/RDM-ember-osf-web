@@ -41,17 +41,30 @@ export default class GuidNodeIQBRIMS extends Controller {
     workingFolderName = 'IQB-RIMS Temporary files';
 
     @computed('manuscriptFiles.loading', 'dataFiles.loading', 'checklistFiles.loading')
-    get loading(): boolean {
+    get loadingForDeposit(): boolean {
         return this.manuscriptFiles.get('loading') || this.dataFiles.get('loading')
                || this.checklistFiles.get('loading');
     }
 
-    @computed('modeEdit', 'loading')
-    get panelStatus(): string {
+    @computed('manuscriptFiles.loading')
+    get loadingForCheck(): boolean {
+        return this.manuscriptFiles.get('loading');
+    }
+
+    @computed('modeEdit', 'modeDeposit', 'loadingForDeposit')
+    get panelStatusForDeposit(): string {
         if (!this.modeEdit) {
             return 'loaded';
         }
-        return this.loading ? 'loading' : 'loaded';
+        return this.loadingForDeposit ? 'loading' : 'loaded';
+    }
+
+    @computed('modeEdit', 'modeDeposit', 'loadingForCheck')
+    get panelStatusForCheck(): string {
+        if (!this.modeEdit) {
+            return 'loaded';
+        }
+        return this.loadingForCheck ? 'loading' : 'loaded';
     }
 
     @computed('status.state')
@@ -118,17 +131,19 @@ export default class GuidNodeIQBRIMS extends Controller {
                     f.moveOnCurrentProject('iqbrims', '/最終原稿・組図/');
                 });
             }
-            const dfiles = this.dataFiles.files;
-            if (dfiles != null) {
-                dfiles.forEach(f => {
-                    f.moveOnCurrentProject('iqbrims', '/生データ/');
-                });
-            }
-            const cfiles = this.checklistFiles.files;
-            if (cfiles != null) {
-                cfiles.forEach(f => {
-                    f.moveOnCurrentProject('iqbrims', '/チェックリスト/');
-                });
+            if (this.modeDeposit) {
+                const dfiles = this.dataFiles.files;
+                if (dfiles != null) {
+                    dfiles.forEach(f => {
+                        f.moveOnCurrentProject('iqbrims', '/生データ/');
+                    });
+                }
+                const cfiles = this.checklistFiles.files;
+                if (cfiles != null) {
+                    cfiles.forEach(f => {
+                        f.moveOnCurrentProject('iqbrims', '/チェックリスト/');
+                    });
+                }
             }
             let url = window.location.href;
             if (url.endsWith('/')) {
@@ -169,11 +184,13 @@ export default class GuidNodeIQBRIMS extends Controller {
             return false;
         }
         const status = this.status.content as IQBRIMSStatusModel;
-        if (!status.journalName || status.journalName.length === 0) {
-            return false;
-        }
-        if (!status.acceptedDate || status.acceptedDate.length === 0) {
-            return false;
+        if (this.modeDeposit) {
+            if (!status.journalName || status.journalName.length === 0) {
+                return false;
+            }
+            if (!status.acceptedDate || status.acceptedDate.length === 0) {
+                return false;
+            }
         }
         if (!status.laboId || status.laboId.length === 0) {
             return false;
