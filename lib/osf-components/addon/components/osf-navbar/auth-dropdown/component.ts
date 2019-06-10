@@ -20,8 +20,12 @@ import layout from './template';
 const { OSF: { url: baseUrl }, featureFlagNames } = config;
 
 const {
+    support: {
+        globalUrl,
+    },
     navbar: {
         useSupport,
+        useGlobalSupport,
         useSignup,
         useEmbeddedDS,
     },
@@ -58,12 +62,14 @@ export default class NavbarAuthDropdown extends Component {
 
     campaign?: string;
 
+    globalSupportURL: string = globalUrl;
     profileURL: string = defaultTo(this.profileURL, pathJoin(baseUrl, 'profile'));
     settingsURL: string = defaultTo(this.settingsURL, pathJoin(baseUrl, 'settings'));
     signUpURL: string = defaultTo(this.signUpURL, pathJoin(baseUrl, 'register'));
     onLinkClicked?: () => void;
 
     useNavSupport: boolean = useSupport;
+    useNavGlobalSupport: boolean = useGlobalSupport;
     useNavSignUp: boolean = useSignup;
     useNavEmbeddedDS: boolean = useEmbeddedDS;
 
@@ -91,6 +97,20 @@ export default class NavbarAuthDropdown extends Component {
         }
 
         return params;
+    }
+
+    @computed('this.globalSupportURL')
+    get replaceGlobalSupportUrl() {
+        return this.globalSupportURL !== '';
+    }
+
+    @computed('this.globalSupportURL')
+    get globalSupportTarget() {
+        if (/^https?:\/\//.test(this.globalSupportURL)) {
+            return '_blank';
+        } else {
+            return '_self';
+        }
     }
 
     @action

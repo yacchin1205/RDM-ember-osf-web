@@ -67,6 +67,7 @@ declare const config: {
     };
     OSF: {
         pageName: string;
+        simpleBrand: string;
         shortBrand: string;
         longBrand: string;
         clientId?: string;
@@ -129,6 +130,7 @@ declare const config: {
         github: string,
     },
     support: {
+        globalUrl: string;
         preregUrl: string;
         statusPageUrl: string;
         faqPageUrl: string;
@@ -165,6 +167,7 @@ declare const config: {
         useRegistrations: boolean;
         useSearch: boolean;
         useSupport: boolean;
+        useGlobalSupport: boolean;
         useDonate: boolean;
         useSignup: boolean;
         useEmbeddedDS: boolean;

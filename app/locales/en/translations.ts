@@ -5,6 +5,7 @@ const {
     organization,
     OSF: {
         pageName,
+        simpleBrand,
         shortBrand,
         longBrand,
     },
@@ -270,7 +271,7 @@ export default {
     auth_dropdown: {
         log_out: 'Log Out',
         my_profile: 'My Profile',
-        osf_support: `${shortBrand} Support`,
+        osf_support: `${simpleBrand} Support`,
         sign_up: 'Sign Up',
         sign_in: 'Sign In',
         user_gravatar: 'User gravatar',

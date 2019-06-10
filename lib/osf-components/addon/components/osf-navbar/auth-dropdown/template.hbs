@@ -38,12 +38,19 @@
                     {{t 'auth_dropdown.my_profile'}}
                 </a>
             {{/ddm.item}}
-            {{#if useNavSupport}}
+            {{#if (or useNavSupport useNavGlobalSupport)}}
             {{#ddm.item (html-attributes role='menuitem')}}
+                {{#if replaceGlobalSupportUrl}}
+                <a href="{{globalSupportURL}}" onclick={{action '_onLinkClicked' 'Navbar - Support'}} target="{{globalSupportTarget}}">
+                    <i class="fa fa-life-ring fa-lg p-r-xs"></i>
+                    {{t 'auth_dropdown.osf_support'}}
+                </a>
+                {{else}}
                 {{#global-link-to 'support' click=(action '_onLinkClicked' 'Navbar - Support')}}
                     <i class="fa fa-life-ring fa-lg p-r-xs"></i>
                     {{t 'auth_dropdown.osf_support'}}
                 {{/global-link-to}}
+                {{/if}}
             {{/ddm.item}}
             {{/if}}
             {{#ddm.item (html-attributes role='menuitem')}}
