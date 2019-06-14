@@ -47,6 +47,13 @@
                                     {{item.fullName}}
                                 </div>
                             {{/each}}
+                            <Link @href='./contributors'>
+                                <OsfButton
+                                    @type='default'
+                                    @size='xs'>
+                                    <i class='fa fa-edit'> {{t 'iqbrims.edit_contributors'}}</i>
+                                </OsfButton>
+                            </Link>
                         </div>
                     </div>
                 {{/if}}
@@ -386,7 +393,7 @@
                                 {{t 'iqbrims.discard_button'}}
                             </OsfButton>
                             <OsfButton @type='success'
-                                       @disabled={{not (and this.isFilled (or this.status.hasDirtyAttributes this.hasChangedFiles))}}
+                                       @disabled={{not (and this.isFilled (or this.isPageDirty this.hasChangedFiles))}}
                                        @onClick={{action this.saveInput}}>
                                 {{t 'iqbrims.submit_button'}}
                             </OsfButton>

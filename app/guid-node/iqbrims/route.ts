@@ -1,11 +1,14 @@
-import { action } from '@ember-decorators/object';
+import { action, computed } from '@ember-decorators/object';
 import { service } from '@ember-decorators/service';
 import Route from '@ember/routing/route';
+import ConfirmationMixin from 'ember-onbeforeunload/mixins/confirmation';
 
 import Node from 'ember-osf-web/models/node';
 import { GuidRouteModel } from 'ember-osf-web/resolve-guid/guid-route';
 import Analytics from 'ember-osf-web/services/analytics';
 import Ready from 'ember-osf-web/services/ready';
+
+import GuidNodeIQBRIMS from './controller';
 
 function preventDrop(e: DragEvent) {
     if ((e.target as HTMLDivElement).id === 'manuscript-dropzone') {
@@ -23,11 +26,11 @@ function preventDrop(e: DragEvent) {
     e.dataTransfer!.dropEffect = 'none';
 }
 
-export default class GuidNodeIQBRIMS extends Route {
+export default class GuidNodeIQBRIMSRoute extends Route.extend(ConfirmationMixin, {}) {
     @service analytics!: Analytics;
     @service ready!: Ready;
 
-    model(this: GuidNodeIQBRIMS) {
+    model(this: GuidNodeIQBRIMSRoute) {
         return this.modelFor('guid-node');
     }
 
@@ -40,5 +43,12 @@ export default class GuidNodeIQBRIMS extends Route {
         window.addEventListener('drop', preventDrop);
 
         this.analytics.trackPage(node ? node.public : undefined, 'nodes');
+    }
+
+    // This tells ember-onbeforeunload's ConfirmationMixin whether or not to stop transitions
+    @computed('controller.isPageDirty')
+    get isPageDirty() {
+        const controller = this.controller as GuidNodeIQBRIMS;
+        return () => controller.isPageDirty;
     }
 }
