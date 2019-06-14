@@ -32,6 +32,7 @@ export default class GuidNodeIQBRIMS extends Controller {
     node?: Node;
 
     submitting = false;
+    submitted = false;
 
     statusCache?: DS.PromiseObject<IQBRIMSStatusModel>;
     manuscriptFiles = new IQBRIMSFileBrowser(this, '最終原稿・組図');
@@ -154,6 +155,7 @@ export default class GuidNodeIQBRIMS extends Controller {
                 url = url.substring(0, pos + 1);
             }
             this.set('submitting', false);
+            this.set('submitted', true);
             window.location.hash = '';
             window.location.reload();
         }).catch(() => {
@@ -605,6 +607,19 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         this.statusCache = this.store.findRecord('iqbrims-status', this.node.id);
         return this.statusCache!;
+    }
+
+    @computed('status.hasDirtyAttributes', 'submitted')
+    get isPageDirty() {
+        if (this.get('submitted')) {
+            return false;
+        }
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return false;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        const value = status.hasDirtyAttributes;
+        return value;
     }
 
     @action
