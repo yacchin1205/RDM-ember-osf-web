@@ -1784,5 +1784,9 @@ export default {
         processing_submit_button: 'Submitting...',
         discard_button: 'Discard Changes',
         failed_to_submit: 'データの保存に失敗しました',
+        uploader_no_files: 'No files',
+        uploader_rejected_manuscript_files: 'Cannot upload TIFF, PNG, JPEG:',
+        uploader_rejected_data_files: 'Can upload only ZIP, Excel:',
+        uploader_rejected_checklist_files: 'Can upload only PDF:',
     },
 };
