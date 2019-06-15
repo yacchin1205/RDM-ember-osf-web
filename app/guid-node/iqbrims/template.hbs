@@ -216,6 +216,17 @@
                         </tbody>
                     </table>
                     {{#if this.modeEdit}}
+                        {{#if this.manuscriptFiles.noFilesError}}
+                            <div local-class='IQBRIMS__file_error'>
+                                {{t 'iqbrims.uploader_no_files'}}
+                            </div>
+                        {{/if}}
+                        {{#if this.manuscriptFiles.rejectedFiles.length}}
+                            <div local-class='IQBRIMS__file_error'>
+                                {{t 'iqbrims.uploader_rejected_manuscript_files'}}
+                                {{this.manuscriptFiles.rejectedFiles}}
+                            </div>
+                        {{/if}}
                         <FileBrowser
                             @dzUploadButtonClass='dz-manuscript-upload-button'
                             @user={{this.user}}
@@ -267,6 +278,17 @@
                             </tbody>
                         </table>
                         {{#if this.modeEdit}}
+                            {{#if this.dataFiles.noFilesError}}
+                                <div local-class='IQBRIMS__file_error'>
+                                    {{t 'iqbrims.uploader_no_files'}}
+                                </div>
+                            {{/if}}
+                            {{#if this.dataFiles.rejectedFiles.length}}
+                                <div local-class='IQBRIMS__file_error'>
+                                    {{t 'iqbrims.uploader_rejected_data_files'}}
+                                    {{this.dataFiles.rejectedFiles}}
+                                </div>
+                            {{/if}}
                             <FileBrowser
                                 @dzUploadButtonClass='dz-data-upload-button'
                                 @user={{this.user}}
@@ -317,6 +339,17 @@
                             </tbody>
                         </table>
                         {{#if this.modeEdit}}
+                            {{#if this.checklistFiles.noFilesError}}
+                                <div local-class='IQBRIMS__file_error'>
+                                    {{t 'iqbrims.uploader_no_files'}}
+                                </div>
+                            {{/if}}
+                            {{#if this.checklistFiles.rejectedFiles.length}}
+                                <div local-class='IQBRIMS__file_error'>
+                                    {{t 'iqbrims.uploader_rejected_checklist_files'}}
+                                    {{this.checklistFiles.rejectedFiles}}
+                                </div>
+                            {{/if}}
                             <FileBrowser
                                 @dzUploadButtonClass='dz-checklist-upload-button'
                                 @user={{this.user}}

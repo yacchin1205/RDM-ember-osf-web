@@ -178,7 +178,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         return this.manuscriptFiles.changed || this.dataFiles.changed || this.checklistFiles.changed;
     }
 
-    @computed('status.state')
+    @computed('status.state', 'manuscriptFiles.filled', 'dataFiles.filled', 'checklistFiles.filled')
     get isFilled() {
         if (!this.status) {
             return false;
@@ -191,8 +191,14 @@ export default class GuidNodeIQBRIMS extends Controller {
             if (!status.acceptedDate || status.acceptedDate.length === 0) {
                 return false;
             }
+            if (!this.dataFiles.filled || !this.checklistFiles.filled) {
+                return false;
+            }
         }
         if (!status.laboId || status.laboId.length === 0) {
+            return false;
+        }
+        if (!this.manuscriptFiles.filled) {
             return false;
         }
         return true;
@@ -534,6 +540,9 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         this.notifyPropertyChange('workingDirectory');
         this.notifyPropertyChange('gdProvider');
+        this.manuscriptFiles.rejectExtensions = ['.tiff', '.png', '.jpg', '.jpeg'];
+        this.dataFiles.acceptExtensions = ['.zip', '.xls', '.xlsx'];
+        this.checklistFiles.acceptExtensions = ['.pdf'];
         return files[0];
     }
 

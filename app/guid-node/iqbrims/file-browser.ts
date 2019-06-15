@@ -21,6 +21,11 @@ export default class IQBRIMSFileBrowser extends EmberObject {
     changed = false;
     gdLoading = true;
     gdEmpty = false;
+    filled = false;
+    noFilesError = false;
+    rejectedFiles: string[] = [];
+    acceptExtensions: string[] | null = null;
+    rejectExtensions: string[] | null = null;
 
     @computed('allFiles.[]')
     get loading(): boolean {
@@ -57,7 +62,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         }
 
         allFiles.pushObject(file);
-        this.set('changed', true);
+        this.notifyChange();
 
         if (duplicate) {
             return;
@@ -77,7 +82,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
                 return;
             }
             allFiles.removeObject(file);
-            this.set('changed', true);
+            this.notifyChange();
         } catch (e) {
             yield this.get('flash').perform(file, this.owner.get('i18n').t('file_browser.delete_failed'), 'danger');
         }
@@ -98,7 +103,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
                 return;
             }
             allFiles.removeObject(file);
-            this.set('changed', true);
+            this.notifyChange();
             return true;
         } catch (ex) {
             this.owner.get('toast').error(this.owner.get('i18n').t('move_to_project.could_not_move_file'));
@@ -118,7 +123,6 @@ export default class IQBRIMSFileBrowser extends EmberObject {
 
         try {
             yield file.rename(name, conflict);
-            this.set('changed', true);
 
             // intentionally not yielded
             flash.perform(file, 'Successfully renamed');
@@ -131,6 +135,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
                 }
                 allFiles.removeObject(conflictingFile);
             }
+            this.notifyChange();
         } catch (ex) {
             flash.perform(file, 'Failed to rename item', 'danger');
         }
@@ -185,7 +190,9 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             return undefined;
         }
         const dir = this.targetDirectory;
-        return dir.files.map(f => f);
+        const files = dir.files.map(f => f);
+        this.notifyFilled(files);
+        return files;
     }
 
     @computed('owner.gdProvider')
@@ -280,5 +287,52 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             return;
         }
         return `${dir.links.upload}?${$.param({ name })}`;
+    }
+
+    notifyChange() {
+        this.set('changed', true);
+        const files = this.allFiles;
+        if (files == null) {
+            this.set('filled', false);
+            this.set('noFilesError', true);
+            this.set('rejectedFiles', []);
+        } else {
+            this.notifyFilled(files);
+        }
+    }
+
+    notifyFilled(files: File[]) {
+        if (files.length === 0) {
+            this.set('filled', false);
+            this.set('noFilesError', true);
+            this.set('rejectedFiles', []);
+        } else if (this.acceptExtensions != null) {
+            const extensions = this.acceptExtensions;
+            const rejecteds = files.filter(file => !extensions.includes(this.getExtension(file.get('name'))));
+            this.set('filled', rejecteds.length === 0);
+            this.set('noFilesError', false);
+            this.set('rejectedFiles', rejecteds.map(file => file.get('name')));
+        } else if (this.rejectExtensions != null) {
+            const extensions = this.rejectExtensions;
+            const rejecteds = files.filter(file => extensions.includes(this.getExtension(file.get('name'))));
+            this.set('filled', rejecteds.length === 0);
+            this.set('noFilesError', false);
+            this.set('rejectedFiles', rejecteds.map(file => file.get('name')));
+        } else {
+            this.set('filled', true);
+            this.set('noFilesError', false);
+            this.set('rejectedFiles', []);
+        }
+    }
+
+    getExtension(filename: string) {
+        if (filename == null) {
+            return '';
+        }
+        const pos = filename.lastIndexOf('.');
+        if (pos <= 0) {
+            return filename;
+        }
+        return filename.substring(pos).toLowerCase();
     }
 }
