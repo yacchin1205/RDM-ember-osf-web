@@ -215,7 +215,7 @@
                             {{/if}}
                         </tbody>
                     </table>
-                    {{#if this.modeEdit}}
+                    {{#if (and this.modeEdit this.isPaperWritable)}}
                         {{#if this.manuscriptFiles.noFilesError}}
                             <div local-class='IQBRIMS__file_error'>
                                 {{t 'iqbrims.uploader_no_files'}}
@@ -277,7 +277,7 @@
                                 {{/if}}
                             </tbody>
                         </table>
-                        {{#if this.modeEdit}}
+                        {{#if (and this.modeEdit this.isRawWritable)}}
                             {{#if this.dataFiles.noFilesError}}
                                 <div local-class='IQBRIMS__file_error'>
                                     {{t 'iqbrims.uploader_no_files'}}
@@ -338,7 +338,7 @@
                                 {{/if}}
                             </tbody>
                         </table>
-                        {{#if this.modeEdit}}
+                        {{#if (and this.modeEdit this.isChecklistWritable)}}
                             {{#if this.checklistFiles.noFilesError}}
                                 <div local-class='IQBRIMS__file_error'>
                                     {{t 'iqbrims.uploader_no_files'}}
