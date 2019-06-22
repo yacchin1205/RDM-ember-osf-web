@@ -18,6 +18,9 @@ export default class IQBRIMSStatusModel extends OsfModel {
     @attr('string') workflowPaperState?: string;
     @attr('string') workflowRawState?: string;
     @attr('string') workflowChecklistState?: string;
+    @attr('fixstringarray') workflowPaperPermissions?: string[];
+    @attr('fixstringarray') workflowRawPermissions?: string[];
+    @attr('fixstringarray') workflowChecklistPermissions?: string[];
 }
 
 declare module 'ember-data/types/registries/model' {

@@ -382,6 +382,42 @@ export default class GuidNodeIQBRIMS extends Controller {
         return status.workflowChecklistState;
     }
 
+    @computed('status.state')
+    get isPaperWritable() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return true;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (!status.workflowPaperPermissions) {
+            return true;
+        }
+        return status.workflowPaperPermissions.includes('WRITABLE');
+    }
+
+    @computed('status.state')
+    get isRawWritable() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return true;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (!status.workflowRawPermissions) {
+            return true;
+        }
+        return status.workflowRawPermissions.includes('WRITABLE');
+    }
+
+    @computed('status.state')
+    get isChecklistWritable() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return true;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (!status.workflowChecklistPermissions) {
+            return true;
+        }
+        return status.workflowChecklistPermissions.includes('WRITABLE');
+    }
+
     @computed('node.contributors.[]')
     get owner() {
         if (!this.node) {
