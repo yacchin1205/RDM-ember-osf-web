@@ -1372,7 +1372,7 @@ export default {
         publish_date: 'Publish Date',
         volume: 'Volume',
         page_number: 'Page Number',
-        workflow_overall_state: 'Workflow Overall State',
+        workflow_overall_state: 'Current Status',
         submit_manuscripts: 'Final Manuscript/Composition',
         submit_data: 'Raw Data',
         submit_checklist: 'Checklist',
