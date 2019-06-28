@@ -193,15 +193,19 @@ export default class GuidNodeIQBRIMS extends Controller {
             if (!status.acceptedDate || status.acceptedDate.length === 0) {
                 return false;
             }
-            if (!this.dataFiles.filled || !this.checklistFiles.filled) {
-                return false;
+            if (status.state === 'initialized') {
+                if (!this.dataFiles.filled || !this.checklistFiles.filled) {
+                    return false;
+                }
             }
         }
         if (!status.laboId || status.laboId.length === 0) {
             return false;
         }
-        if (!this.manuscriptFiles.filled) {
-            return false;
+        if (status.state === 'initialized') {
+            if (!this.manuscriptFiles.filled) {
+                return false;
+            }
         }
         return true;
     }
