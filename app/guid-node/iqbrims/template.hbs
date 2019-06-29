@@ -201,31 +201,35 @@
                             {{this.workflowPaperState}}
                         </div>
                     </div>
-                    <table class='table'>
-                        <thead>
-                            <tr>
-                                <th>{{t 'iqbrims.submitted_name'}}</th>
-                                <th>{{t 'iqbrims.submitted_modified'}}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {{#each this.manuscriptFiles.gdAllFiles as |item|}}
-                                <tr>
-                                    <td>{{item.name}}</td>
-                                    <td>{{item.dateModified}}</td>
-                                </tr>
-                            {{/each}}
-                            {{#if this.manuscriptFiles.gdLoading}}
-                                <tr>
-                                    <td colspan='2'>{{t 'iqbrims.submitted_loading'}}</td>
-                                </tr>
-                            {{else if this.manuscriptFiles.gdEmpty}}
-                                <tr>
-                                    <td colspan='2'>{{t 'iqbrims.submitted_no_data'}}</td>
-                                </tr>
-                            {{/if}}
-                        </tbody>
-                    </table>
+                    <div class='row' local-class='IQBRIMS__file_header'>
+                        <div class='col-md-8'>
+                            {{t 'iqbrims.submitted_name'}}
+                        </div>
+                        <div class='col-md-4'>
+                            {{t 'iqbrims.submitted_modified'}}
+                        </div>
+                    </div>
+                    {{#each this.manuscriptFiles.gdAllFiles as |item|}}
+                        <div class='row' local-class='IQBRIMS__file_body'>
+                            <div class='col-md-8'>
+                                <i class='fa fa-file-o'></i>{{item.name}}
+                            </div>
+                            <div class='col-md-4'>
+                                {{item.dateModified}}
+                            </div>
+                        </div>
+                    {{/each}}
+                    {{#if this.manuscriptFiles.gdLoading}}
+                        <div class='row' local-class='IQBRIMS__file_body'>
+                            <div class='col-md-12'>{{t 'iqbrims.submitted_loading'}}</div>
+                        </div>
+                    {{else if this.manuscriptFiles.gdEmpty}}
+                        <div class='row' local-class='IQBRIMS__file_body'>
+                            <div class='col-md-12'>{{t 'iqbrims.submitted_no_data'}}</div>
+                        </div>
+                    {{/if}}
+                    <div class='row' local-class='IQBRIMS__file_footer'>
+                    </div>
                 {{/if}}
                 {{#if (and this.modeEdit this.isPaperWritable)}}
                     {{#if this.isNotSubmitted}}
@@ -268,31 +272,35 @@
                                 {{this.workflowRawState}}
                             </div>
                         </div>
-                        <table class='table'>
-                            <thead>
-                                <tr>
-                                    <th>{{t 'iqbrims.submitted_name'}}</th>
-                                    <th>{{t 'iqbrims.submitted_modified'}}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#each this.dataFiles.gdAllFiles as |item|}}
-                                    <tr>
-                                        <td>{{item.name}}</td>
-                                        <td>{{item.dateModified}}</td>
-                                    </tr>
-                                {{/each}}
-                                {{#if this.dataFiles.gdLoading}}
-                                    <tr>
-                                        <td colspan='2'>{{t 'iqbrims.submitted_loading'}}</td>
-                                    </tr>
-                                {{else if this.dataFiles.gdEmpty}}
-                                    <tr>
-                                        <td colspan='2'>{{t 'iqbrims.submitted_no_data'}}</td>
-                                    </tr>
-                                {{/if}}
-                            </tbody>
-                        </table>
+                        <div class='row' local-class='IQBRIMS__file_header'>
+                            <div class='col-md-8'>
+                                {{t 'iqbrims.submitted_name'}}
+                            </div>
+                            <div class='col-md-4'>
+                                {{t 'iqbrims.submitted_modified'}}
+                            </div>
+                        </div>
+                        {{#each this.dataFiles.gdAllFiles as |item|}}
+                            <div class='row' local-class='IQBRIMS__file_body'>
+                                <div class='col-md-8'>
+                                    <i class='fa fa-file-o'></i>{{item.name}}
+                                </div>
+                                <div class='col-md-4'>
+                                    {{item.dateModified}}
+                                </div>
+                            </div>
+                        {{/each}}
+                        {{#if this.dataFiles.gdLoading}}
+                            <div class='row' local-class='IQBRIMS__file_body'>
+                                <div class='col-md-12'>{{t 'iqbrims.submitted_loading'}}</div>
+                            </div>
+                        {{else if this.dataFiles.gdEmpty}}
+                            <div class='row' local-class='IQBRIMS__file_body'>
+                                <div class='col-md-12'>{{t 'iqbrims.submitted_no_data'}}</div>
+                            </div>
+                        {{/if}}
+                        <div class='row' local-class='IQBRIMS__file_footer'>
+                        </div>
                     {{else}}
                         <div class='form-group row'>
                             <div class='col-sm-12 checkbox' local-class='IQBRIMS__checkbox'>
@@ -346,31 +354,35 @@
                                 {{this.workflowChecklistState}}
                             </div>
                         </div>
-                        <table class='table'>
-                            <thead>
-                                <tr>
-                                    <th>{{t 'iqbrims.submitted_name'}}</th>
-                                    <th>{{t 'iqbrims.submitted_modified'}}</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {{#each this.checklistFiles.gdAllFiles as |item|}}
-                                    <tr>
-                                        <td>{{item.name}}</td>
-                                        <td>{{item.dateModified}}</td>
-                                    </tr>
-                                {{/each}}
-                                {{#if this.checklistFiles.gdLoading}}
-                                    <tr>
-                                        <td colspan='2'>{{t 'iqbrims.submitted_loading'}}</td>
-                                    </tr>
-                                {{else if this.checklistFiles.gdEmpty}}
-                                    <tr>
-                                        <td colspan='2'>{{t 'iqbrims.submitted_no_data'}}</td>
-                                    </tr>
-                                {{/if}}
-                            </tbody>
-                        </table>
+                        <div class='row' local-class='IQBRIMS__file_header'>
+                            <div class='col-md-8'>
+                                {{t 'iqbrims.submitted_name'}}
+                            </div>
+                            <div class='col-md-4'>
+                                {{t 'iqbrims.submitted_modified'}}
+                            </div>
+                        </div>
+                        {{#each this.checklistFiles.gdAllFiles as |item|}}
+                            <div class='row' local-class='IQBRIMS__file_body'>
+                                <div class='col-md-8'>
+                                    <i class='fa fa-file-o'></i>{{item.name}}
+                                </div>
+                                <div class='col-md-4'>
+                                    {{item.dateModified}}
+                                </div>
+                            </div>
+                        {{/each}}
+                        {{#if this.checklistFiles.gdLoading}}
+                            <div class='row' local-class='IQBRIMS__file_body'>
+                                <div class='col-md-12'>{{t 'iqbrims.submitted_loading'}}</div>
+                            </div>
+                        {{else if this.checklistFiles.gdEmpty}}
+                            <div class='row' local-class='IQBRIMS__file_body'>
+                                <div class='col-md-12'>{{t 'iqbrims.submitted_no_data'}}</div>
+                            </div>
+                        {{/if}}
+                        <div class='row' local-class='IQBRIMS__file_footer'>
+                        </div>
                     {{/if}}
                     {{#if (and this.modeEdit this.isChecklistWritable)}}
                         {{#if this.isNotSubmitted}}
