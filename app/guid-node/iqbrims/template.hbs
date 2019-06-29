@@ -29,6 +29,7 @@
                         </div>
                     </div>
                 {{/if}}
+                <h2 local-class='IQBRIMS__header_1'>{{t 'iqbrims.header_overview' }}</h2>
                 <div class='form-group row'>
                     <label class='col-sm-2' for='paper_title'>{{t 'iqbrims.paper_title'}}</label>
                     <div class='col-sm-10'>
@@ -192,10 +193,13 @@
                         </div>
                     </div>
                 {{/if}}
-                <div class='form-group row'>
-                    <label class='col-sm-2'>{{t 'iqbrims.submit_manuscripts'}}</label>
-                    <div class='col-sm-10'>
-                        {{this.workflowPaperState}}
+                <h2 local-class='IQBRIMS__header_2'>{{t 'iqbrims.header_manuscripts' }}</h2>
+                {{#if (not this.isNotSubmitted)}}
+                    <div class='form-group row'>
+                        <label class='col-sm-2'>{{t 'iqbrims.submit_manuscripts'}}</label>
+                        <div class='col-sm-10'>
+                            {{this.workflowPaperState}}
+                        </div>
                     </div>
                     <table class='table'>
                         <thead>
@@ -222,7 +226,9 @@
                             {{/if}}
                         </tbody>
                     </table>
-                    {{#if (and this.modeEdit this.isPaperWritable)}}
+                {{/if}}
+                {{#if (and this.modeEdit this.isPaperWritable)}}
+                    {{#if this.isNotSubmitted}}
                         {{#if this.manuscriptFiles.noFilesError}}
                             <div local-class='IQBRIMS__file_error'>
                                 {{t 'iqbrims.uploader_no_files'}}
@@ -234,39 +240,33 @@
                                 {{this.manuscriptFiles.rejectedFiles}}
                             </div>
                         {{/if}}
-                        <FileBrowser
-                            @dzUploadButtonClass='dz-manuscript-upload-button'
-                            @user={{this.user}}
-                            @items={{this.manuscriptFiles.files}}
-                            @filter={{this.manuscriptFiles.filter}}
-                            @sort={{this.manuscriptFiles.sort}}
-                            @canEdit={{this.manuscriptFiles.canEdit}}
-                            @newProject={{this.manuscriptFiles.newProject}}
-                            @openFile={{action this.manuscriptFiles.openFile}}
-                            @updateFilter={{perform this.manuscriptFiles.updateFilter}}
-                            @dropZoneId='manuscript-dropzone'
-                            @deleteFiles={{perform this.manuscriptFiles.deleteFiles}}
-                            @moveFile={{perform this.manuscriptFiles.moveFile}}
-                            @renameFile={{perform this.manuscriptFiles.renameFile}}
-                            @addFile={{perform this.manuscriptFiles.addFile}}
-                            @buildUrl={{action this.buildManuscriptFileUrl}}
-                        />
                     {{/if}}
-                </div>
+                    <FileBrowser
+                        @dzUploadButtonClass='dz-manuscript-upload-button'
+                        @user={{this.user}}
+                        @items={{this.manuscriptFiles.files}}
+                        @filter={{this.manuscriptFiles.filter}}
+                        @sort={{this.manuscriptFiles.sort}}
+                        @canEdit={{this.manuscriptFiles.canEdit}}
+                        @newProject={{this.manuscriptFiles.newProject}}
+                        @openFile={{action this.manuscriptFiles.openFile}}
+                        @updateFilter={{perform this.manuscriptFiles.updateFilter}}
+                        @dropZoneId='manuscript-dropzone'
+                        @deleteFiles={{perform this.manuscriptFiles.deleteFiles}}
+                        @moveFile={{perform this.manuscriptFiles.moveFile}}
+                        @renameFile={{perform this.manuscriptFiles.renameFile}}
+                        @addFile={{perform this.manuscriptFiles.addFile}}
+                        @buildUrl={{action this.buildManuscriptFileUrl}}
+                    />
+                {{/if}}
                 {{#if this.modeDeposit}}
-                    <div class='form-group row'>
-                        <label class='col-sm-2'>{{t 'iqbrims.submit_data'}}</label>
-                        <div class='col-sm-10'>
-                            {{this.workflowRawState}}
-                        </div>
-                        <div class='col-sm-12 checkbox' local-class='IQBRIMS__checkbox'>
-                            {{input
-                                name='is_directly_submit_data'
-                                id='is_directly_submit_data'
-                                checked=this.isDirectlySubmitData
-                                type='checkbox'
-                            }}
-                            <label for='is_directly_submit_data'>{{t 'iqbrims.directly_submit_data'}}</label>
+                    <h2 local-class='IQBRIMS__header_2'>{{t 'iqbrims.header_data' }}</h2>
+                    {{#if (not this.isNotSubmitted)}}
+                        <div class='form-group row'>
+                            <label class='col-sm-2'>{{t 'iqbrims.submit_data'}}</label>
+                            <div class='col-sm-10'>
+                                {{this.workflowRawState}}
+                            </div>
                         </div>
                         <table class='table'>
                             <thead>
@@ -293,7 +293,21 @@
                                 {{/if}}
                             </tbody>
                         </table>
-                        {{#if (and this.modeEdit this.isRawWritable)}}
+                    {{else}}
+                        <div class='form-group row'>
+                            <div class='col-sm-12 checkbox' local-class='IQBRIMS__checkbox'>
+                                {{input
+                                    name='is_directly_submit_data'
+                                    id='is_directly_submit_data'
+                                    checked=this.isDirectlySubmitData
+                                    type='checkbox'
+                                }}
+                                <label for='is_directly_submit_data'>{{t 'iqbrims.directly_submit_data'}}</label>
+                            </div>
+                        </div>
+                    {{/if}}
+                    {{#if (and this.modeEdit this.isRawWritable)}}
+                        {{#if this.isNotSubmitted}}
                             {{#if this.dataFiles.noFilesError}}
                                 <div local-class='IQBRIMS__file_error'>
                                     {{t 'iqbrims.uploader_no_files'}}
@@ -305,29 +319,32 @@
                                     {{this.dataFiles.rejectedFiles}}
                                 </div>
                             {{/if}}
-                            <FileBrowser
-                                @dzUploadButtonClass='dz-data-upload-button'
-                                @user={{this.user}}
-                                @items={{this.dataFiles.files}}
-                                @filter={{this.dataFiles.filter}}
-                                @sort={{this.dataFiles.sort}}
-                                @canEdit={{this.dataFiles.canEdit}}
-                                @newProject={{this.dataFiles.newProject}}
-                                @openFile={{action this.dataFiles.openFile}}
-                                @updateFilter={{perform this.dataFiles.updateFilter}}
-                                @dropZoneId='data-dropzone'
-                                @deleteFiles={{perform this.dataFiles.deleteFiles}}
-                                @moveFile={{perform this.dataFiles.moveFile}}
-                                @renameFile={{perform this.dataFiles.renameFile}}
-                                @addFile={{perform this.dataFiles.addFile}}
-                                @buildUrl={{action this.buildDataFileUrl}}
-                            />
                         {{/if}}
-                    </div>
-                    <div class='form-group row'>
-                        <label class='col-sm-2'>{{t 'iqbrims.submit_checklist'}}</label>
-                        <div class='col-sm-10'>
-                            {{this.workflowChecklistState}}
+                        <FileBrowser
+                            @dzUploadButtonClass='dz-data-upload-button'
+                            @user={{this.user}}
+                            @items={{this.dataFiles.files}}
+                            @filter={{this.dataFiles.filter}}
+                            @sort={{this.dataFiles.sort}}
+                            @canEdit={{this.dataFiles.canEdit}}
+                            @newProject={{this.dataFiles.newProject}}
+                            @openFile={{action this.dataFiles.openFile}}
+                            @updateFilter={{perform this.dataFiles.updateFilter}}
+                            @dropZoneId='data-dropzone'
+                            @deleteFiles={{perform this.dataFiles.deleteFiles}}
+                            @moveFile={{perform this.dataFiles.moveFile}}
+                            @renameFile={{perform this.dataFiles.renameFile}}
+                            @addFile={{perform this.dataFiles.addFile}}
+                            @buildUrl={{action this.buildDataFileUrl}}
+                        />
+                    {{/if}}
+                    <h2 local-class='IQBRIMS__header_2'>{{t 'iqbrims.header_checklist' }}</h2>
+                    {{#if (not this.isNotSubmitted)}}
+                        <div class='form-group row'>
+                            <label class='col-sm-2'>{{t 'iqbrims.submit_checklist'}}</label>
+                            <div class='col-sm-10'>
+                                {{this.workflowChecklistState}}
+                            </div>
                         </div>
                         <table class='table'>
                             <thead>
@@ -354,7 +371,9 @@
                                 {{/if}}
                             </tbody>
                         </table>
-                        {{#if (and this.modeEdit this.isChecklistWritable)}}
+                    {{/if}}
+                    {{#if (and this.modeEdit this.isChecklistWritable)}}
+                        {{#if this.isNotSubmitted}}
                             {{#if this.checklistFiles.noFilesError}}
                                 <div local-class='IQBRIMS__file_error'>
                                     {{t 'iqbrims.uploader_no_files'}}
@@ -366,25 +385,25 @@
                                     {{this.checklistFiles.rejectedFiles}}
                                 </div>
                             {{/if}}
-                            <FileBrowser
-                                @dzUploadButtonClass='dz-checklist-upload-button'
-                                @user={{this.user}}
-                                @items={{this.checklistFiles.files}}
-                                @filter={{this.checklistFiles.filter}}
-                                @sort={{this.checklistFiles.sort}}
-                                @canEdit={{this.checklistFiles.canEdit}}
-                                @newProject={{this.checklistFiles.newProject}}
-                                @openFile={{action this.checklistFiles.openFile}}
-                                @updateFilter={{perform this.checklistFiles.updateFilter}}
-                                @dropZoneId='checklist-dropzone'
-                                @deleteFiles={{perform this.checklistFiles.deleteFiles}}
-                                @moveFile={{perform this.checklistFiles.moveFile}}
-                                @renameFile={{perform this.checklistFiles.renameFile}}
-                                @addFile={{perform this.checklistFiles.addFile}}
-                                @buildUrl={{action this.buildChecklistFileUrl}}
-                            />
                         {{/if}}
-                    </div>
+                        <FileBrowser
+                            @dzUploadButtonClass='dz-checklist-upload-button'
+                            @user={{this.user}}
+                            @items={{this.checklistFiles.files}}
+                            @filter={{this.checklistFiles.filter}}
+                            @sort={{this.checklistFiles.sort}}
+                            @canEdit={{this.checklistFiles.canEdit}}
+                            @newProject={{this.checklistFiles.newProject}}
+                            @openFile={{action this.checklistFiles.openFile}}
+                            @updateFilter={{perform this.checklistFiles.updateFilter}}
+                            @dropZoneId='checklist-dropzone'
+                            @deleteFiles={{perform this.checklistFiles.deleteFiles}}
+                            @moveFile={{perform this.checklistFiles.moveFile}}
+                            @renameFile={{perform this.checklistFiles.renameFile}}
+                            @addFile={{perform this.checklistFiles.addFile}}
+                            @buildUrl={{action this.buildChecklistFileUrl}}
+                        />
+                    {{/if}}
                 {{/if}}
                 {{#if this.modeEdit}}
                     <div class='text-right'>
