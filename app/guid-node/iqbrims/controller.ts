@@ -550,6 +550,15 @@ export default class GuidNodeIQBRIMS extends Controller {
         return false;
     }
 
+    @computed('status.state')
+    get isNotSubmitted() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return false;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        return status.state === 'initialized';
+    }
+
     get gdProvider(): FileProviderModel | null | undefined {
         if (!this.node) {
             return undefined;
