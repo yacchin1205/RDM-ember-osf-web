@@ -58,6 +58,26 @@
     margin: 1em;
 }
 
+.IQBRIMS__editor [data-test-share-dialog-button] {
+    display: none;
+}
+
+.IQBRIMS__editor [data-test-view-button] {
+    display: none;
+}
+
+.IQBRIMS__editor [data-test-move-button] {
+    display: none;
+}
+
+.IQBRIMS__editor [data-test-filter-button] {
+    display: none;
+}
+
+.IQBRIMS__editor [data-test-info-button] {
+    display: none;
+}
+
 .IQBRIMS .IQBRIMS__checkbox {
     input {
         margin-left: 0;
