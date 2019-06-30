@@ -272,6 +272,16 @@
                                 {{this.workflowRawState}}
                             </div>
                         </div>
+                        <div class='form-group row'>
+                            <div class='col-sm-12 checkbox' local-class='IQBRIMS__checkbox'>
+                                {{#if this.isDirectlySubmitData}}
+                                    <i class='fa fa-check-square'></i>
+                                {{else}}
+                                    <i class='fa fa-square'></i>
+                                {{/if}}
+                                <label for='is_directly_submit_data'>{{t 'iqbrims.directly_submit_data'}}</label>
+                            </div>
+                        </div>
                         <div class='row' local-class='IQBRIMS__file_header'>
                             <div class='col-md-8'>
                                 {{t 'iqbrims.submitted_name'}}
