@@ -180,7 +180,8 @@ export default class GuidNodeIQBRIMS extends Controller {
         return this.manuscriptFiles.changed || this.dataFiles.changed || this.checklistFiles.changed;
     }
 
-    @computed('status.state', 'manuscriptFiles.filled', 'dataFiles.filled', 'checklistFiles.filled')
+    @computed('status.state', 'status.isDirectlySubmitData', 'manuscriptFiles.filled',
+        'dataFiles.filled', 'checklistFiles.filled')
     get isFilled() {
         if (!this.status) {
             return false;
@@ -194,7 +195,10 @@ export default class GuidNodeIQBRIMS extends Controller {
                 return false;
             }
             if (status.state === 'initialized') {
-                if (!this.dataFiles.filled || !this.checklistFiles.filled) {
+                if (!status.isDirectlySubmitData && !this.dataFiles.filled) {
+                    return false;
+                }
+                if (!this.checklistFiles.filled) {
                     return false;
                 }
             }
@@ -340,7 +344,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         status.set('pageNumber', v);
     }
 
-    @computed('status.state')
+    @computed('status.isDirectlySubmitData')
     get isDirectlySubmitData() {
         if (!this.status || !this.status.get('isFulfilled')) {
             return false;
