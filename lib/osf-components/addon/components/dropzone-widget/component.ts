@@ -6,11 +6,11 @@ import I18N from 'ember-i18n/services/i18n';
 import Session from 'ember-simple-auth/services/session';
 import $ from 'jquery';
 
-import requiredAction from 'ember-osf-web/decorators/required-action';
+import { layout, requiredAction } from 'ember-osf-web/decorators/component';
 import File from 'ember-osf-web/models/file';
 import CurrentUser from 'ember-osf-web/services/current-user';
 import defaultTo from 'ember-osf-web/utils/default-to';
-import layout from './template';
+import template from './template';
 
 /**
  * @module ember-osf-web
@@ -34,6 +34,7 @@ import layout from './template';
  *
  * @class dropzone-widget
  */
+@layout(template)
 export default class DropzoneWidget extends Component.extend({
     didReceiveAttrs: diffAttrs(
         'enable',
@@ -65,8 +66,6 @@ export default class DropzoneWidget extends Component.extend({
         },
     ),
 }) {
-    layout = layout;
-
     @service session!: Session;
     @service i18n!: I18N;
     @service currentUser!: CurrentUser;
@@ -99,7 +98,7 @@ export default class DropzoneWidget extends Component.extend({
     }
 
     loadDropzone(this: DropzoneWidget) {
-        function CustomDropzone(this: DropzoneWidget, ...args: any[]) {
+        function CustomDropzone(...args: any[]) {
             // @ts-ignore - Dropzone is a global
             Dropzone.call(this, ...args);
         }
@@ -111,12 +110,12 @@ export default class DropzoneWidget extends Component.extend({
                 if ((e.dataTransfer.items && e.dataTransfer.items.length > 1) || e.dataTransfer.files.length > 1) {
                     this.emit('drop', e);
                     this.emit('error', 'None', i18n.t('dropzone_widget.error_multiple_files'));
-                    return;
+                    return undefined;
                 }
                 if (e.dataTransfer.files.length === 0) {
                     this.emit('drop', e);
                     this.emit('error', 'None', i18n.t('dropzone_widget.error_directories'));
-                    return;
+                    return undefined;
                 }
             }
             // @ts-ignore - Dropzone is a global
@@ -128,7 +127,7 @@ export default class DropzoneWidget extends Component.extend({
                 // @ts-ignore - Dropzone is a global
                 directory.status = Dropzone.ERROR;
                 this.emit('error', directory, i18n.t('dropzone_widget.error_directories'));
-                return;
+                return undefined;
             }
             // @ts-ignore - Dropzone is a global
             return Dropzone.prototype._addFilesFromDirectory.call(directory, path);

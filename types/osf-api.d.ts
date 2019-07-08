@@ -1,4 +1,4 @@
-/* eslint-disable no-use-before-define,camelcase */
+/* eslint-disable camelcase */
 
 import * as JSONAPI from 'jsonapi-typescript';
 
@@ -36,12 +36,18 @@ export interface RootMeta extends BaseMeta {
     active_flags: string[];
     message: string;
     version: string;
-    current_user?: { data: UserResource };
+    current_user?: {
+        data: UserResource,
+        meta?: {
+            anonymous?: boolean;
+        },
+    };
 }
 
 export interface BaseMeta {
     version: string;
     total_bibliographic?: number;
+    anonymous?: boolean;
 }
 
 export interface Resource extends JSONAPI.ResourceObject {
@@ -80,18 +86,13 @@ export interface RelationshipLinks extends JSONAPI.Links {
 export type RelatedLink = string | { href: string; meta?: RelatedLinkMeta };
 
 export interface RelatedLinkMeta {
+    id?: string;
     count?: number;
+    type?: string;
 }
 
 export interface NormalLinks extends JSONAPI.Links {
-    info?: Link | null;
-    self?: Link | null;
-    move?: Link | null;
-    upload?: Link | null;
-    download?: Link | null;
-    delete?: Link | null;
-    self?: Link | null;
-    html?: Link | null;
-    profile_image?: Link | null;
+    self?: JSONAPI.Link;
+    html?: JSONAPI.Link;
 }
-/* eslint-enable no-use-before-define,camelcase */
+/* eslint-enable camelcase */

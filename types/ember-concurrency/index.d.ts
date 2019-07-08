@@ -63,12 +63,13 @@ interface Task<T> extends TaskProperty<T> {
     readonly lastSuccessful?: TaskInstance<T>;
     readonly performCount: number;
     readonly state: TaskState;
-    perform(...args: any[]);
+    perform(...args: any[]): TaskInstance<T>;
     cancelAll(): void;
 }
 
 export function allSettled(promiseLikeObjects: any[]): Promise<any>;
 export function task(generator: any): Task;
+export function task(generator: IterableIterator<T>): Task<T>;
 export function waitForProperty(object: object, key: string, callbackOrValue?: any): Promise<any>;
 export function waitForQueue(queue: string): Promise<any>;
 export function timeout(milliseconds: number): Promise<any>;

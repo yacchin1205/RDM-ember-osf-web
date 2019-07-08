@@ -3,11 +3,13 @@ import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
 import Features from 'ember-feature-flags/services/features';
 import config from 'ember-get-config';
+
+import { layout } from 'ember-osf-web/decorators/component';
 import Analytics from 'ember-osf-web/services/analytics';
 import defaultTo from 'ember-osf-web/utils/default-to';
 import Session from 'ember-simple-auth/services/session';
 import styles from './styles';
-import layout from './template';
+import template from './template';
 
 const osfURL = config.OSF.url;
 
@@ -19,11 +21,17 @@ export enum OSFService {
     INSTITUTIONS = 'INSTITUTIONS',
 }
 
-export const OSF_SERVICES = [
+interface ServiceLink {
+    name: string;
+    route?: string;
+    href?: string;
+}
+
+export const OSF_SERVICES: ServiceLink[] = [
     { name: OSFService.HOME, route: 'home' },
-    { name: OSFService.PREPRINTS, route: `${osfURL}preprints/` },
-    { name: OSFService.REGISTRIES, route: config.engines.registries.enabled ? 'registries' : `${osfURL}registries/` },
-    { name: OSFService.MEETINGS, route: `${osfURL}meetings/` },
+    { name: OSFService.PREPRINTS, href: `${osfURL}preprints/` },
+    { name: OSFService.REGISTRIES, route: 'registries' },
+    { name: OSFService.MEETINGS, route: 'meetings' },
     { name: OSFService.INSTITUTIONS, route: 'institutions' },
 ];
 
@@ -33,10 +41,8 @@ const {
     },
 } = config;
 
+@layout(template, styles)
 export default class OsfNavbar extends Component {
-    layout = layout;
-    styles = styles;
-
     @service analytics!: Analytics;
     @service features!: Features;
     @service router!: any;
@@ -45,7 +51,7 @@ export default class OsfNavbar extends Component {
     showNavLinks: boolean = false;
 
     activeService: OSFService = defaultTo(this.activeService, OSFService.HOME);
-    services: Array<{name: OSFService, route: string}> = defaultTo(this.services, OSF_SERVICES);
+    services: ServiceLink[] = defaultTo(this.services, OSF_SERVICES);
 
     useNavDropdown: boolean = useDropdown;
 
@@ -53,9 +59,18 @@ export default class OsfNavbar extends Component {
     get _activeService() {
         let { activeService } = this;
 
-        // HACK/Special case until institutions are put into an engine
-        if (activeService === OSFService.HOME && this.router.currentRouteName === 'institutions') {
-            activeService = OSFService.INSTITUTIONS;
+        const { currentRouteName } = this.router;
+        if (activeService === OSFService.HOME && currentRouteName) {
+            for (const osfService of OSF_SERVICES) {
+                if (!osfService.route) {
+                    continue;
+                }
+                const routeRegExp = new RegExp(`^${osfService.route}($|\\.)`);
+                if (routeRegExp.test(currentRouteName)) {
+                    activeService = osfService.name as OSFService;
+                    break;
+                }
+            }
         }
 
         return this.services.find(x => x.name === activeService);

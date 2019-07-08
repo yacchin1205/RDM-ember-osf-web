@@ -1,88 +1,134 @@
-<button class='btn btn-sm btn-default popover-toggler' {{action 'togglePopup'}}>
-    {{t "general.share"}}
-    {{#bs-popover placement='bottom' local-class='Popover' title=(t 'general.share') visible=showPopup}}
-        {{#click-outside action=(action 'hidePopup') }}
-            {{#bs-tab customTabs=true as |tab| }}
-                {{#bs-nav class='nav-justified' type='tabs' as |nav|}}
-                    {{#nav.item active=(bs-eq tab.activeId sharePaneId)}}
-                        <a role='button' {{action tab.select sharePaneId}} local-class='SharePane__tab'>{{t "general.share"}}</a>
-                    {{/nav.item}}
-                    {{#nav.item active=(bs-eq tab.activeId embedPaneId)}}
-                        <a role='button' {{action tab.select embedPaneId}} local-class='SharePane__tab'>
-                            {{t "general.embed"}}
-                            <span class='badge'>{{badge}}</span>
+<OsfButton 
+    data-test-share-button
+    data-analytics-scope='File share button'
+    data-analytics-name='Open share popover'
+    class='popover-toggler'
+    @size='sm'
+    @onClick={{action this.togglePopup}}
+>
+    {{t 'general.share'}}
+    <BsPopover
+        data-analytics-scope='Popover'
+        @placement='bottom'
+        local-class='Popover'
+        @title={{t 'general.share'}}
+        @visible={{this.showPopup}}
+    >
+        <ClickOutside @action={{action 'hidePopup'}}>
+            <BsTab @customTabs={{true}} as |tab|>
+                <BsNav @class='nav-justified' @type='tabs' as |nav|>
+                    <nav.item data-test-share-tab @active={{bs-eq tab.activeId this.sharePaneId}}>
+                        <a 
+                            data-test-share-pane-tab
+                            role='tab'
+                            {{action tab.select this.sharePaneId}}
+                            local-class='SharePane__tab'
+                        >
+                            {{t 'general.share'}}
                         </a>
-                    {{/nav.item}}
-                {{/bs-nav}}
+                    </nav.item>
+                    <nav.item data-test-embed-tab @active={{bs-eq tab.activeId this.embedPaneId}}>
+                        <a
+                            data-test-embed-pane-tab
+                            role='tab'
+                            {{action tab.select this.embedPaneId}}
+                            local-class='SharePane__tab'
+                        >
+                            {{t 'general.embed'}}
+                            <span class='badge'>{{@badge}}</span>
+                        </a>
+                    </nav.item>
+                </BsNav>
 
                 <div class='tab-content'>
-                    {{#tab.pane elementId=sharePaneId title=(t 'general.share') local-class='SharePane'}}
+                    <tab.pane 
+                        @elementId={{this.sharePaneId}}
+                        @title={{t 'general.share'}}
+                        local-class='SharePane'
+                    >
                         <br>
-                        {{copyable-text
-                            text=this.mfrUrl
-                            analyticsLabel='Quick Files - Share file'
-                        }}
-                        <div local-class="SharePane__button-group">
-                            <a
+                        <span data-test-copyable-link>
+                            <CopyableText
+                                data-analytics-scope='Share file'
+                                @text={{this.mfrUrl}}
+                            />
+                        </span>
+                        <div local-class='SharePane__button-group'>
+                            <OsfLink
+                                data-test-twitter-link
+                                data-analytics-name='Share file on Twitter'
                                 local-class='SharePane__share-link'
                                 aria-label={{t 'social.twitter'}}
-                                href='{{twitterUrl}}'
                                 target='_blank'
                                 rel='noopener'
-                                onclick={{action 'click' 'link' 'Quick Files - Share file on Twitter'
-                                                 preventDefault=false
-                                                 target=analytics}}
+                                @href={{this.twitterUrl}}
                             >
                                 <i aria-hidden='true' class='fa fa-twitter'></i>
-                            </a>
-                            <a
+                            </OsfLink>
+                            <OsfLink
+                                data-test-facebook-link
+                                data-analytics-name='Share file on Facebook'
                                 local-class='SharePane__share-link'
                                 aria-label={{t 'social.facebook'}}
-                                href='{{facebookUrl}}'
                                 target='_blank'
                                 rel='noopener'
-                                onclick={{action 'click' 'link' 'Quick Files - Share file on Facebook'
-                                                 target=analytics
-                                                 preventDefault=false}}
+                                @href={{this.facebookUrl}}
                             >
                                 <i aria-hidden='true' class='fa fa-facebook'></i>
-                            </a>
-                            <a
+                            </OsfLink>
+                            <OsfLink
+                                data-test-linkedin-link
+                                data-analytics-name='Share file on LinkedIn'
                                 local-class='SharePane__share-link'
                                 aria-label={{t 'social.linkedin'}}
-                                href='{{linkedInUrl}}'
                                 target='_blank'
                                 rel='noopener'
-                                onclick={{action 'click' 'link' 'Quick Files - Share file on LinkedIn'
-                                                 preventDefault=false
-                                                 target=analytics}}
+                                @href={{this.linkedInUrl}}
                             >
                                 <i aria-hidden='true' class='fa fa-linkedin'></i>
-                            </a>
-                            <a
+                            </OsfLink>
+                            <OsfLink
+                                data-test-email-link
+                                data-analytics-name='Share file in email'
                                 local-class='SharePane__share-link'
                                 aria-label={{t 'quickfiles.share_by_email'}}
-                                href='{{emailUrl}}'
                                 target='_blank'
                                 rel='noopener'
-                                onclick={{action 'click' 'link' 'Quick Files - Share file in email'
-                                                 preventDefault=false
-                                                 target=analytics}}
+                                @href={{this.emailUrl}}
                             >
                                 <i aria-hidden='true' class='fa fa-envelope'></i>
-                            </a>
+                            </OsfLink>
                         </div>
-                    {{/tab.pane}}
-                    {{#tab.pane elementId=embedPaneId title='Embed' local-class='EmbedPane'}}
+                    </tab.pane>
+                    <tab.pane
+                        @elementId={{this.embedPaneId}}
+                        @title='Embed' 
+                        local-class='EmbedPane'
+                    >
                         <br>
-                        <p>{{t "file_detail.embed.dynamic"}}</p>
-                        <textarea aria-label={{t 'file_detail.embed_js_label'}} readonly='true' type='text' class='form-control'>{{shareiFrameDynamic}}</textarea>
+                        <p>{{t 'file_detail.embed.dynamic'}}</p>
+                        <textarea
+                            data-test-share-js
+                            aria-label={{t 'file_detail.embed_js_label'}}
+                            readonly='true'
+                            type='text'
+                            class='form-control'
+                        >
+                            {{this.shareiFrameDynamic}}
+                        </textarea>
                         <br>
-                        <p>{{t "file_detail.embed.direct"}}</p>
-                        <textarea aria-label={{t 'file_detail.embed_iframe_label'}} readonly='true' class='form-control'>{{shareiFrameDirect}}</textarea>
-                    {{/tab.pane}}
+                        <p>{{t 'file_detail.embed.direct'}}</p>
+                        <textarea
+                            data-test-share-iframe
+                            aria-label={{t 'file_detail.embed_iframe_label'}}
+                            readonly='true'
+                            class='form-control'
+                        >
+                            {{this.shareiFrameDirect}}
+                        </textarea>
+                    </tab.pane>
                 </div>
-            {{/bs-tab}}
-        {{/click-outside}}
-    {{/bs-popover}}
-</button>
+            </BsTab>
+        </ClickOutside>
+    </BsPopover>
+</OsfButton>

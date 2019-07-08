@@ -1,12 +1,21 @@
-import { click, currentURL, fillIn, visit, waitFor } from '@ember/test-helpers';
+import { click as untrackedClick, currentURL, fillIn, visit, waitFor } from '@ember/test-helpers';
 
 import setupMirage from 'ember-cli-mirage/test-support/setup-mirage';
-import { setupApplicationTest } from 'ember-qunit';
+import { percySnapshot } from 'ember-percy';
 import { module, test } from 'qunit';
 
+import { click, setupOSFApplicationTest } from 'ember-osf-web/tests/helpers';
+
 module('Acceptance | settings | personal access tokens', hooks => {
-    setupApplicationTest(hooks);
+    setupOSFApplicationTest(hooks);
     setupMirage(hooks);
+
+    test('visit page', async assert => {
+        server.create('user', 'loggedIn');
+        await visit('/settings/tokens');
+
+        assert.equal(currentURL(), '/settings/tokens', 'Went to the PAT route.');
+    });
 
     test('empty tokens list', async assert => {
         server.create('user', 'loggedIn');
@@ -32,6 +41,7 @@ module('Acceptance | settings | personal access tokens', hooks => {
         await visit('/settings/tokens');
 
         assert.dom('[data-test-token-card]').exists({ count: 10 });
+        await percySnapshot(assert);
     });
 
     test('create token', async assert => {
@@ -46,8 +56,9 @@ module('Acceptance | settings | personal access tokens', hooks => {
         await visit('/settings/tokens/create');
 
         await fillIn('[data-test-token-name] input', tokenName);
-        await click('[data-test-scope] input[type=checkbox]');
-        await click('[data-test-create-token-button]');
+        await untrackedClick('[data-test-scope] input[type=checkbox]');
+        await percySnapshot(assert);
+        await click('[data-analytics-name="Submit button"]');
 
         assert.dom('[data-test-new-token-value]').exists();
 
@@ -78,7 +89,8 @@ module('Acceptance | settings | personal access tokens', hooks => {
 
         assert.dom(input).hasValue(oldName);
         await fillIn(input, newName);
-        await click('[data-test-save-token-button]');
+        await percySnapshot(assert);
+        await click('[data-analytics-name="Save"]');
 
         assert.equal(currentURL(), '/settings/tokens');
 
@@ -98,6 +110,7 @@ module('Acceptance | settings | personal access tokens', hooks => {
         assert.dom(card).exists({ count: 1 });
 
         await click(`${card} [data-test-delete-button]`);
+        await percySnapshot(assert);
         await click('[data-test-confirm-delete]');
 
         assert.dom('[data-test-token-card]').exists({ count: 1 });

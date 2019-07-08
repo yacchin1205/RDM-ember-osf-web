@@ -1,8 +1,21 @@
 import { Server } from 'ember-cli-mirage';
 import config from 'ember-get-config';
-import { modelList, relationshipList } from './views';
+
+import { getCitation } from './views/citation';
+import { reportDelete } from './views/comment';
+import { createDeveloperApp, resetClientSecret } from './views/developer-app';
+import { createFork, createRegistrationFork } from './views/fork';
+import { guidDetail } from './views/guid';
+import { createNode } from './views/node';
+import { osfNestedResource, osfResource, osfToManyRelationship } from './views/osf-resource';
+import { forkRegistration, registrationDetail } from './views/registration';
 import { rootDetail } from './views/root';
-import { userFileList, userNodeList } from './views/user';
+import { createToken } from './views/token';
+import { createEmails, updateEmails } from './views/update-email';
+import { userNodeList } from './views/user';
+import { updatePassword } from './views/user-password';
+import * as userSettings from './views/user-setting';
+import * as wb from './views/wb';
 
 const { OSF: { apiUrl } } = config;
 
@@ -11,78 +24,137 @@ export default function(this: Server) {
 
     this.urlPrefix = apiUrl;
     this.namespace = '/v2';
-    this.apiBaseUrl = `${this.urlPrefix}${this.namespace}`;
 
-    this.get('/', function(schema) {
-        return rootDetail(schema, this);
-    });
+    this.get('/', rootDetail);
 
-    this.get('/files/:id');
-    this.get('/institutions');
+    osfResource(this, 'developer-app', { path: 'applications', except: ['create'] });
+    this.post('/applications', createDeveloperApp);
+    this.post('/applications/:id/reset', resetClientSecret);
 
-    this.resource('node', { path: '/nodes' });
-    this.get('/nodes/:id/contributors', function(schema, request) {
-        return relationshipList('nodes', 'contributors', schema, request, this);
-    });
-    this.get('/nodes/:id/linked_nodes', function(schema, request) {
-        return relationshipList('nodes', 'linkedNodes', schema, request, this);
-    });
-    this.get('/nodes/:id/registrations', function(schema, request) {
-        return relationshipList('nodes', 'registrations', schema, request, this);
-    });
-    this.get('/nodes/:id/draft_registrations', function(schema, request) {
-        return relationshipList('nodes', 'draftRegistrations', schema, request, this);
+    osfResource(this, 'file', { only: ['show', 'update'] });
+
+    this.get('/guids/:id', guidDetail);
+
+    osfResource(this, 'institution', { only: ['index'], defaultPageSize: 1000 });
+    osfResource(this, 'license', { only: ['index', 'show'] });
+    osfResource(this, 'citation-style', {
+        only: ['index'],
+        path: '/citations/styles',
     });
 
-    this.resource('registration-schemas', { path: '/schemas/registrations' });
-
-    this.get('/status', () => {
-        return { meta: { version: '2.8' }, maintenance: null };
+    osfResource(this, 'node', { except: ['create'] });
+    this.post('/nodes/', createNode);
+    osfNestedResource(this, 'node', 'children');
+    osfNestedResource(this, 'node', 'contributors', { defaultSortKey: 'index' });
+    osfNestedResource(this, 'node', 'bibliographicContributors', {
+        only: ['index'],
+        relatedModelName: 'contributor',
+        defaultSortKey: 'index',
+    });
+    osfNestedResource(this, 'node', 'forks', { only: ['index'] });
+    this.post('/nodes/:id/forks', createFork);
+    osfNestedResource(this, 'node', 'linkedNodes', { only: ['index'] });
+    osfNestedResource(this, 'node', 'linkedRegistrations', { only: ['index'] });
+    osfNestedResource(this, 'node', 'registrations', { only: ['index'] });
+    osfNestedResource(this, 'node', 'draftRegistrations', { only: ['index'] });
+    osfNestedResource(this, 'node', 'identifiers', { only: ['index'] });
+    osfToManyRelationship(this, 'node', 'affiliatedInstitutions', {
+        only: ['related', 'add', 'remove'],
+        path: '/nodes/:parentID/relationships/institutions',
     });
 
-    this.get('/users', function(schema, request) {
-        return modelList('users', schema, request, this);
+    osfResource(this, 'registration', { except: ['show'] });
+    this.get('/registrations/:id', registrationDetail);
+    osfNestedResource(this, 'registration', 'children');
+    osfNestedResource(this, 'registration', 'forks', { except: ['create'] });
+    this.post('/registrations/:id/forks', forkRegistration);
+
+    osfNestedResource(this, 'registration', 'contributors', { defaultSortKey: 'index' });
+    osfNestedResource(this, 'registration', 'bibliographicContributors', {
+        only: ['index'],
+        relatedModelName: 'contributor',
+        defaultSortKey: 'index',
+    });
+    osfNestedResource(this, 'registration', 'forks', { only: ['index'] });
+    this.post('/registrations/:id/forks', createRegistrationFork);
+    osfNestedResource(this, 'registration', 'linkedNodes', { only: ['index'] });
+    osfNestedResource(this, 'registration', 'linkedRegistrations', { only: ['index'] });
+    osfToManyRelationship(this, 'registration', 'affiliatedInstitutions', {
+        only: ['related', 'add', 'remove'],
+        path: '/registrations/:parentID/relationships/institutions',
+    });
+    osfNestedResource(this, 'registration', 'identifiers', { only: ['index'] });
+    osfNestedResource(this, 'registration', 'comments', { only: ['index'] });
+    this.get('/registrations/:guid/citation/:citationStyleID', getCitation);
+
+    osfNestedResource(this, 'comment', 'reports', {
+        except: ['delete'],
+        path: '/comments/:parentID/reports',
+        relatedModelName: 'comment-report',
+    });
+    this.del('/comments/:id/reports/:reporter_id', reportDelete);
+
+    osfResource(this, 'registration-schema', { path: '/schemas/registrations' });
+
+    osfResource(this, 'collection');
+    osfToManyRelationship(this, 'collection', 'linkedRegistrations', {
+        only: ['related', 'add', 'remove'],
     });
 
-    this.get('/users/:id');
-    this.get('/users/:id/institutions', function(schema, request) {
-        return relationshipList('users', 'institutions', schema, request, this);
+    osfResource(this, 'scope', { only: ['index', 'show'] });
+    osfResource(this, 'region', { only: ['index', 'show'] });
+
+    this.get('/status', () => ({ meta: { version: '2.8' }, maintenance: null }));
+
+    osfResource(this, 'token', { except: ['create'] });
+    this.post('/tokens', createToken);
+
+    osfResource(this, 'user', { except: ['create', 'delete'] });
+    osfNestedResource(this, 'user', 'institutions', { only: ['index'] });
+    this.get('/users/:id/settings', userSettings.getUserSetting);
+    this.patch('/users/:parentID/settings', userSettings.updateUserSetting);
+    osfNestedResource(this, 'user', 'emails', {
+        except: ['update', 'create'],
+        path: '/users/:parentID/settings/emails',
+        relatedModelName: 'user-email',
     });
-    this.get('/users/:id/nodes', function(schema, request) {
-        return userNodeList(schema, request, this);
-    });
-    this.get('/users/:id/quickfiles', function(schema, request) {
-        return userFileList(schema, request, this);
-    });
-    this.get('/users/:userid/quickfiles/:id', (schema, request) => {
-        const { id } = request.params;
-        return schema.files.find(id);
+    this.patch('/users/:parentID/settings/emails/:emailID/', updateEmails);
+    this.post('/users/:parentID/settings/emails/', createEmails);
+    this.post('/users/:id/settings/export', userSettings.requestExport);
+    this.post('/users/:parentID/settings/password/', updatePassword);
+
+    osfResource(this, 'external-identity', {
+        path: '/users/me/settings/identities',
+        only: ['index', 'delete'],
     });
 
-    this.resource('tokens', { except: ['index', 'create'] });
-    this.get('/tokens', function(schema, request) {
-        return modelList('tokens', schema, request, this);
-    });
-    this.post('/tokens', function(schema) {
-        const attrs = this.normalizedRequestAttrs();
-        const token = schema.tokens.create(attrs);
-        token.attrs.tokenId = 'blahblah';
-        return token;
-    });
+    this.get('/users/:id/nodes', userNodeList);
+    osfNestedResource(this, 'user', 'quickfiles', { only: ['index', 'show'] });
 
-    this.resource('scopes', { only: ['index', 'show'] });
+    osfResource(this, 'preprint-provider', { path: '/providers/preprints' });
+
+    // Waterbutler namespace
+    this.namespace = '/wb';
+    this.post('/files/:id/move', wb.moveFile);
+    this.post('/files/:id/upload', wb.renameFile);
+    this.del('/files/:id/delete', wb.deleteFile);
+    this.get('/files/:id/download', wb.fileVersions);
 
     // Private namespace
     this.namespace = '/_';
 
-    this.get('/banners/current/', () => {
-        return {
-            data: {
-                attributes: {
-                },
-                type: 'banners',
-                id: '',
+    this.get('/banners/current/', () => ({
+        data: {
+            attributes: {
             },
-        };
+            type: 'banners',
+            id: '',
+        },
+    }));
+
+    osfResource(this, 'meeting', { only: ['index', 'show'] });
+    osfToManyRelationship(this, 'meeting', 'submissions', {
+        only: ['related'],
+        path: '/meetings/:parentID/submissions/',
     });
 }

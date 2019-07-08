@@ -1,0 +1,172 @@
+<div ...attributes>
+    <div local-class='Field'>
+        <h4>
+            {{#if @extendedFields}}
+                <OsfLink
+                    data-analytics-name='Contributors'
+                    @href={{concat '/' this.registration.id '/contributors'}}
+                >
+                    {{t 'registries.registration_metadata.contributors'}}
+                </OsfLink>
+            {{else}}
+                {{t 'registries.registration_metadata.contributors'}}
+            {{/if}}
+        </h4>
+        <ContributorList
+            @node={{this.registration}}
+            @shouldTruncate={{false}}
+            @shouldLinkUsers={{true}}
+        />
+    </div>
+
+    <div local-class='Field'>
+        <h4>{{t 'registries.registration_metadata.description'}}</h4>
+        <div data-test-registries-metadata='description'>
+            {{or this.registration.description (t 'registries.registration_metadata.no_description')}}
+        </div>
+    </div>
+
+    <div local-class='Field'>
+        <h4>{{t 'registries.registration_metadata.registration_type'}}</h4>
+        <div data-test-registries-metadata='registration type'>
+            {{this.registration.registrationSchema.name}}
+        </div>
+    </div>
+
+    <div local-class='Field'>
+        <h4>{{t 'registries.registration_metadata.date_registered'}}</h4>
+        <div data-test-registries-metadata='date registered'>
+            {{moment-format this.registration.dateRegistered 'MMMM D, YYYY'}}
+        </div>
+    </div>
+
+    <div local-class='Field'>
+        <h4>{{t 'registries.registration_metadata.date_created'}}</h4>
+        <div data-test-registries-metadata='date created'>
+            {{moment-format this.registration.dateCreated 'MMMM D, YYYY'}}
+        </div>
+    </div>
+
+    <div local-class='Field'>
+        <h4>{{t 'registries.registration_metadata.registered_from'}}</h4>
+        <div>
+            <OsfLink
+                data-analytics-name='Registered from'
+                @route='guid-node'
+                @models={{array this.registeredFromId}}
+            >
+                {{this.registeredFromDisplayUrl}}
+            </OsfLink>
+        </div>
+    </div>
+
+    {{#if this.registration.category}}
+        <div local-class='Field'>
+            <h4>{{t 'registries.registration_metadata.category'}}</h4>
+            <div data-test-registries-metadata='category'>
+                {{t (concat 'node_categories.' this.registration.category)}}
+            </div>
+        </div>
+    {{/if}}
+
+    {{#if @extendedFields}}
+        <div local-class='Field'>
+            <h4>{{t 'registries.registration_metadata.registration_doi'}}</h4>
+            {{#if this.registrationDoi}}
+                <OsfLink
+                    data-analytics-name='Registration DOI'
+                    @href={{this.registrationDoiUrl}}
+                >
+                    {{this.registrationDoi}}
+                </OsfLink>
+            {{/if}}
+            {{! TODO: mint DOIs }}
+        </div>
+        {{!--
+        <div local-class='Field'>
+            <h4>{{t 'registries.registration_metadata.publication_doi'}}</h4>
+        </div>
+        --}}
+
+        <div local-class='Field'>
+            <EditableField
+                data-analytics-scope='Affiliated institutions'
+                @registration={{this.registration}}
+                @title={{t 'registries.registration_metadata.affiliated_institutions'}}
+            as |editable|>
+                <InstitutionsWidget
+                    data-analytics-scope='Registries overview'
+                    @node={{this.registration}}
+                    @shouldShowModal={{editable.shouldShowEditable}}
+                    @hideModal={{editable.hideEditable}}
+                />
+            </EditableField>
+        </div>
+
+        <div local-class='Field'>
+            <h4>{{t 'registries.registration_metadata.license'}}</h4>
+            {{#if this.registration.license}}
+                <OsfButton
+                    data-analytics-name='View license'
+                    local-class='LinkButton'
+                    @type='link'
+                    @onClick={{action (mut this.shouldShowLicense) true}}
+                >
+                    {{this.registration.license.name}}
+                </OsfButton>
+                {{#if this.shouldShowLicense}}
+                    <BsModal
+                        @onHide={{action (mut this.shouldShowLicense) false}}
+                        as |modal|
+                    >
+                        <modal.header>
+                            <h4 class='modal-title'>
+                                {{t 'registries.registration_metadata.license'}}
+                            </h4>
+                        </modal.header>
+                        <modal.body>
+                            {{#if this.registration.license.url}}
+                                <p>
+                                    <OsfLink
+                                        data-analytics-name='License URL'
+                                        @href={{this.registration.license.url}}
+                                    >
+                                        {{this.registration.license.name}}
+                                    </OsfLink>
+                                </p>
+                            {{/if}}
+                            <LicenseText @node={{this.registration}} />
+                        </modal.body>
+                    </BsModal>
+                {{/if}}
+            {{else}}
+                {{t 'registries.registration_metadata.no_license'}}
+            {{/if}}
+        </div>
+        <div local-class='Field'>
+            <h4>{{t 'registries.registration_metadata.tags'}}</h4>
+            <TagsWidget
+                data-test-registration-tags
+                @taggable={{this.registration}}
+                @readOnly={{not this.registration.userHasAdminPermission}}
+            />
+        </div>
+        {{#unless this.registration.isAnonymous}}
+            <div local-class='Field'>
+                <h4>{{t 'registries.registration_metadata.citation'}}</h4>
+                <OsfButton
+                    data-analytics-name='{{if this.expandCitations 'Collapse' 'Expand'}} citations'
+                    local-class='LinkButton'
+                    @type='link'
+                    @onClick={{action (mut this.expandCitations) (not this.expandCitations)}}
+                >
+                    {{this.registrationDisplayUrl}}
+                    <FaIcon @icon={{if this.expandCitations 'caret-up' 'caret-down'}} />
+                </OsfButton>
+                {{#if this.expandCitations}}
+                    <CitationViewer @citable={{this.registration}} />
+                {{/if}}
+            </div>
+        {{/unless}}
+    {{/if}}
+</div>

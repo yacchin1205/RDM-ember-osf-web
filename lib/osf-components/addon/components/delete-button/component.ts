@@ -4,27 +4,32 @@ import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
 import { task } from 'ember-concurrency';
 import I18n from 'ember-i18n/services/i18n';
+import Toast from 'ember-toastr/services/toast';
 
-import requiredAction from 'ember-osf-web/decorators/required-action';
+import { layout, requiredAction } from 'ember-osf-web/decorators/component';
 import Analytics from 'ember-osf-web/services/analytics';
 import defaultTo from 'ember-osf-web/utils/default-to';
 import randomScientist from 'ember-osf-web/utils/random-scientist';
 
 import styles from './styles';
-import layout from './template';
+import template from './template';
 
+@layout(template, styles)
 @tagName('span')
 export default class DeleteButton extends Component.extend({
     _deleteTask: task(function *(this: DeleteButton) {
-        if (this.analyticsScope) {
-            this.analytics.click('button', `${this.analyticsScope} - Confirm delete`);
+        try {
+            yield this.delete();
+            this.set('modalShown', false);
+        } catch (e) {
+            this.toast.error(this.errorMessage);
+            throw e;
         }
-        yield this.delete();
-        this.set('modalShown', false);
     }).drop(),
 }) {
     @service analytics!: Analytics;
     @service i18n!: I18n;
+    @service toast!: Toast;
 
     // Required arguments
     @requiredAction delete!: () => unknown;
@@ -33,7 +38,6 @@ export default class DeleteButton extends Component.extend({
     small: boolean = defaultTo(this.small, false);
     hardConfirm: boolean = defaultTo(this.hardConfirm, false);
     disabled: boolean = defaultTo(this.disabled, false);
-    analyticsScope?: string;
     buttonLabel: string = defaultTo(
         this.buttonLabel,
         this.i18n.t('osf-components.delete-button.buttonLabel'),
@@ -54,10 +58,12 @@ export default class DeleteButton extends Component.extend({
         this.cancelButtonText,
         this.i18n.t('osf-components.delete-button.cancelButtonText'),
     );
+    errorMessage: string = defaultTo(
+        this.errorMessage,
+        this.i18n.t('osf-components.delete-button.error'),
+    );
 
     // Private properties
-    layout = layout;
-    styles = styles;
     modalShown: boolean = false;
     scientistName: string = '';
     scientistInput: string = '';
@@ -71,10 +77,6 @@ export default class DeleteButton extends Component.extend({
 
     @action
     _show(this: DeleteButton) {
-        if (this.analyticsScope) {
-            this.analytics.click('button', `${this.analyticsScope} - Open delete confirmation`);
-        }
-
         this.set('modalShown', true);
         if (this.hardConfirm) {
             this.setProperties({
@@ -86,9 +88,6 @@ export default class DeleteButton extends Component.extend({
 
     @action
     _cancel(this: DeleteButton) {
-        if (this.analyticsScope) {
-            this.analytics.click('button', `${this.analyticsScope} - Cancel delete`);
-        }
         this.set('modalShown', false);
     }
 }

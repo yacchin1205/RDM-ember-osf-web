@@ -1,34 +1,37 @@
 import { attr, belongsTo, hasMany } from '@ember-decorators/data';
+import { computed } from '@ember-decorators/object';
 import DS from 'ember-data';
-import Comment from './comment';
-import Contributor from './contributor';
-import Node from './node';
-import RegistrationSchema, { RegistrationMetadata } from './registration-schema';
-import RegistryProvider from './registry-provider';
-import User from './user';
 
-/**
- * @module ember-osf-web
- * @submodule models
- */
+import CommentModel from './comment';
+import ContributorModel from './contributor';
+import InstitutionModel from './institution';
+import NodeModel from './node';
+import RegistrationSchemaModel, { RegistrationMetadata } from './registration-schema';
+import RegistryProviderModel from './registry-provider';
+import UserModel from './user';
 
-/**
- * Model for OSF APIv2 registrations. This model may be used with one of several API endpoints. It may be queried
- * directly, or accessed via relationship fields.
- *
- * @class Registration
- */
-export default class Registration extends Node.extend() {
+export enum RegistrationState {
+    Embargoed = 'Embargoed',
+    Public = 'Public',
+    Withdrawn = 'Withdrawn',
+    PendingRegistration = 'PendingRegistration',
+    PendingWithdrawal = 'PendingWithdrawal',
+    PendingEmbargo = 'PendingEmbargo',
+    PendingEmbargoTermination = 'PendingEmbargoTermination',
+}
+
+export default class RegistrationModel extends NodeModel.extend() {
     @attr('date') dateRegistered!: Date;
     @attr('boolean') pendingRegistrationApproval!: boolean;
     @attr('boolean') archiving!: boolean;
     @attr('boolean') embargoed!: boolean;
     @attr('date') embargoEndDate!: Date | null;
     @attr('boolean') pendingEmbargoApproval!: boolean;
+    @attr('boolean') pendingEmbargoTerminationApproval!: boolean;
     @attr('boolean') withdrawn!: boolean;
+    @attr('date') dateWithdrawn!: Date | null;
     @attr('fixstring') withdrawalJustification?: string;
     @attr('boolean') pendingWithdrawal!: boolean;
-
     @attr('fixstring') registrationSupplement?: string;
     @attr('object') registeredMeta!: RegistrationMetadata;
 
@@ -37,20 +40,75 @@ export default class Registration extends Node.extend() {
     @attr('fixstring') registrationChoice?: 'immediate' | 'embargo';
     @attr('date') liftEmbargo?: Date;
 
-    @belongsTo('node', { inverse: 'registrations' }) registeredFrom!: DS.PromiseObject<Node> & Node;
-    @belongsTo('user', { inverse: null }) registeredBy!: DS.PromiseObject<User> & User;
+    @computed(
+        'withdrawn', 'embargoed', 'public', 'pendingRegistrationApproval',
+        'pendingEmbargoApproval', 'pendingEmbargoTerminationApproval',
+        'pendingWithdrawal',
+    )
+    get state(): RegistrationState {
+        const stateMap: any = this.registrationStateMap();
+        const currentState: RegistrationState = Object.keys(stateMap)
+            .filter(active => stateMap[active])
+            .map(key => RegistrationState[key as keyof typeof RegistrationState])[0];
+
+        return currentState || RegistrationState.Public;
+    }
+
+    @belongsTo('node', { inverse: 'registrations' })
+    registeredFrom!: DS.PromiseObject<NodeModel> & NodeModel;
+
+    @belongsTo('user', { inverse: null })
+    registeredBy!: DS.PromiseObject<UserModel> & UserModel;
 
     @belongsTo('registry-provider', { inverse: 'registrations' })
-    provider!: DS.PromiseObject<RegistryProvider> & RegistryProvider;
+    provider!: DS.PromiseObject<RegistryProviderModel> & RegistryProviderModel;
 
-    @hasMany('contributor', { inverse: 'node' }) contributors!: DS.PromiseManyArray<Contributor>;
-    @hasMany('comment', { inverse: 'node' }) comments!: DS.PromiseManyArray<Comment>;
+    @hasMany('contributor', { inverse: 'node' })
+    contributors!: DS.PromiseManyArray<ContributorModel>;
+
+    @hasMany('comment', { inverse: 'node' })
+    comments!: DS.PromiseManyArray<CommentModel>;
+
     @belongsTo('registration-schema', { inverse: null })
-    registrationSchema!: DS.PromiseObject<RegistrationSchema> & RegistrationSchema;
+    registrationSchema!: DS.PromiseObject<RegistrationSchemaModel> & RegistrationSchemaModel;
+
+    @belongsTo('registration', { inverse: 'children' })
+    parent!: DS.PromiseObject<RegistrationModel> & RegistrationModel;
+
+    @belongsTo('registration', { inverse: null })
+    root!: DS.PromiseObject<NodeModel> & NodeModel;
+
+    @hasMany('registration', { inverse: 'parent' })
+    children!: DS.PromiseManyArray<RegistrationModel>;
+
+    @hasMany('institution', { inverse: 'registrations' })
+    affiliatedInstitutions!: DS.PromiseManyArray<InstitutionModel> | InstitutionModel[];
+
+    registrationStateMap(): Record<RegistrationState, boolean> {
+        const {
+            pendingRegistrationApproval,
+            pendingEmbargoApproval,
+            pendingEmbargoTerminationApproval,
+            pendingWithdrawal,
+            withdrawn,
+            embargoed,
+        } = this;
+        const embargo = embargoed && !pendingEmbargoTerminationApproval;
+
+        return {
+            PendingRegistration: pendingRegistrationApproval,
+            PendingEmbargo: pendingEmbargoApproval,
+            PendingEmbargoTermination: pendingEmbargoTerminationApproval,
+            PendingWithdrawal: pendingWithdrawal,
+            Withdrawn: withdrawn,
+            Embargoed: embargo,
+            Public: !pendingWithdrawal,
+        };
+    }
 }
 
-declare module 'ember-data' {
-    interface ModelRegistry {
-        'registration': Registration;
-    }
+declare module 'ember-data/types/registries/model' {
+    export default interface ModelRegistry {
+        registration: RegistrationModel;
+    } // eslint-disable-line semi
 }

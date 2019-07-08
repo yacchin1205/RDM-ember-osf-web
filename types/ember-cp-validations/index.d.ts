@@ -9,6 +9,7 @@ interface GlobalValidations {
     attrs: {
         [attrName: string]: ResultCollection;
     };
+    validatableAttributes: string[];
 }
 
 export interface ResultCollection {
@@ -48,4 +49,4 @@ interface Validations {
 }
 
 export function buildValidations(validations: any, globalOptions?: any): Validations;
-export function validator(attrName: string, message: any): any;
+export function validator(attrName: string, options?: any): any;

@@ -1,0 +1,13 @@
+{{#if this.href}}
+    <OsfLink
+        data-analytics-name={{@analyticsName}}
+        @href={{this.href}}
+        target='_blank'
+        rel='noopener'
+    >
+        <FaIcon @icon={{@icon}} @fixedWidth={{true}} />
+        {{#if @showText}}
+            {{@medium}}
+        {{/if}}
+    </OsfLink>
+{{/if}}

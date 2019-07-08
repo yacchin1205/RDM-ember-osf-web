@@ -11,6 +11,10 @@ declare const config: {
         urlRegex: string;
         display?: string;
     }>;
+    externalLinks: {
+        help: string;
+        donate: string;
+    };
 };
 
 export default config;

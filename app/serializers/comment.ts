@@ -1,31 +1,29 @@
 import DS from 'ember-data';
+
 import OsfSerializer from './osf-serializer';
 
-export default class Comment extends OsfSerializer.extend({
-    serialize(snapshot: DS.Snapshot, options?: object): any {
+export default class CommentSerializer extends OsfSerializer {
+    serialize(snapshot: DS.Snapshot, options: {}) {
         // Add relationships field to identify comment target
-        const serialized: any = this._super(snapshot, options);
+        const serialized = super.serialize(snapshot, options);
 
-        const targetID: string = snapshot.record.get('targetID');
-        const targetType: string = snapshot.record.get('targetType');
+        const { targetID, targetType } = snapshot.record;
 
-        if (targetID && targetType) {
-            serialized.data.relationships = {
-                target: {
-                    data: {
-                        id: targetID,
-                        type: targetType,
-                    },
+        if (targetID && targetType && serialized.data.relationships) {
+            serialized.data.relationships.target = {
+                data: {
+                    id: targetID,
+                    type: targetType,
                 },
             };
         }
 
         return serialized;
-    },
-}) {}
-
-declare module 'ember-data' {
-    interface SerializerRegistry {
-        comment: Comment;
     }
+}
+
+declare module 'ember-data/types/registries/serializer' {
+    export default interface SerializerRegistry {
+        comment: CommentSerializer;
+    } // eslint-disable-line semi
 }

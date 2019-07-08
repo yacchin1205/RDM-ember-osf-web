@@ -5,7 +5,9 @@ import { underscore } from '@ember/string';
 import { task, timeout } from 'ember-concurrency';
 import DS from 'ember-data';
 import I18N from 'ember-i18n/services/i18n';
-import requiredAction from 'ember-osf-web/decorators/required-action';
+import Toast from 'ember-toastr/services/toast';
+
+import { layout, requiredAction } from 'ember-osf-web/decorators/component';
 import CollectedMetadatum from 'ember-osf-web/models/collected-metadatum';
 import Collection from 'ember-osf-web/models/collection';
 import CollectionProvider from 'ember-osf-web/models/collection-provider';
@@ -15,9 +17,9 @@ import Analytics from 'ember-osf-web/services/analytics';
 import CurrentUser from 'ember-osf-web/services/current-user';
 import Theme from 'ember-osf-web/services/theme';
 import defaultTo from 'ember-osf-web/utils/default-to';
-import Toast from 'ember-toastr/services/toast';
+import getHref from 'ember-osf-web/utils/get-href';
 import styles from './styles';
-import layout from './template';
+import template from './template';
 
 enum Section {
     project = 0,
@@ -28,10 +30,8 @@ enum Section {
     submit = 5,
 }
 
+@layout(template, styles)
 export default class Submit extends Component {
-    layout = layout;
-    styles = styles;
-
     @service analytics!: Analytics;
     @service currentUser!: CurrentUser;
     @service i18n!: I18N;
@@ -46,12 +46,18 @@ export default class Submit extends Component {
 
     collectionItem: Node | null = defaultTo(this.collectionItem, null);
     isProjectSelectorValid: boolean = false;
-    didValidate: boolean = false;
     sections = Section;
     activeSection: Section = this.edit ? Section.projectMetadata : Section.project;
-    savedSections: Section[] = this.edit ? [Section.project] : [];
+    savedSections: Section[] = this.edit ? [
+        Section.project,
+        Section.projectMetadata,
+        Section.projectContributors,
+        Section.collectionSubjects,
+        Section.collectionMetadata,
+    ] : [];
     showCancelDialog: boolean = false;
     i18nKeyPrefix = 'collections.collections_submission.';
+    showSubmitModal: boolean = false;
 
     save = task(function *(this: Submit) {
         if (!this.collectionItem) {
@@ -62,8 +68,6 @@ export default class Submit extends Component {
             this.get('collectionItem')!.validate(),
             this.get('collectedMetadatum').validate(),
         ]);
-
-        this.set('didValidate', true);
 
         const invalid = validatedModels.some(({ validations: { isInvalid } }) => isInvalid);
 
@@ -83,6 +87,10 @@ export default class Submit extends Component {
         const operation = this.edit ? 'update' : 'add';
 
         try {
+            if (!this.collectionItem.public) {
+                this.collectionItem.set('public', true);
+                yield this.collectionItem.save();
+            }
             yield this.collectedMetadatum.save();
 
             this.collectionItem.set('collectable', false);
@@ -92,9 +100,9 @@ export default class Submit extends Component {
             }));
 
             yield timeout(1000);
-
+            this.resetPageDirty();
             // TODO: external-link-to / waffle for project main page
-            window.location.href = this.collectionItem.links.html;
+            window.location.href = getHref(this.collectionItem.links.html!);
         } catch (e) {
             this.toast.error(this.i18n.t(`${this.i18nKeyPrefix}${operation}_save_error`, {
                 title: this.collectionItem.title,
@@ -103,8 +111,8 @@ export default class Submit extends Component {
         }
     }).drop();
 
-    @computed('collectedMetadatum.displayChoiceFields')
-    get choiceFields(): Array<{ label: string; value: string; }> {
+    @computed('collectedMetadatum.{displayChoiceFields,collectedType,issue,volume,programArea,status}')
+    get choiceFields(): Array<{ label: string; value: string | undefined; }> {
         return this.collectedMetadatum.displayChoiceFields
             .map(field => ({
                 label: `collections.collection_metadata.${underscore(field)}_label`,
@@ -118,6 +126,18 @@ export default class Submit extends Component {
     @requiredAction
     transition!: () => void;
 
+    /**
+     * Called when user advances to the next section
+     */
+    @requiredAction
+    onNextSection!: () => void;
+
+    /**
+     * Called to reset isPageDirty
+     */
+    @requiredAction
+    resetPageDirty!: () => void;
+
     @action
     projectSelected(this: Submit, collectionItem: Node) {
         collectionItem.set('collectable', true);
@@ -130,33 +150,27 @@ export default class Submit extends Component {
     }
 
     /**
-     * Reset for the cancel modal
+     * Cancel action for the entire form (bottom of the page). Navigates away if a project has not been selected.
      */
     @action
-    reset(this: Submit) {
-        this.collectedMetadatum.rollbackAttributes();
-
-        this.setProperties({
-            activeSection: Section.project,
-            savedSections: [],
-            showCancelDialog: false,
-        });
-
+    cancel() {
         this.transition();
     }
 
     /**
-     * Cancel action for the entire form (bottom of the page). Navigates away if a project has not been selected.
-     * Otherwise, shows the confirmation dialog
+     * Sets showSubmitModal, a property when set will cause the collection-submission-confirmation-modal to be shown
      */
     @action
-    cancel(this: Submit) {
-        if (this.activeSection === Section.project) {
-            this.transition();
-            return;
-        }
+    setShowSubmitModal() {
+        this.set('showSubmitModal', true);
+    }
 
-        this.set('showCancelDialog', true);
+    /**
+     * Resets showSubmitModal
+     */
+    @action
+    resetShowSubmitModal() {
+        this.set('showSubmitModal', false);
     }
 
     @action
@@ -164,9 +178,13 @@ export default class Submit extends Component {
         // Nothing to see here
     }
 
+    /**
+     * Advances to the next section of the form
+     */
     @action
     nextSection() {
         this.savedSections.pushObject(this.activeSection);
         this.incrementProperty('activeSection');
+        this.onNextSection();
     }
 }

@@ -19,12 +19,45 @@ const {
 } = config;
 
 export default {
+    documentType: {
+        default: {
+            plural: 'documents',
+            pluralCapitalized: 'Documents',
+            singular: 'document',
+            singularCapitalized: 'Document',
+        },
+        work: {
+            plural: 'works',
+            pluralCapitalized: 'Works',
+            singular: 'work',
+            singularCapitalized: 'Work',
+        },
+        paper: {
+            plural: 'papers',
+            pluralCapitalized: 'Papers',
+            singular: 'paper',
+            singularCapitalized: 'Paper',
+        },
+        preprint: {
+            plural: 'preprints',
+            pluralCapitalized: 'Preprints',
+            singular: 'preprint',
+            singularCapitalized: 'Preprint',
+        },
+        thesis: {
+            plural: 'theses',
+            pluralCapitalized: 'Theses',
+            singular: 'thesis',
+            singularCapitalized: 'Thesis',
+        },
+    },
     general: {
         OSF: pageName,
         share: 'Share',
         embed: 'Embed',
         download: 'Download',
         download_url: 'Download url',
+        done: 'Done',
         delete: 'Delete',
         view: 'View',
         edit: 'Edit',
@@ -41,6 +74,7 @@ export default {
         create: 'Create',
         and: 'and',
         or: 'or',
+        bookmark: 'Bookmark',
         more: 'more',
         upload: 'Upload',
         rename: 'Rename',
@@ -51,6 +85,7 @@ export default {
         downloads: 'Downloads',
         close: 'Close',
         back: 'Back',
+        public: 'Public',
         filter: 'Filter',
         revert: 'Revert',
         save: 'Save',
@@ -61,6 +96,7 @@ export default {
         sort: 'Sort',
         asc_paren: '(asc)',
         desc_paren: '(desc)',
+        loading: 'Loading...',
         next: 'next',
         previous: 'previous',
         help: 'Help',
@@ -73,6 +109,31 @@ export default {
         component: 'component',
         hosted_on_the_osf: `Hosted on ${shortBrand}`,
         please_confirm: 'Please confirm',
+        required: 'Required',
+        options: 'Options',
+        optional: 'Optional',
+        optional_paren: '(optional)',
+        services: {
+            collections: 'Collections',
+            institutions: 'Institutions',
+            preprints: 'Preprints',
+            registries: 'Registries',
+        },
+    },
+    node_categories: {
+        // Keys match the values of node.category from the API. Intended to be used like:
+        // {{t (concat 'node_categories.' node.category)}}
+        analysis: 'Analysis',
+        communication: 'Communication',
+        data: 'Data',
+        hypothesis: 'Hypothesis',
+        instrumentation: 'Instrumentation',
+        'methods and measures': 'Methods and measures',
+        procedure: 'Procedure',
+        project: 'Project',
+        software: 'Software',
+        other: 'Other',
+        uncategorized: 'Uncategorized',
     },
     maintenance: {
         line1: 'The site will undergo maintenance between <strong>{{start}} and {{end}}</strong> ({{utc}} UTC).',
@@ -222,6 +283,10 @@ export default {
             description: 'Improve your next study. Enter the Prereg Challenge and you could win $1,000.',
             button: 'Start Prereg Challenge',
         },
+        view_only: {
+            warning: 'You are viewing OSF through a view-only link, which may limit the data you have permission to see.',
+            view_normally: 'Leave this view',
+        },
     },
     move_to_project: {
         create_new_project: 'Create new project',
@@ -267,6 +332,8 @@ export default {
         toggle_primary: 'Toggle primary navigation',
         toggle_secondary: 'Toggle secondary navigation',
         other_views: `Other ${shortBrand} views`,
+        login: 'Login',
+        join: 'Join',
     },
     auth_dropdown: {
         log_out: 'Log Out',
@@ -280,28 +347,20 @@ export default {
     support: {
         title: 'Support',
         faq_title: 'Frequently asked questions',
-        faq_paragraph: `How can it be free? How will ${shortBrand} be useful to my research? What is a registration? Get your questions about ${shortBrand} answered on our `,
-        faq_link_text: 'FAQ page',
+        faq_paragraph: `How can it be free? How will ${shortBrand} be useful to my research? What is a registration? Get your questions about ${shortBrand} answered on our <a href="{{faqPageUrl}}" data-analytics-name="faq_link">FAQ page</a>.`,
         faq_button: 'Visit FAQ',
         guides_title: `${shortBrand} guides`,
-        guides_paragraph_1: `Learn how to use ${shortBrand} for improving your research workflow. Read our `,
-        guides_link_text: 'guides',
-        guides_paragraph_2: 'for step-by-step screenshots that show you the basics of project structures, version control, privacy, files, add-on support, and more!',
+        guides_paragraph: `Learn how to use ${shortBrand} for improving your research workflow. Read our <a href="{{helpUrl}}" data-analytics-name="guides_link">guides</a> for step-by-step screenshots that show you the basics of project structures, version control, privacy, files, add-on support, and more!`,
         guides_button: 'Visit guides',
         contact_title: 'Get in touch',
-        contact_technical: 'For emails about technical support:',
-        contact_questions: 'For all other questions or comments:',
-        prereg_title: 'Do you have Prereg Challenge related questions?',
-        prereg_paragraph_1: 'Check out our ',
-        prereg_link_text: 'prereg section',
-        prereg_paragraph_2: ' on the cos.io website.',
+        contact_questions: 'For technical support or other questions,',
+        contact_form: 'submit a request.',
+        prereg_title: 'Do you have questions about preregistration?',
+        prereg_paragraph: 'Check out our <a href="{{preregUrl}}" data-analytics-name="prereg_link">prereg page</a>.',
         status_title: 'Are you experiencing downtime with our services?',
-        status_paragraph_1: 'Check out our',
-        status_link_text: 'status page',
-        status_paragraph_2: 'for updates on how our services are operating.',
-        consultation_title: 'Are you looking for statistics consultations?',
-        consultation_paragraph: 'COS provides statistics consultation. To learn more about this service visit the',
-        consultation_link_text: 'COS statistics consulting page',
+        status_paragraph: 'Check out our <a href="{{statusPageUrl}}" data-analytics-name="status_page_link">status page</a> for updates on how our services are operating.',
+        consultation_title: 'Are you looking for hands-on training?',
+        consultation_paragraph: 'COS leads workshops and webinars on how to use OSF and incorporate best practices in transparency into your research workflow. To learn more about this service visit our <a href="{{consultationUrl}}" data-analytics-name="consultation_link">Training Services page</a>.',
         social_title: 'Other ways to get help',
         social_twitter: 'Ask us a question on Twitter',
         social_mailing: 'Join our mailing list',
@@ -321,11 +380,6 @@ export default {
     error_no_api: {
         title: 'API Unavailable',
         body: 'Our API is currently unavailable. Try again in a few minutes. If the issue persists, please report it to <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.',
-    },
-    zoom_to_route: {
-        title: 'Zoom directly to any route',
-        zoom: 'Zoom!',
-        placeholder: 'Choose a route',
     },
     osf_mode_footer: {
         dev_mode: 'This site is running in development mode.',
@@ -418,6 +472,29 @@ export default {
         free_title1: 'Free and open source.',
         free_title2: `${shortBrand} is a public good built to support your research.`,
         free_link: 'Get started',
+        learn_more: 'Learn more',
+    },
+    'new-home': {
+        'support-section': {
+            header: 'How OSF supports your research',
+            arrow: 'arrow',
+            search: {
+                header: 'Search and Discover',
+                description: 'Find papers, data, and materials to inspire your next research project. Search public projects to build on the work of others and find new collaborators.',
+            },
+            design: {
+                header: 'Design Your Study',
+                description: 'Start a project and add collaborators, giving them access to protocols and other research materials. Built-in version control tracks the evolution of your study.',
+            },
+            analyze: {
+                header: 'Collect and Analyze Data',
+                description: 'Store data, code, and other materials in OSF Storage, or connect your Dropbox or other third-party account. Every file gets a unique, persistent URL for citing and sharing.',
+            },
+            publish: {
+                header: 'Publish Your Reports',
+                description: 'Share papers in OSF Preprints or a community-based preprint provider, so others can find and cite your work. Track impact with metrics like downloads and view counts.',
+            },
+        },
     },
     tos_consent: {
         paragraph: 'We\'ve updated our <a href="{{link1}}">Terms of Use</a> and <a href="{{link2}}">Privacy Policy</a>. Please read them carefully.',
@@ -460,8 +537,11 @@ export default {
         phone: '{{description}} must be a valid phone number.',
         url: '{{description}} must be a valid url.',
         // custom
+        https_url: '{{description}} must be a valid https url.',
         email_registered: 'This email address has already been registered.',
+        email_invalid: 'Invalid email address. If this should not have occurred, please report this to {{supportEmail}}',
         email_match: 'Email addresses must match.',
+        email_duplicate: 'Duplicate email',
         password_email: 'Your password cannot be the same as your email address.',
         password_old: 'Your new password cannot be the same as your old password.',
         password_match: 'Passwords must match.',
@@ -470,6 +550,9 @@ export default {
         min_subjects: 'You must select at least {{minLength}} subject(s).',
         node_license_invalid: 'Invalid required fields for the license',
         node_license_missing_fields: 'The following required fields are missing: {{missingFields}}',
+    },
+    validated_input_form: {
+        discard_changes: 'Discard changes',
     },
     node_navbar: {
         toggle: 'Toggle navigation',
@@ -485,7 +568,7 @@ export default {
     },
     // These keys come from the "osf_status" cookie set by Flask to expose status messages added to the session with push_status_message()
     status: {
-        welcome_message: `<h1>Welcome to ${shortBrand}!</h1><p>Visit our <a href="http://help.osf.io/" target="_blank" rel="noreferrer">Guides</a> to learn about creating a project, or get inspiration from <a href="https://osf.io/explore/activity/#popularPublicProjects">popular public projects</a>.</p>`,
+        welcome_message: `<h1>Welcome to ${shortBrand}!</h1><p>Visit our <a href="https://openscience.zendesk.com/hc/en-us" target="_blank" rel="noreferrer">Guides</a> to learn about creating a project, or get inspiration from <a href="https://osf.io/explore/activity/#popularPublicProjects">popular public projects</a>.</p>`,
         alternate_email_error: 'The email address has <b>NOT</b> been added to your account. Please log out and revisit the link in your email. Thank you.',
         remove_addon: 'Because the GitHub add-on for {{extra.category}} "{{extra.title}}" was authenticated by {{extra.user}}, authentication information has been deleted.',
         project_deleted: 'Project has been successfully deleted.',
@@ -526,6 +609,7 @@ export default {
                 pending_withdrawl: 'Pending withdrawal',
                 embargoed: 'Embargoed',
                 pending_embargo: 'Pending embargo',
+                pending_embargo_termination: 'Pending embargo termination',
                 archiving: 'Archiving',
             },
         },
@@ -617,7 +701,8 @@ export default {
         },
     },
     contributor_list: {
-        and_x_more: '{{x}} more',
+        x_more: '{{x}} more',
+        anonymous: 'Anonymous contributors',
     },
     app_components: {
         branded_navbar: {
@@ -636,6 +721,9 @@ export default {
                 copyrightHolders: 'Copyright Holders',
                 year: 'Year',
             },
+        },
+        license_text: {
+            anonymized_placeholder: '[anonymized]',
         },
         navbar: {
             add_item: 'Add to {{objectType}}',
@@ -811,12 +899,13 @@ export default {
         submit_section: {
             discard: 'Discard changes',
             save: 'Save and continue',
+            continue: 'Continue',
             click_to_edit: 'Click to edit',
         },
     },
     collections: {
         general: {
-            brand: '{{name}} Collections',
+            brand: '{{name}} Collection',
         },
         navbar: {
             add: 'Add to Collection',
@@ -843,7 +932,7 @@ export default {
         discover: {
             title: 'Discover',
             search_heading: 'Collections Search',
-            search_placeholder: 'Search collections',
+            search_placeholder: 'Search collection',
             other_repositories: 'Other collections',
             facet_titles: {
                 collection_provider: 'Providers',
@@ -880,8 +969,12 @@ export default {
             update_save_success: '{{title}} has been updated in the collection.',
             add_save_error: 'Error adding {{title}} to the collection:\n{{error}}',
             update_save_error: 'Error updating {{title}} in the collection:\n{{error}}',
-            modal_header: 'Alert',
-            modal_body: 'Are you sure you want to discard changes to the collection? Changes saved to the project will persist, if saved.',
+            warning_body: 'Are you sure you want to discard changes to the submission? Changes saved to the project will persist.',
+        },
+        collection_submission_confirmation_modal: {
+            header: 'Submit project',
+            body: 'Once this project is submitted to the collection, it will be made public, and you should assume that it will always be public. You can return it to private later, but search engines (including Google’s cache) or others may access files, wiki pages, or analytics before you do.',
+            add_button: 'Add to collection',
         },
         collection_item_picker: {
             after_options: {
@@ -930,8 +1023,7 @@ export default {
             searchLoading: 'Search loading',
             searchPlaceholder: 'Search...',
             share: 'SHARE',
-            shareUnavailable: 'Search is Unavailable',
-            shareUnavailableDescription: 'SHARE Search is temporarily unavailable. We have been notified and are working to fix the problem. Please try again later.',
+            searchUnavailable: 'Search is Unavailable',
             sortBy: 'Sort by',
             sortSearchResults: 'Sort search results',
             source: 'Source',
@@ -1013,6 +1105,228 @@ export default {
             recent: {
                 title: 'Browse Registrations',
                 more: 'See more',
+            },
+        },
+
+        registration_metadata: {
+            contributors: 'Contributors',
+            description: 'Description',
+            no_description: 'No description given.',
+            registration_type: 'Registration type',
+            date_registered: 'Date registered',
+            date_created: 'Date created',
+            registered_from: 'Registered from',
+            category: 'Category',
+            registration_doi: 'Registration DOI',
+            publication_doi: 'Publication DOI',
+            affiliated_institutions: 'Affiliated institutions',
+            license: 'License',
+            no_license: 'No license',
+            disciplines: 'Disciplines',
+            tags: 'Tags',
+            citation: 'Citation',
+        },
+
+        form_view: {
+            none_selected: 'None selected',
+        },
+
+        overview: {
+            title: 'Overview',
+            collapse: 'Collapse',
+            expand: 'Expand',
+            contents: 'Contents',
+            see_more: 'See more',
+            metadata: 'Metadata',
+            component_of: 'This is a component of a registration:',
+            comments: {
+                title: 'Comments',
+                see_replies: 'See replies',
+                hide_replies: 'Hide replies',
+                report: 'Report',
+                cancel: 'Cancel',
+                load_more: 'Load more replies',
+                create_report: {
+                    success: 'Comment successfully reported',
+                    error: 'Unable to report comment',
+                },
+                category_placeholder: 'Select a category that best describes abuse',
+                retract_report: {
+                    success: 'Report successfully retracted',
+                    error: 'Unable to retract abuse report',
+                },
+                modified: 'Modified ',
+                report_placeholder: 'Describe abuse',
+                comment_abuse: 'Comment reported.',
+                comment_abuse_action: 'Not abuse',
+                abuse_spam: 'Spam or advertising',
+                abuse_hate: 'Hate speech',
+                abuse_violence: 'Violence or harmful behavior',
+                cannot_retract_report: 'Only the reporter can retract report',
+                no_comments: 'No comments.',
+            },
+
+            links: {
+                title: 'Links',
+                linked_nodes: 'Linked projects and components',
+                no_linked_nodes: 'This registration has no linked projects or components.',
+                linked_registrations: 'Linked registrations',
+                no_linked_registrations: 'This registration has no linked registrations.',
+            },
+
+            contributors: {
+                title: 'Contributors',
+                gravatar_alt: 'Gravatar for {{name}}',
+            },
+
+            components: {
+                title: 'Components',
+                no_components: 'This registration has no components.',
+            },
+
+            external_links: {
+                files: 'Files',
+                wiki: 'Wiki',
+                analytics: 'Analytics',
+            },
+
+            form_view: {
+                no_files: 'No files selected',
+            },
+
+            withdrawn: {
+                has_been_withdrawn: 'This registration has been withdrawn for the reason(s) stated below.',
+                date_withdrawn: 'Date withdrawn',
+                justification: 'Justification for withdrawal',
+                no_justification: 'None given',
+                state: 'Withdrawn',
+            },
+
+            withdraw: {
+                withdraw: 'Withdraw registration',
+                withdrawal_justification_label: 'Please provide your justification for withdrawing this registration.',
+                random_scientist_x: 'Type <strong>{{x}}</strong> below and click Withdraw Registration if you are sure you want to continue.',
+                success: 'Withdrawal request submitted successfully',
+                error: 'Unable to withdraw this registration',
+                warning: 'Withdrawing a registration will remove its content from the OSF, but leave basic metadata behind. The title of a withdrawn registration and its contributor list will remain, as will justification or explanation of the withdrawal, should you wish to provide it. Withdrawn registrations will be marked with a "withdrawn" tag. This action is irreversible.',
+            },
+
+            archiving: {
+                currently_archiving: 'This registration is currently archiving, and no changes can be made at this time.',
+                email_support: 'If this registration has been archiving for more than 72 hours, please email <a data-analytics-name="Email support" href="mailto:{{supportEmail}}">{{supportEmail}}</a> for assistance.',
+            },
+            aria_labels: {
+                main: 'Toolbar: withdraw, fork, share registration',
+                scientist_name_input: 'Random scientist name',
+            },
+            embargoed: {
+                state: 'Embargoed',
+                action: 'End embargo early',
+                action_success: 'Embargo termination request successfully sent',
+                action_error: 'Unable to submit embargo termination request',
+                confirm_text: 'By clicking confirm, an email will be sent to project administrator(s) to approve ending the embargo. If approved, this registration, including any components, will be made public immmediately. This action is irreversible.',
+                confirm_button_text: 'Confirm',
+                banner: 'This registration is currently embargoed. It will remain private until its embargo end date, {{embargoEndDate}}.',
+            },
+            pending: {
+                state: 'Pending',
+                action: {
+                    approve: 'Approve',
+                    reject: 'Reject',
+                },
+            },
+            public: {
+                state: 'Public',
+            },
+            pendingRegistrationApproval: {
+                banner: 'This is a pending registration of this <a href={{projectUrl}}><u>project</u></a>, awaiting approval from project administrators. This registration will be final when all project administrators approve the registration or 48 hours pass, whichever comes first.',
+            },
+            pendingWithdrawal: {
+                banner: 'This project is currently pending withdrawal',
+            },
+            pendingEmbargoApproval: {
+                banner: 'This project is currently pending registration, awaiting approval from project administrators. This registration will be final and enter the embargo period when all project administrators approve the registration or 48 hours pass, whichever comes first. The embargo will keep the registration private until the embargo period ends.',
+            },
+            pendingEmbargoTerminationApproval: {
+                banner: 'This registration is currently embargoed. It will remain private until its embargo end date, {{embargoEndDate}}. A request to lift the embargo and make this registration public is pending.',
+            },
+            update_bookmarks: {
+                add: {
+                    text: 'Bookmark',
+                    success: 'Registration successfully added to your bookmarks',
+                    error: 'Unable to bookmark this registration',
+                },
+                remove: {
+                    text: 'Remove from bookmarks',
+                    success: 'Registration successfully removed from your bookmarks',
+                    error: 'Unable to remove this registration from bookmarks',
+                },
+            },
+            fork: {
+                success: 'Your fork is being created. You\'ll receive an email when it is complete',
+                success_title: 'Fork status',
+                error: 'Unable to fork registration',
+            },
+            view_forks: 'View forks',
+            fork_registration: 'Fork this registration',
+        },
+    },
+    meetings: {
+        index: {
+            'meetings-list': {
+                min_5_submissions: 'Only conferences with at least five submissions are displayed.',
+                name: 'Name',
+                submissions: 'Submissions',
+                location: 'Location',
+                date: 'Date',
+                empty: 'No results found for this search term.',
+            },
+            'meetings-hero-banner': {
+                image_alt: 'Logo for OSF meeting',
+                h3: 'A <strong>free poster and presentation sharing service</strong> for academic meetings and conferences',
+                conference_organizers_h3: 'For Conference Organizers',
+                conference_organizers_help_text: 'Register your event to broaden its impact. Events get a dedicated page, an easy submission process, and persistent links.',
+                conference_organizers_register_button: 'Register',
+                conference_organizers_register_panel_texts: '<p>OSF Meetings is a product that we offer to academic conferences at no cost. To request poster and talk hosting for a conference:</p><p class=\'text-center\'><strong>Submit this <a href=\'https://docs.google.com/forms/d/e/1FAIpQLSeBq4CfC5CjTBz49TP2dO9ZIsQc6QAAJFUoUbkS767Le9twLw/viewform\'>set-up form </a></strong></p><p>We\'ll review and add your conference within one business day.</p>',
+                conference_participants_h3: 'For Conference Participants',
+                conference_participants_help_text: 'Share your posters and presentations along with any supporting data and materials. Get persistent links and usage analytics.',
+                conference_participants_upload_button: 'Upload',
+                conference_participants_upload_panel_texts: '<p>The OSF can host posters and talks for scholarly meetings. Submitting a presentation is easy:</p><ul><li>Find the email address for your conference by clicking on its name in the list below</li><li>Send your materials to the OSF Meetings email address for your conference</li></ul><p>We’ll create an OSF project for you. You\'ll get a permanent link to your presentation, plus analytics about who has viewed and downloaded your work.</p>',
+            },
+            'meetings-footer': {
+                discover: 'Discover',
+                discover_text: 'Explore posters and presentations from events long after they\'re over.',
+                share: 'Share',
+                share_text: 'Get persistent links to your content and increase your impact.',
+                enhance: 'Enhance',
+                enhance_text: 'Add supplementary data and materials to your submission to make your work more transparent.',
+                who_use_text: 'Who uses OSF Meetings?',
+                aps_img_alt: 'Logo for American Physiological Society (APS)',
+                bitss_img_alt: 'Logo for Berkeley Initiative for Transparency in the Social Sciences (BITSS)',
+                nrao_img_alt: 'Logo for National Radio Astronomy Observatory (NRAO)',
+                spsp_img_alt: 'Logo for Society for Personality and Social Psychology (SPSP)',
+            },
+        },
+        detail: {
+            'meeting-submissions-list': {
+                title: 'Title',
+                author: 'Author',
+                category: 'Category',
+                dateCreated: 'Date created',
+                downloads: 'Downloads',
+                noSubmissions: 'No submissions',
+            },
+            'meeting-detail-header': {
+                image_alt: 'Meeting logo image',
+                add_your: 'Add your',
+                send_email: 'Send an email to the following address(es) from the email account you would like used on the OSF:',
+                email_text: 'For {{typeName}}, email <a href="{{emailAddress}}">{{emailAddress}}</a>',
+                format_header: 'The format of the email should be as follows:',
+                subject: 'Subject',
+                message_body: 'Message body',
+                attachment: 'Attachment',
+                panel_footer_note: 'Once sent, we will follow-up by sending you the permanent identifier that others can use to cite your work; you can also login and make changes, such as uploading additional files, to your project at that URL.If you didn\'t have an OSF account, one will be created automatically and a link to set your password will be emailed to you; if you do, we will simply create a new project in your account.By creating an account you agree to our <a href="https://github.com/CenterForOpenScience/centerforopenscience.org/blob/master/TERMS_OF_USE.md">Terms</a> and that you have read our <a href="https://github.com/CenterForOpenScience/centerforopenscience.org/blob/master/PRIVACY_POLICY.md">Privacy Policy</a>, including our information on <a href="https://github.com/CenterForOpenScience/centerforopenscience.org/blob/master/PRIVACY_POLICY.md#f-cookies">Cookie Use</a>.',
+                conference_homepage: 'Conference homepage',
             },
         },
     },
@@ -1120,6 +1434,7 @@ export default {
             modalTitle: 'Are you sure you want to delete this?',
             modalBody: 'This action is irreversible.',
             hardConfirm: 'Type the following to continue: <strong>{{text}}</strong>',
+            error: 'There was an error deleting this item.',
         },
         'paginated-list': {
             error: 'There was an error loading this list.',
@@ -1139,15 +1454,189 @@ export default {
         'tags-widget': {
             tags: 'Tags',
             add_tag: 'Add a tag to enhance discoverability',
+            no_tags: 'No tags',
+        },
+        'institutions-widget': {
+            affiliated_institutions: 'Affiliated institutions',
+            affiliate_institutions: 'Affiliate institutions',
+            add_institution_error: 'Error adding institution',
+            remove_institution_error: 'Error removing institution',
+            no_affiliations: 'No affiliations to add',
+            no_affiliated_institution: {
+                user: 'You have no institutional affiliations',
+                project: 'This project has no affiliated institutions',
+                registration: 'This registration has no affiliated institutions',
+            },
+        },
+        'citation-viewer': {
+            get_more: 'Get more citations',
+            placeholder: 'Enter citation style (e.g. "APA")',
+            type_to_search: 'Start typing to search citation styles',
+        },
+        'search-bar': {
+            aria: 'Search',
+            heading: 'Discover public research',
+            subheading: 'Discover projects, data, materials, and collaborators on OSF that might be helpful to your own research.',
+            placeholder: 'Search discipline, author...',
+        },
+        'hero-banner': {
+            heading: 'The place to share your research',
+            subheading: 'OSF is a free, open platform to support your research and enable collaboration.',
+            add_your_research: {
+                heading: 'Add your research',
+                subheading: 'Labs and teams across the globe use OSF to open their projects up to the scientific community.',
+            },
         },
     },
     settings: {
         toggleNav: 'Toggle navigation',
         profile: {
             title: 'Profile information',
+            name: {
+                title: 'Name',
+                fullName: 'Display name (e.g. Rosalind Elsie Franklin)',
+                givenName: 'Given name (e.g. Rosalind)',
+                middleNames: 'Middle names (e.g. Elsie)',
+                familyName: 'Family name (e.g. Franklin)',
+                suffix: 'Suffix',
+                citationName: 'Citation name',
+                instructions: 'Your full name, above, will be displayed in your profile. To control the way your name will appear in citations, edit the fields below.',
+                apa: 'APA',
+                mla: 'MLA',
+                citationPreview: 'Citation preview',
+            },
+            social: {
+                title: 'Social',
+            },
+            education: {
+                title: 'Education',
+            },
+            employment: {
+                title: 'Employment',
+            },
         },
         account: {
+            deactivation: {
+                title: 'Deactivate account',
+                body: 'Deactivating your account will remove you from all public projects to which you are a contributor. Your account will no longer be associated with OSF projects, and your work on the OSF will be inaccessible. If this is a secondary account that you want to close, consider <a href="https://openscience.zendesk.com/hc/en-us/articles/360019738014">merging your accounts</a>.',
+                warning: 'Warning:',
+                warningText: 'Once your deactivation has been approved the effects are irreversible.',
+                pending: 'Your account is currently pending deactivation.',
+                requestButton: 'Request deactivation',
+                confirmationTitle: 'Request account deactivation?',
+                confirmationBody: 'Are you sure you want to request account deactivation? An OSF administrator will review your request. If accepted, you will NOT be able to reactivate your account.',
+                confirmationButton: 'Request',
+                confirmationToastMessage: 'An OSF administrator will contact you shortly to confirm your deactivation request.',
+                undoRequestButton: 'Undo deactivation request',
+                undoRequestConfirmationTitle: 'Undo deactivation request?',
+                undoRequestConfirmationBody: 'Are you sure you want to undo your account deactivation request? This will preserve your account status.',
+                undoRequestConfirmationButton: 'Undo deactivation request',
+                undoRequestToastMessage: 'Your deactivation request has been undone.',
+            },
+            defaultRegion: {
+                title: 'Default storage location',
+                why: 'This location will be applied to new projects and components. It will not affect existing projects and components.',
+                updateButton: 'Update location',
+                successToast: 'You have successfully changed your default storage location to <strong>{{region}}</strong>',
+                saveError: 'Could not make this change. Try again in a few minutes. If the issue persists, please report it to <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.',
+            },
+            export: {
+                title: 'Export account data',
+                body: 'Exporting your account data allows you to keep a permanent copy of the current state of your account. Keeping a copy of your account data can provide peace of mind or assist in transferring your information to another provider.',
+                requestButton: 'Request export',
+                confirmationTitle: 'Request account export?',
+                confirmationBody: 'Are you sure you want to request account export?',
+                confirmationButton: 'Request',
+                confirmationToastMessage: 'An OSF administrator will contact you shortly to confirm your export request.',
+                saveError: 'Could not make this change. Try again in a few minutes. If the issue persists, please report it to <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.',
+            },
+            security: {
+                title: 'Security settings',
+                twoFactorAuth: 'Two-factor authentication',
+                enableTwoFactor: 'Configure',
+                enableWarning: 'Configuring two-factor authentication will not immediately activate this feature for your account. You will need to follow the steps that appear below to complete the activation of two-factor authentication for your account.',
+                disableTwoFactor: 'Disable',
+                why: 'By using two-factor authentication, you will protect your OSF account with both your password and your mobile phone.',
+                enableButton: 'Configure',
+                importantWarning: 'Important: If you lose access to your mobile device, you will not be able to log in to your OSF account.',
+                howTo: 'To use, you must install an appropriate application on your mobile device. Google Authenticator is a popular choice and is available for both Android and iOS.',
+                onceVerified: 'Once verified, your device will display a six-digit code that must be entered during the login process. This code changes every few seconds, which means that unauthorized users will not be able to log in to you account, even if they know your password.',
+                scanImage: 'Scan the image below, or enter the secret key <code>{{secretKey}}</code> into your authentication device.',
+                enterVerification: 'Enter your verification code:',
+                verificationFailed: 'Verification failed. Please enter your verification code again.',
+                disableWarning: 'Are you sure you want to disable two-factor authentication?',
+                disableButton: 'Disable',
+                saveError: 'Could not make this change. Try again in a few minutes. If the issue persists, please report it to <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.',
+                submitVerification: 'Enable',
+            },
             title: 'Account settings',
+            connected_emails: {
+                add_email: 'Add email',
+                add_email_modal: {
+                    title: 'Confirmation email sent',
+                    body: '<strong>{{emailAddress}}</strong> was added to your account. You will receive a confirmation email at <strong>{{emailAddress}}</strong>. Please click the link in your email to confirm this action. You will be required to enter your password.',
+                },
+                alternate_emails: 'Alternate emails',
+                confirm_delete: {
+                    title: 'Remove email',
+                    body: 'Are you sure you want to remove <strong>{{emailAddress}}</strong> from your email list?',
+                },
+                resend_confirmation_modal: {
+                    title: 'Resend email confirmation?',
+                    body: 'Are you sure that you want to resend email confirmation to <strong>{{emailAddress}}</strong>?',
+                    resend_button: 'Resend',
+                },
+                resend_fail: 'Unable to resend confirmation email',
+                resend_success: 'Email resent',
+                delete_fail: 'Unable to delete email',
+                delete_success: 'Email deleted',
+                load_fail: 'Unable to load emails',
+                make_primary: 'Make primary',
+                merge_explanation: 'To merge an existing account with this one or to log in with multiple email addresses, add an alternate email address below. All projects and components will be displayed under the email address listed as primary.',
+                no_unconfirmed_emails: 'There are no unconfirmed emails',
+                no_alternate_emails: 'There are no alternate emails',
+                placeholder_text: 'Email address',
+                primary_email: 'Primary email',
+                resend_confirmation: 'Resend confirmation',
+                save_fail: 'Unable to add email',
+                save_success: 'Email added',
+                title: 'Connected emails',
+                unconfirmed_emails: 'Unconfirmed emails',
+                update_fail: 'Unable to update email',
+                update_success: 'Email updated',
+            },
+            changePassword: {
+                title: 'Change password',
+                updateButton: 'Update password',
+                updateFail: 'Error updating password',
+                updateSuccess: 'Successfully changed password',
+                currentPassword: {
+                    placeholder: 'Old password',
+                },
+                newPassword: {
+                    placeholder: 'New password',
+                },
+                confirmPassword: {
+                    title: 'Confirm new password',
+                    placeholder: 'Verify password',
+                },
+            },
+            connected_identities: {
+                title: 'Connected identities',
+                description: 'Connected identities allow you to log in to the OSF via a third-party service.<br>You can revoke these authorizations here.',
+                no_identities: 'You have not authorized any external services to log in to the OSF.',
+                status: {
+                    verified: 'Verified',
+                    pending: 'Pending',
+                },
+                confirm_remove: {
+                    title: 'Remove authorization?',
+                    body: 'Are you sure you want to remove this authorization?',
+                    confirm_button_text: 'Remove',
+                },
+                remove_fail: 'Revocation request failed. Please contact <a href="mailto:{{supportEmail}}">{{supportEmail}}</a> if the problem persists.',
+                remove_success: 'You have revoked this connected identity.',
+            },
         },
         addons: {
             title: 'Configure add-on accounts',
@@ -1155,8 +1644,38 @@ export default {
         notifications: {
             title: 'Notifications',
         },
-        apps: {
+        'developer-apps': {
             title: 'Developer apps',
+            explanation: 'The OSF allows third-party web applications to connect to the OSF on behalf of other users via the OAuth 2.0 web application flow.',
+            createApp: 'Create developer app',
+            backToList: 'Back to list of developer apps',
+            appDetail: 'Detail for app <strong>{{appName}}</strong>',
+            editApp: 'Edit app',
+            appName: 'App name',
+            appHomepage: 'Project homepage URL',
+            appDescription: 'App description',
+            appCallbackUrl: 'Authorization callback URL',
+            clientID: 'Client ID',
+            clientIDDescription: 'The unique identifier for this developer app. It is safe to share publicly with others.',
+            clientSecret: 'Client secret',
+            clientSecretDescription: 'The client secret is known only to you and OSF. Do not display or expose it to others.',
+            showSecret: 'Show client secret',
+            hideSecret: 'Hide client secret',
+            created: 'Developer app created.',
+            saved: 'Developer app saved.',
+            deleted: 'Developer app deleted.',
+            resetSecret: {
+                label: 'Reset secret',
+                description: 'Resetting the client secret will render your application unusable until it is updated with the new client secret, and all users must reauthorize access. Previously issued access tokens will no longer work.',
+                modalTitle: 'Reset client secret?',
+                confirm: 'Are you sure you want to reset the client secret? This cannot be reversed.',
+                success: 'Client secret successfully reset.',
+                error: 'Error resetting client secret.',
+            },
+            confirmDelete: {
+                title: 'Delete app <strong>{{appName}}</strong>?',
+                body: 'Are you sure you want to delete this developer app? All users\' access tokens will be revoked. This cannot be reversed.',
+            },
         },
         tokens: {
             title: 'Personal access tokens',
@@ -1167,6 +1686,9 @@ export default {
             tokenName: 'Token name',
             scopes: 'Scopes',
             scopesDescription: 'Scopes limit access for personal access tokens.',
+            created: 'Token created.',
+            saved: 'Token saved.',
+            deleted: 'Token deleted.',
             confirmDelete: {
                 title: 'Delete token <strong>{{tokenName}}</strong>?',
                 body: 'Are you sure you want to delete this personal access token? This cannot be reversed.',
@@ -1177,6 +1699,45 @@ export default {
                 warning: 'This is the only time your token will be displayed.',
                 editScopes: 'Edit scopes',
             },
+        },
+    },
+    verifyEmail: {
+        merge: {
+            header: 'Merge account?',
+            body: 'Would you like to merge <strong>{{email}}</strong> into your account? This action is irreversible.',
+            verifyButton: 'Merge account',
+            denyButton: 'Do not merge account',
+            verifySuccess: '<strong>{{email}}</strong> has been merged into your account.',
+            denySuccess: '<strong>{{email}}</strong> has not been merged into your account.',
+            verifyError: 'There was a problem merging <strong>{{email}}</strong> into your account.',
+            denyError: 'There was a problem canceling the request to merge <strong>{{email}}</strong> into your account.',
+        },
+        add: {
+            header: 'Add alternate email?',
+            body: 'Would you like to add <strong>{{email}}</strong> to your account?',
+            verifyButton: 'Add email',
+            denyButton: 'Do not add email',
+            verifySuccess: '<strong>{{email}}</strong> has been added to your account.',
+            denySuccess: '<strong>{{email}}</strong> has not been added to your account.',
+            verifyError: 'There was a problem adding <strong>{{email}}</strong> to your account.',
+            denyError: 'There was a problem canceling the request to add <strong>{{email}}</strong> to your account.',
+        },
+    },
+    ipsum: {
+        title: 'tempor nec feugiat nisl pretium',
+        sentence: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+        paragraph: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Id velit ut tortor pretium. Nisi porta lorem mollis aliquam ut porttitor leo a. Cras fermentum odio eu feugiat. Eget mi proin sed libero enim. Quam adipiscing vitae proin sagittis. Volutpat consequat mauris nunc congue nisi vitae suscipit tellus. At varius vel pharetra vel turpis nunc eget. Purus ut faucibus pulvinar elementum integer enim neque volutpat. Turpis nunc eget lorem dolor. Mattis pellentesque id nibh tortor id aliquet lectus proin nibh. Arcu felis bibendum ut tristique et egestas quis. Nisl tincidunt eget nullam non nisi est sit amet. Fringilla urna porttitor rhoncus dolor purus non enim.',
+    },
+    dev_tools: {
+        title: 'Dev tools',
+        zoom_to_route: {
+            title: 'Zoom to route',
+            zoom: 'Zoom!',
+            placeholder: 'Choose a route',
+        },
+        options: {
+            toast_events: 'Display toast for tracked events',
+            show_url_bar: 'Show URL bar -- navigate by URL without reloading',
         },
     },
 };

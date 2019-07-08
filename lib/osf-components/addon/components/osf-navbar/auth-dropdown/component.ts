@@ -7,17 +7,20 @@ import { Registry as Services } from '@ember/service';
 import Features from 'ember-feature-flags/services/features';
 import config from 'ember-get-config';
 import I18N from 'ember-i18n/services/i18n';
+import Session from 'ember-simple-auth/services/session';
+
+import { layout } from 'ember-osf-web/decorators/component';
 import User from 'ember-osf-web/models/user';
 import Analytics from 'ember-osf-web/services/analytics';
 import CurrentUser from 'ember-osf-web/services/current-user';
+import cleanURL from 'ember-osf-web/utils/clean-url';
 import defaultTo from 'ember-osf-web/utils/default-to';
 import param from 'ember-osf-web/utils/param';
 import pathJoin from 'ember-osf-web/utils/path-join';
-import Session from 'ember-simple-auth/services/session';
 import styles from './styles';
-import layout from './template';
+import template from './template';
 
-const { OSF: { url: baseUrl }, featureFlagNames } = config;
+const { OSF: { url: baseUrl } } = config;
 
 const {
     support: {
@@ -31,16 +34,7 @@ const {
     },
 } = config;
 
-/**
- * Display the login dropdown on the navbar
- *
- * @class osf-navbar/auth-dropdown
- */
-@tagName('')
-export default class NavbarAuthDropdown extends Component {
-    layout = layout;
-    styles = styles;
-
+export class AuthBase extends Component {
     @service analytics!: Analytics;
     @service currentUser!: CurrentUser;
     @service i18n!: I18N;
@@ -75,13 +69,7 @@ export default class NavbarAuthDropdown extends Component {
 
     @computed('router.currentURL')
     get signUpNext() {
-        return pathJoin(baseUrl, this.router.currentURL);
-    }
-
-    @computed('signUpURL', 'signUpNext')
-    get signUpRoute() {
-        return this.features.isEnabled(featureFlagNames.routes.register) ? 'register' :
-            `${this.signUpURL}?${param(this.signUpQueryParams)}`;
+        return pathJoin(baseUrl, cleanURL(this.router.currentURL));
     }
 
     @computed('router.currentRouteName', 'signUpNext')
@@ -124,12 +112,14 @@ export default class NavbarAuthDropdown extends Component {
         const query = this.redirectUrl ? `?${param({ next_url: this.redirectUrl })}` : '';
         window.location.href = `${config.OSF.url}logout/${query}`;
     }
+}
 
-    @action
-    _onLinkClicked(analyticsLabel: string) {
-        this.analytics.click('link', analyticsLabel);
-        if (this.onLinkClicked) {
-            this.onLinkClicked();
-        }
-    }
+/**
+ * Display the login dropdown on the navbar
+ *
+ * @class osf-navbar/auth-dropdown
+ */
+@layout(template, styles)
+@tagName('')
+export default class NavbarAuthDropdown extends AuthBase {
 }

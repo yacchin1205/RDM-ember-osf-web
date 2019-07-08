@@ -1,29 +1,65 @@
-import { faker, ModelInstance } from 'ember-cli-mirage';
+import { ModelInstance } from 'ember-cli-mirage';
 import config from 'ember-get-config';
+
 import User from 'ember-osf-web/models/user';
-import ApplicationSerializer, { SerializedLinks } from './application';
+
+import { randomGravatar } from '../utils';
+
+import ApplicationSerializer from './application';
 
 const { OSF: { apiUrl } } = config;
 
-export default class UserSerializer extends ApplicationSerializer {
-    links(model: ModelInstance<User>): SerializedLinks<User> {
+export default class UserSerializer extends ApplicationSerializer<User> {
+    buildRelationships(model: ModelInstance<User>) {
         return {
-            nodes: {
-                related: {
-                    href: `${apiUrl}/v2/users/${model.id}/nodes/`,
-                    meta: this.buildRelatedLinkMeta(model, 'nodes'),
+            emails: {
+                links: {
+                    related: {
+                        href: `${apiUrl}/v2/users/${model.id}/settings/emails/`,
+                    },
                 },
             },
-            quickfiles: {
-                related: {
-                    href: `${apiUrl}/v2/users/${model.id}/quickfiles/`,
-                    meta: this.buildRelatedLinkMeta(model, 'quickfiles'),
+            settings: {
+                links: {
+                    related: {
+                        href: `${apiUrl}/v2/users/${model.id}/settings/`,
+                    },
                 },
             },
             institutions: {
-                related: {
-                    href: `${apiUrl}/v2/users/${model.id}/institutions/`,
-                    meta: this.buildRelatedLinkMeta(model, 'institutions'),
+                links: {
+                    related: {
+                        href: `${apiUrl}/v2/users/${model.id}/institutions/`,
+                        meta: this.buildRelatedLinkMeta(model, 'institutions'),
+                    },
+                },
+            },
+            nodes: {
+                links: {
+                    related: {
+                        href: `${apiUrl}/v2/users/${model.id}/nodes/`,
+                        meta: this.buildRelatedLinkMeta(model, 'nodes'),
+                    },
+                },
+            },
+            quickfiles: {
+                links: {
+                    related: {
+                        href: `${apiUrl}/v2/users/${model.id}/quickfiles/`,
+                        meta: this.buildRelatedLinkMeta(model, 'quickfiles'),
+                    },
+                },
+            },
+            default_region: {
+                data: {
+                    type: 'regions',
+                    id: `${model.defaultRegion.id}`,
+                },
+                links: {
+                    related: {
+                        href: `${apiUrl}/v2/regions/${model.defaultRegion.id}/`,
+                        meta: {},
+                    },
                 },
             },
         };
@@ -31,8 +67,8 @@ export default class UserSerializer extends ApplicationSerializer {
 
     buildNormalLinks(model: ModelInstance<User>) {
         return {
-            self: `${apiUrl}/v2/users/${model.id}/`,
-            profile_image: `https://www.gravatar.com/avatar/${faker.random.uuid().replace(/-/g, '')}?d=identicon`,
+            ...super.buildNormalLinks(model),
+            profile_image: randomGravatar(),
         };
     }
 }

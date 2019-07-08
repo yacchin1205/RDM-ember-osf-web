@@ -1,24 +1,25 @@
-<a href="{{node.links.html}}"
-   onclick={{action 'click' 'link' 'Dashboard - visit_node' target=analytics}}
+<OsfLink
+    data-analytics-name='visit_node'
+    @href={{@node.links.html}}
 >
-    <div class="m-v-sm" local-class="DashboardItem">
-        <div class="row">
+    <div class='m-v-sm' local-class='DashboardItem'>
+        <div class='row'>
             <div>
-                <div class="col-sm-3 col-md-6 p-v-xs">
-                    <div local-class="DashboardItem__col" class="di-title">
-                        {{#each ancestry as |ancestorTitle|}}
-                            {{ancestorTitle}} /
-                        {{/each}}
-                        <strong data-test-dashboard-item-title>{{node.title}}</strong>
+                <div class='col-sm-3 col-md-6 p-v-xs'>
+                    <div local-class='DashboardItem__col' class='di-title'>
+                        <AncestryDisplay @node={{@node}} />
+                        <strong data-test-dashboard-item-title>{{@node.title}}</strong>
                     </div>
                 </div>
-                <div class="col-sm-3 col-md-3 p-v-xs">
-                    <div local-class="DashboardItem__col" class="di-contributors">{{contributor-list contributors=contributors}}</div>
+                <div class='col-sm-3 col-md-3 p-v-xs'>
+                    <div local-class='DashboardItem__col' class='di-contributors'>
+                        <ContributorList @node={{this.node}} />
+                    </div>
                 </div>
-                <div class="col-sm-3 col-md-3 p-v-xs">
-                    <div local-class="DashboardItem__col" class="di-date">{{date}}</div>
+                <div class='col-sm-3 col-md-3 p-v-xs'>
+                    <div local-class='DashboardItem__col' class='di-date'>{{this.date}}</div>
                 </div>
             </div>
         </div>
     </div>
-</a>
+</OsfLink>

@@ -1,26 +1,26 @@
-<div local-class='Top'>
-    <p local-class='Top__explanation'>
-        {{t 'settings.tokens.explanation'}}
-    </p>
+<div data-analytics-scope='Index'>
+    <div local-class='Top'>
+        <p local-class='Top__explanation'>
+            {{t 'settings.tokens.explanation'}}
+        </p>
+        <OsfLink
+            data-test-create-token-link
+            class='btn btn-primary'
+            @route='settings.tokens.create'
+        >
+            {{t 'settings.tokens.createToken'}}
+        </OsfLink>
+    </div>
 
-    {{#link-to
-        data-test-create-token-link
-        'settings.tokens.create'
-        class='btn btn-primary'
+    {{#paginated-list/all
+        modelName='token'
+        as |list|
     }}
-        {{t 'settings.tokens.createToken'}}
-    {{/link-to}}
+        {{#list.item as |token|}}
+            {{settings/tokens/-components/token-card
+                token=token
+                onDelete=list.doReload
+            }}
+        {{/list.item}}
+    {{/paginated-list/all}}
 </div>
-
-{{#paginated-list/all
-    modelName='token'
-    analyticsScope='Settings - Tokens'
-    as |list|
-}}
-    {{#list.item as |token|}}
-        {{settings/tokens/x-token-card
-            token=token
-            deleted=list.doReload
-        }}
-    {{/list.item}}
-{{/paginated-list/all}}

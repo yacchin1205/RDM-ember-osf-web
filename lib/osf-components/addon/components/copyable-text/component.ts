@@ -4,10 +4,13 @@ import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
 import { timeout } from 'ember-concurrency';
 
+import { layout } from 'ember-osf-web/decorators/component';
 import Analytics from 'ember-osf-web/services/analytics';
+import defaultTo from 'ember-osf-web/utils/default-to';
 import styles from './styles';
-import layout from './template';
+import template from './template';
 
+@layout(template, styles)
 @classNames('input-group')
 export default class CopyableText extends Component {
     // Required arguments
@@ -17,11 +20,10 @@ export default class CopyableText extends Component {
     analyticsLabel?: string;
     success?: () => void;
     error?: () => void;
+    disabled: boolean = defaultTo(this.disabled, false);
 
     // Private properties
     @service analytics!: Analytics;
-    layout = layout;
-    styles = styles;
 
     showTooltip: boolean = false;
 
@@ -29,6 +31,12 @@ export default class CopyableText extends Component {
     async _success() {
         if (this.analyticsLabel) {
             this.analytics.click('button', this.analyticsLabel);
+        } else {
+            this.analytics.trackFromElement(this.element, {
+                name: 'Copy text',
+                category: 'button',
+                action: 'click',
+            });
         }
         if (this.success) {
             this.success();

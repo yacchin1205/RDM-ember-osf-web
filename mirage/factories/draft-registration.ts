@@ -12,11 +12,11 @@ export default Factory.extend<DraftRegistration & DraftRegistrationTraits>({
     registrationSupplement: 'abcdefghijklmnopqrstuvwxyz',
 
     datetimeInitiated() {
-        return faker.date.recent(5);
+        return faker.date.past(1, new Date(2015, 0, 0));
     },
 
     datetimeUpdated() {
-        return faker.date.recent(5);
+        return faker.date.past(2, new Date(2018, 0, 0));
     },
 
     branchedFrom: association() as DraftRegistration['branchedFrom'],
@@ -27,11 +27,17 @@ export default Factory.extend<DraftRegistration & DraftRegistrationTraits>({
 
     registrationMetadata: {},
 
-    withRegistrationMetadata: trait({
-        afterCreate(draftRegistration: any) {
+    withRegistrationMetadata: trait<DraftRegistration>({
+        afterCreate(draftRegistration) {
             draftRegistration.update({
-                registrationMetadata: createRegistrationMetadata(draftRegistration.registrationSchema.schemaNoConflict),
+                registrationMetadata: createRegistrationMetadata(draftRegistration.registrationSchema),
             });
         },
     }),
 });
+
+declare module 'ember-cli-mirage/types/registries/schema' {
+    export default interface MirageSchemaRegistry {
+        draftRegistrations: DraftRegistration;
+    } // eslint-disable-line semi
+}

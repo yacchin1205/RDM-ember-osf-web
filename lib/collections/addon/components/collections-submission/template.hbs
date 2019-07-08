@@ -1,31 +1,12 @@
-{{#bs-modal
-    onSubmit=(action 'reset')
-    onHide=(action (mut this.showCancelDialog) false)
-    open=this.showCancelDialog
-    as |modal|
-}}
-    {{#modal.header}}
-        <h4 class="modal-title">
-            <i class="glyphicon glyphicon-alert"></i>
-            {{t (concat this.i18nKeyPrefix 'modal_header')}}
-        </h4>
-    {{/modal.header}}
-    {{#modal.body}}
-        {{t (concat this.i18nKeyPrefix 'modal_body')}}
-    {{/modal.body}}
-    {{#modal.footer}}
-        {{#bs-button onClick=(action modal.close) type='default'}}
-            {{t 'general.cancel'}}
-        {{/bs-button}}
-        {{#bs-button onClick=(action modal.submit) type='danger'}}
-            {{t 'general.ok'}}
-        {{/bs-button}}
-    {{/modal.footer}}
-{{/bs-modal}}
-<div class="submit-header" local-class="header">
+<CollectionSubmissionConfirmationModal 
+    @openModal={{this.showSubmitModal}}
+    @addToCollection={{action (perform this.save)}} 
+    @cancel={{action this.resetShowSubmitModal}}
+/>
+<div class='submit-header' local-class='header'>
     <h1>{{t (concat this.i18nKeyPrefix (if this.edit 'update' 'add') '_header')}}</h1>
 </div>
-<div local-class="body">
+<div local-class='body'>
     {{#submit-sections
         activeSection=this.activeSection
         savedSections=this.savedSections
@@ -40,7 +21,7 @@
         }}
             {{#section.active}}
                 {{collection-item-picker
-                    class="col-xs-12"
+                    class='col-xs-12'
                     collection=this.collection
                     projectSelected=(action 'projectSelected')
                     validationChanged=(action (mut this.isProjectSelectorValid))
@@ -49,7 +30,7 @@
             {{#section.complete}}
                 <p>
                     <em>{{t (concat this.i18nKeyPrefix 'project_select_project_label')}}</em>
-                    <span>{{collectionItem.title}}</span>
+                    <span>{{this.collectionItem.title}}</span>
                 </p>
             {{/section.complete}}
         {{/sections.section}}
@@ -69,7 +50,7 @@
                         continue=(action 'nextSection')
                     }}
                 {{else}}
-                    <div class="text-center">
+                    <div class='text-center'>
                         {{fa-icon 'spinner' pulse=true size=2}}
                     </div>
                 {{/if}}
@@ -90,7 +71,7 @@
                 <p>
                     <em>{{t (concat this.i18nKeyPrefix 'project_metadata_tags_label')}}</em>
                     {{#each this.collectionItem.tags as |tag|}}
-                        <div local-class="subject">{{tag}}</div>
+                        <div local-class='subject'>{{tag}}</div>
                     {{/each}}
                 </p>
             {{/section.complete}}
@@ -112,7 +93,7 @@
                 }}
             {{/section.active}}
             {{#section.complete}}
-                <p>{{contributor-list contributors=this.collectionItem.contributors}}</p>
+                <p>{{contributor-list node=this.collectionItem shouldTruncate=false}}</p>
             {{/section.complete}}
         {{/sections.section}}
 
@@ -128,21 +109,11 @@
                     id='subjects'
                     currentSubjects=this.collectedMetadatum.subjects
                     model=this.collectedMetadatum
-                    valuePath='subjects'
-                    didValidate=this.didValidate
                     continue=(action 'nextSection')
                 }}
             {{/section.active}}
             {{#section.complete}}
-                <div>
-                    {{#each this.collectedMetadatum.subjects as |subject|}}
-                        <div local-class="subject">
-                            {{#each subject as |segment|}}
-                                <span>{{segment.text}}</span>
-                            {{/each}}
-                        </div>
-                    {{/each}}
-                </div>
+                {{collection-subjects-list subjects=this.collectedMetadatum.displaySubjects onClickSubject=(action this.noop)}}
             {{/section.complete}}
         {{/sections.section}}
 
@@ -156,7 +127,6 @@
                 {{collection-metadata
                     collection=this.collection
                     collectedMetadatum=this.collectedMetadatum
-                    didValidate=this.didValidate
                     continue=(action 'nextSection')
                 }}
             {{/section.active}}
@@ -170,14 +140,20 @@
             {{/section.complete}}
         {{/sections.section}}
 
-        <section class="row" local-class="last-buttons">
-            <div class="col-xs-12 text-right">
-                <button class="btn btn-default" {{action 'cancel'}}>
+        <section class='row' local-class='last-buttons'>
+            <div class='col-xs-12 text-right'>
+                <button class='btn btn-default' {{action 'cancel'}}>
                     {{t (concat this.i18nKeyPrefix 'cancel')}}
                 </button>
-                <button class="btn btn-success" {{action (perform this.save)}} disabled={{not (eq this.activeSection this.sections.submit)}}>
-                    {{t (concat this.i18nKeyPrefix (if this.edit 'update' 'add') '_button')}}
-                </button>
+                {{#if this.edit}}
+                    <button class='btn btn-success' {{action (perform this.save)}}>
+                        {{t (concat this.i18nKeyPrefix 'update' '_button')}}
+                    </button>
+                {{else}}
+                    <button class='btn btn-success' {{action this.setShowSubmitModal}} disabled={{not (eq this.activeSection this.sections.submit)}}>
+                        {{t (concat this.i18nKeyPrefix 'add' '_button')}}
+                    </button>
+                {{/if}}
             </div>
         </section>
     {{/submit-sections}}

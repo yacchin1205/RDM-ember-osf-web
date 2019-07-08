@@ -9,6 +9,7 @@ const App = Application.extend({
     modulePrefix,
     Resolver,
 
+    // eslint-disable-next-line ember/avoid-leaking-state-in-ember-objects
     engines: {
         collections: {
             dependencies: {
@@ -26,6 +27,7 @@ const App = Application.extend({
                     'theme',
                     'toast',
                     'router',
+                    'ready',
                 ],
             },
         },
@@ -33,7 +35,10 @@ const App = Application.extend({
             dependencies: {
                 services: [
                     'analytics',
+                    'current-user',
+                    'features',
                     'i18n',
+                    'ready',
                     'router',
                     'store',
                     'toast',
@@ -48,15 +53,21 @@ const App = Application.extend({
                     'current-user',
                     'features',
                     'head-data',
+                    'meta-tags',
+                    'head-tags',
                     'i18n',
+                    'media',
                     'page-title-list',
+                    'ready',
                     'router',
                     'session',
                     'status-messages',
                     'store',
                 ],
                 externalRoutes: {
-                    registration: 'guid-registration',
+                    'guid-registration': 'guid-registration',
+                    'guid-registration.analytics': 'guid-registration.analytics',
+                    'guid-registration.forks': 'guid-registration.forks',
                 },
             },
         },
@@ -64,7 +75,6 @@ const App = Application.extend({
             dependencies: {
                 services: [
                     'i18n',
-                    'route-context',
                     'cookies',
                     'store',
                     'analytics',

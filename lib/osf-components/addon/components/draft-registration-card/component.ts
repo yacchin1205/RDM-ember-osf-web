@@ -5,21 +5,20 @@ import Component from '@ember/component';
 import { htmlSafe } from '@ember/string';
 import config from 'ember-get-config';
 
+import { layout } from 'ember-osf-web/decorators/component';
 import DraftRegistration from 'ember-osf-web/models/draft-registration';
 import { RegistrationMetadata } from 'ember-osf-web/models/registration-schema';
 import Analytics from 'ember-osf-web/services/analytics';
 import pathJoin from 'ember-osf-web/utils/path-join';
 
 import styles from './styles';
-import layout from './template';
+import template from './template';
 
 const { OSF: { url: baseURL } } = config;
 
+@layout(template, styles)
 @tagName('')
 export default class DraftRegistrationCard extends Component {
-    layout = layout;
-    styles = styles;
-
     @service analytics!: Analytics;
 
     // Required arguments
@@ -32,12 +31,12 @@ export default class DraftRegistrationCard extends Component {
     // Private properties
     deleteModalOpen = false;
 
-    @computed('draftRegistration.branchedFrom.id', 'draftRegistration.id')
+    @computed('draftRegistration.{branchedFrom.id,id}')
     get draftRegistrationUrl() {
         return pathJoin(baseURL, this.draftRegistration.branchedFrom.get('id'), 'drafts', this.draftRegistration.id);
     }
 
-    @computed('draftRegistration.registrationSchema', 'draftRegistration.registration_metadata')
+    @computed('draftRegistration.{registrationSchema,registrationMetadata}')
     get percentComplete() {
         let requiredQuestions = 0;
         let answeredRequiredQuestions = 0;
@@ -53,18 +52,23 @@ export default class DraftRegistrationCard extends Component {
             page.questions.forEach(question => {
                 if (question.type === 'object' && question.properties) {
                     question.properties.forEach(property => {
-                        if (property.required) {
-                            requiredQuestions++;
-                            if (question.qid in metadata) {
-                                const answers = metadata[question.qid] as RegistrationMetadata;
-                                if ('value' in answers) {
-                                    const value = answers.value as RegistrationMetadata;
-                                    if (value && property.id in value) {
-                                        const propertyValue = value[property.id].value;
-                                        if (Array.isArray(propertyValue) ? propertyValue.length : propertyValue) {
-                                            answeredRequiredQuestions++;
-                                        }
-                                    }
+                        if (!property.required) {
+                            return;
+                        }
+
+                        requiredQuestions++;
+
+                        if (!(question.qid in metadata)) {
+                            return;
+                        }
+
+                        const answers = metadata[question.qid];
+                        if ('value' in answers) {
+                            const value = answers.value as RegistrationMetadata;
+                            if (value && property.id in value) {
+                                const propertyValue = value[property.id].value;
+                                if (Array.isArray(propertyValue) ? propertyValue.length : propertyValue) {
+                                    answeredRequiredQuestions++;
                                 }
                             }
                         }
@@ -102,25 +106,21 @@ export default class DraftRegistrationCard extends Component {
 
     @action
     edit() {
-        this.analytics.click('button', 'Draft Registrations - Edit');
         window.location.assign(this.draftRegistrationUrl);
     }
 
     @action
     delete(this: DraftRegistrationCard) {
-        this.analytics.click('button', 'Draft Registrations - Delete');
         this.set('deleteModalOpen', true);
     }
 
     @action
     cancelDelete(this: DraftRegistrationCard) {
-        this.analytics.click('button', 'Draft Registrations - Cancel Delete');
         this.set('deleteModalOpen', false);
     }
 
     @action
     async confirmDelete(this: DraftRegistrationCard) {
-        this.analytics.click('button', 'Draft Registrations - Confirm Delete');
         this.set('deleteModalOpen', false);
         await this.draftRegistration.destroyRecord();
         if (this.onDelete) {
@@ -130,7 +130,6 @@ export default class DraftRegistrationCard extends Component {
 
     @action
     register() {
-        this.analytics.click('button', 'Draft Registrations - Register');
         window.location.assign(pathJoin(this.draftRegistrationUrl, 'register'));
     }
 }

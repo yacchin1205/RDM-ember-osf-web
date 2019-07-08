@@ -4,14 +4,14 @@ module.exports = {
         additionalHtml: true,
     },
     root: true,
-    parser: 'typescript-eslint-parser',
+    parser: '@typescript-eslint/parser',
     parserOptions: {
         ecmaVersion: 2017,
         sourceType: 'module',
     },
     extends: '@centerforopenscience/eslint-config/ember',
     plugins: [
-        'typescript',
+        '@typescript-eslint',
     ],
     env: {
         browser: true,
@@ -35,8 +35,15 @@ module.exports = {
         'ember/new-module-imports': 'error',
         'ember/no-attrs-in-components': 'error',
         'ember/no-old-shims': 'error',
+        'import/export': 'off',
         'import/prefer-default-export': 'off',
         'no-restricted-globals': 'off',
+        'space-before-function-paren': ['error', {
+            anonymous: 'never',
+            named: 'never',
+            asyncArrow: 'always',
+        }],
+        'no-underscore-dangle': 'off',
     },
     overrides: [
         {
@@ -60,6 +67,7 @@ module.exports = {
             rules: {
                 'no-useless-constructor': 'off',
                 'space-infix-ops': 'off',
+                'no-shadow': 'off',
             },
         },
         {
@@ -72,6 +80,26 @@ module.exports = {
             files: ['tests/**/*'],
             rules: {
                 'no-await-in-loop': 'off',
+                'ember/avoid-leaking-state-in-components': 'off',
+                'ember/avoid-leaking-state-in-ember-objects': 'off',
+            },
+        },
+        {
+            files: ['mirage/**/*'],
+            rules: {
+                'ember/avoid-leaking-state-in-ember-objects': 'off',
+            },
+        },
+        {
+            files: ['lib/*/index.js'],
+            rules: {
+                'ember/avoid-leaking-state-in-ember-objects': 'off',
+            },
+        },
+        {
+            files: ['lib/*/addon/engine.js'],
+            rules: {
+                'ember/avoid-leaking-state-in-ember-objects': 'off',
             },
         },
     ],

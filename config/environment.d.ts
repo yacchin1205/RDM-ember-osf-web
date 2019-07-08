@@ -21,7 +21,9 @@ declare const config: {
     organization: string;
     environment: any;
     lintOnBuild: boolean;
+    testsEnabled: boolean;
     sourcemapsEnabled: boolean;
+    showDevBanner: boolean;
     modulePrefix: string;
     locationType: string;
     rootURL: string;
@@ -79,6 +81,7 @@ declare const config: {
         apiUrl: string;
         apiVersion: string;
         apiHeaders: { [k: string]: string };
+        learnMoreUrl: string;
         renderUrl: string;
         waterbutlerUrl: string;
         helpUrl: string;
@@ -102,8 +105,15 @@ declare const config: {
             authSession: string;
             joinBannerDismissed: string;
         };
-        orcidClientId?: string;
         casUrl: string;
+        analyticsAttrs: {
+            name: string;
+            scope: string;
+            category: string;
+            extra: string;
+            action: string;
+        };
+        doiUrlPrefix: string;
         simplePage: boolean;
         projectAffiliate: boolean;
     };
@@ -153,7 +163,12 @@ declare const config: {
         navigation: {
             institutions: string;
         };
+        ABTesting: {
+            homePageVersionB: string;
+        };
         storageI18n: string;
+        enableInactiveSchemas: string;
+        verifyEmailModals: string;
     };
     gReCaptcha: {
         siteKey: string;
@@ -182,9 +197,12 @@ declare const config: {
             turnAuditOff: boolean,
         },
     };
-    'ember-cli-mirage'?: {
+    'ember-cli-mirage': {
         enabled: boolean;
     };
+
+    mirageScenarios: string[];
+
     engines: {
         collections: {
             enabled: boolean;
@@ -202,6 +220,10 @@ declare const config: {
     };
 
     defaultProvider: string;
+
+    pageTitle: {
+        prepend: boolean;
+    };
 };
 
 export default config;

@@ -1,15 +1,28 @@
-{{#if (not session.isAuthenticated) }}
+{{#if (not this.session.isAuthenticated) }}
     <li class='sign-in'>
         <div>
             {{#if useNavSignUp}}
-            {{#hyper-link this.signUpRoute queryParams=this.signUpQueryParams class='btn btn-success btn-top-signup m-l-sm m-r-xs' analyticsLabel='Navbar - SignUp' testSelectorVal='sign-up-button'}}
+            <OsfLink
+                data-test-ad-sign-up-button
+                data-analytics-name='SignUp'
+                class='btn btn-success btn-top-signup m-l-sm m-r-xs'
+                @route='register'
+                @queryParams={{this.signUpQueryParams}}
+            >
                 {{t 'auth_dropdown.sign_up'}}
-            {{/hyper-link}}
+            </OsfLink>
             {{/if}}
             {{#if (not useNavEmbeddedDS)}}
-            <a {{action 'login'}} data-test-sign-in-button onclick={{action 'click' 'button' 'Navbar - SignIn' target=analytics}} class="btn btn-info btn-top-login m-r-xs" role="button">
+            <OsfButton
+                data-test-sign-in-button
+                data-analytics-name='SignIn'
+                class='btn-top-login'
+                @onClick={{action this.login}}
+                @size='xs'
+                @type='info'
+            >
                 {{t 'auth_dropdown.sign_in'}}
-            </a>
+            </OsfButton>
             {{else}}
             <div id='embDS' />
             {{embedded-ds 'embDS'}}
@@ -17,54 +30,82 @@
         </div>
     </li>
 {{else}}
-    {{#bs-dropdown tagName='li' classNames='dropdown secondary-nav-dropdown' as |dd|}}
-        {{#dd.toggle classNames='btn-link'}}
-            <div class="osf-profile-image">
-                <img src="{{user.profileImage}}&s=25" alt="{{t 'auth_dropdown.user_gravatar'}}">
+    <BsDropdown
+        data-test-auth-dropdown
+        local-class='DropdownContainer'
+        @tagName='li'
+        @classNames='dropdown secondary-nav-dropdown'
+        as |dd| 
+    >
+        <dd.toggle @classNames='btn-link'>
+            <div class='osf-profile-image'>
+                <img src='{{this.user.profileImage}}&s=25' alt='{{t 'auth_dropdown.user_gravatar'}}'>
             </div>
-            <div class='nav-profile-name'>{{user.fullName}}</div>
-            <span class="caret"></span>
-        {{/dd.toggle}}
+            <div class='nav-profile-name'>{{this.user.fullName}}</div>
+            <span class='caret'></span>
+        </dd.toggle>
 
-        {{#dd.menu classNames='auth-dropdown' local-class='AuthDropdown' as |ddm|}}
-            {{#if headline}}
-                {{#ddm.item (html-attributes role='none') local-class='Headline'}}
-                    {{headline}}
-                {{/ddm.item}}
+        <dd.menu
+            @classNames='auth-dropdown'
+            local-class='AuthDropdown'
+            as |ddm|
+        >
+            {{#if @headline}}
+                <ddm.item role='none' local-class='Headline'>
+                    {{@headline}}
+                </ddm.item>
             {{/if}}
-            {{#ddm.item (html-attributes role='menuitem')}}
-                <a href="{{profileURL}}" onclick={{action '_onLinkClicked' 'Navbar - MyProfile'}}>
-                    <i class="fa fa-user fa-lg p-r-xs"></i>
+            <ddm.item role='menuitem'>
+                <OsfLink
+                    data-test-ad-my-profile
+                    data-analytics-name='MyProfile'
+                    @href={{this.profileURL}}
+                >
+                    <i class='fa fa-user fa-lg p-r-xs'></i>
                     {{t 'auth_dropdown.my_profile'}}
-                </a>
-            {{/ddm.item}}
+                </OsfLink>
+            </ddm.item>
             {{#if (or useNavSupport useNavGlobalSupport)}}
-            {{#ddm.item (html-attributes role='menuitem')}}
+            <ddm.item role='menuitem'>
                 {{#if replaceGlobalSupportUrl}}
                 <a href="{{globalSupportURL}}" onclick={{action '_onLinkClicked' 'Navbar - Support'}} target="{{globalSupportTarget}}">
                     <i class="fa fa-life-ring fa-lg p-r-xs"></i>
                     {{t 'auth_dropdown.osf_support'}}
                 </a>
                 {{else}}
-                {{#global-link-to 'support' click=(action '_onLinkClicked' 'Navbar - Support')}}
-                    <i class="fa fa-life-ring fa-lg p-r-xs"></i>
+                <OsfLink
+                    data-test-ad-support
+                    data-analytics-name='Support'
+                    @route='support'
+                >
+                    <i class='fa fa-life-ring fa-lg p-r-xs'></i>
                     {{t 'auth_dropdown.osf_support'}}
-                {{/global-link-to}}
+                </OsfLink>
                 {{/if}}
-            {{/ddm.item}}
+            </ddm.item>
             {{/if}}
-            {{#ddm.item (html-attributes role='menuitem')}}
-                <a href="{{settingsURL}}" onclick={{action '_onLinkClicked' 'Navbar - Settings'}}>
-                    <i class="fa fa-cog fa-lg p-r-xs"></i>
+            <ddm.item role='menuitem'>
+                <OsfLink
+                    data-test-ad-settings
+                    data-analytics-name='Settings'
+                    @href={{this.settingsURL}}
+                >
+                    <i class='fa fa-cog fa-lg p-r-xs'></i>
                     {{t 'general.settings'}}
-                </a>
-            {{/ddm.item}}
-            {{#ddm.item (html-attributes role='menuitem')}}
-                <a class="logoutLink" role="button" {{action 'logout'}} {{action '_onLinkClicked' 'Navbar - Logout'}}>
-                    <i class="fa fa-sign-out fa-lg p-r-xs"></i>
+                </OsfLink>
+            </ddm.item>
+            <ddm.item role='menuitem'>
+                <OsfButton
+                    data-test-ad-logout
+                    data-analytics-name='Logout'
+                    class='logoutLink'
+                    @type='link'
+                    @onClick={{action 'logout'}}
+                >
+                    <i class='fa fa-sign-out fa-lg p-r-xs'></i>
                     {{t 'auth_dropdown.log_out'}}
-                </a>
-            {{/ddm.item}}
-        {{/dd.menu}}
-    {{/bs-dropdown}}
+                </OsfButton>
+            </ddm.item>
+        </dd.menu>
+    </BsDropdown>
 {{/if}}

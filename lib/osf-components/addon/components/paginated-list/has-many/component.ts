@@ -1,14 +1,16 @@
 import { or } from '@ember-decorators/object/computed';
 import { assert } from '@ember/debug';
 import { defineProperty } from '@ember/object';
-import { alias as aliasMacro } from '@ember/object/computed';
+import { reads as readsMacro } from '@ember/object/computed';
 import { task, TaskInstance } from 'ember-concurrency';
 
+import { layout } from 'ember-osf-web/decorators/component';
 import OsfModel from 'ember-osf-web/models/osf-model';
 import defaultTo from 'ember-osf-web/utils/default-to';
 import BaseDataComponent, { LoadItemsOptions } from '../base-data-component';
-import layout from './template';
+import template from './template';
 
+@layout(template)
 export default class PaginatedHasMany extends BaseDataComponent {
     // Required arguments
     relationshipName!: string;
@@ -21,9 +23,6 @@ export default class PaginatedHasMany extends BaseDataComponent {
     usePlaceholders: boolean = defaultTo(this.usePlaceholders, true);
 
     // Private properties
-    layout = layout;
-
-    // Tasks assigned to prototype below
     loadItemsTask = task(function *(this: PaginatedHasMany, { reloading }: LoadItemsOptions) {
         const model = yield this.get('getModelTask').perform();
         if (this.usePlaceholders) {
@@ -81,7 +80,7 @@ export default class PaginatedHasMany extends BaseDataComponent {
         defineProperty(
             this,
             'totalCount',
-            aliasMacro(`modelInstance.relatedCounts.${this.relationshipName}`),
+            readsMacro(`modelInstance.relatedCounts.${this.relationshipName}`),
         );
     }
 }

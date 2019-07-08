@@ -6,7 +6,7 @@ If you see anything you'd like to add or correct, just make a pull request!
 ## Editing a handbook page
 Click "Edit this page" at the bottom of any handbook page to edit and submit a PR on GitHub.
 
-Try it out on the {{#link-to 'docs.troubleshooting'}}troubleshooting page{{/link-to}} next
+Try it out on the <OsfLink @route='docs.troubleshooting'>troubleshooting page</OsfLink> next
 time you work through a problem.
 
 ## Running the handbook locally
@@ -14,11 +14,12 @@ See [the README](https://github.com/CenterForOpenScience/ember-osf-web#developer
 to enable the handbook at [localhost:4200/handbook](http://localhost:4200/handbook)
 
 ## Adding a component to the gallery
-1. Use `ember g handbook-component my-component` to add a route:
+1. Use `ember g handbook-component my-component` to add a route and demo component:
     ```
     lib/handbook/addon/docs/components/my-component/
-    ├── demo
-    │   └── template.hbs
+    ├── -components
+    │   └── demo
+    │       └── template.hbs
     └── template.md
     ```
 1. Describe the component and its usage in `template.md`.

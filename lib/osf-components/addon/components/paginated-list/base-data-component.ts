@@ -1,6 +1,7 @@
 import { action } from '@ember-decorators/object';
 import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
+import ComputedProperty from '@ember/object/computed';
 import { task, Task } from 'ember-concurrency';
 
 import Analytics from 'ember-osf-web/services/analytics';
@@ -33,10 +34,8 @@ export default abstract class BaseDataComponent extends Component.extend({
     }).restartable(),
 }) {
     // Optional arguments
-    page: number = defaultTo(this.page, 1);
     pageSize: number = defaultTo(this.pageSize, 10);
     query?: any;
-    analyticsScope?: string;
 
     // Exposes a reload action the the parent scope.
     // Usage: `bindReload=(action (mut this.reload))`, then call `this.reload()` to trigger a reload
@@ -51,12 +50,12 @@ export default abstract class BaseDataComponent extends Component.extend({
     totalCount?: number;
     items?: any[];
     errorShown: boolean = false;
+    page: number = 1;
 
     // Will be performed with an options hash of type LoadItemsOptions
-    abstract loadItemsTask: Task<void>;
+    abstract loadItemsTask: ComputedProperty<Task<void>>;
 
-    constructor(...args: any[]) {
-        super(...args);
+    didReceiveAttrs() {
         if (this.bindReload) {
             this.bindReload(this._doReload.bind(this));
         }
@@ -71,18 +70,12 @@ export default abstract class BaseDataComponent extends Component.extend({
 
     @action
     next(this: BaseDataComponent) {
-        if (this.analyticsScope) {
-            this.analytics.click('button', `${this.analyticsScope} - Pagination Next`);
-        }
         this.incrementProperty('page');
         this.loadItemsWrapperTask.perform({ reloading: false });
     }
 
     @action
     previous(this: BaseDataComponent) {
-        if (this.analyticsScope) {
-            this.analytics.click('button', `${this.analyticsScope} - Pagination Previous`);
-        }
         this.decrementProperty('page');
         this.loadItemsWrapperTask.perform({ reloading: false });
     }

@@ -1,3 +1,9 @@
-{{node-navbar node=model.taskInstance.value}}
-{{outlet}}
-{{join-osf-banner}}
+{{#unless this.model.taskInstance.isRunning}}
+    <NodeNavbar
+        @node={{this.model.taskInstance.value}}
+    />
+{{/unless}}
+<div data-analytics-scope='Node'>
+    {{outlet}}
+</div>
+<JoinOsfBanner />

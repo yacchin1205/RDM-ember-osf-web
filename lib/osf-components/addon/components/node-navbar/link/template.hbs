@@ -1,17 +1,26 @@
-{{#if useLinkTo}}
-    {{#link-to routeName nodeId class=extraClasses}}
+{{#if this.useLinkTo}}
+    <OsfLink
+        data-test-node-navbar-link={{or @destination @node.id}}
+        class={{this.extraClasses}}
+        @route={{this.routeName}}
+        @models={{array @node.id}}
+    >
         {{#if (has-block)}}
             {{yield}}
         {{else}}
-            {{t translatingKey}}
+            {{t this.translatingKey}}
         {{/if}}
-    {{/link-to}}
+    </OsfLink>
 {{else}}
-    <a href="/{{nodeId}}/{{destination}}" class="{{extraClasses}}">
+    <OsfLink
+        data-test-node-navbar-link={{or @destination @node.id}}
+        class={{this.extraClasses}}
+        @href='/{{@node.id}}/{{@destination}}'
+    >
         {{#if (has-block)}}
             {{yield}}
         {{else}}
-            {{t translatingKey}}
+            {{t this.translatingKey}}
         {{/if}}
-    </a>
+    </OsfLink>
 {{/if}}

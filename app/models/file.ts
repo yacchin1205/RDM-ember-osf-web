@@ -1,25 +1,31 @@
 import { attr, belongsTo, hasMany } from '@ember-decorators/data';
 import DS from 'ember-data';
+import { Link } from 'jsonapi-typescript';
+
+import getHref from 'ember-osf-web/utils/get-href';
 
 import BaseFileItem from './base-file-item';
-import Comment from './comment';
-import FileVersion from './file-version';
-import Node from './node';
-import User from './user';
+import CommentModel from './comment';
+import FileVersionModel from './file-version';
+import NodeModel from './node';
+import { OsfLinks } from './osf-model';
+import UserModel from './user';
 
-/**
- * @module ember-osf-web
- * @submodule models
- */
+export interface FileLinks extends OsfLinks {
+    info: Link;
+    move: Link;
+    upload: Link;
+    delete: Link;
 
-/**
- * Model for OSF APIv2 files. This model may be used with one of several API endpoints. It may be queried directly,
- *  or (more commonly) accessed via relationship fields.
- * This model is used for basic file metadata. To interact with file contents directly, see the `file-manager` service.
- *
- * @class File
- */
-export default class File extends BaseFileItem {
+    // only for files
+    download?: Link;
+
+    // only for folders
+    new_folder?: Link; // eslint-disable-line camelcase
+}
+
+export default class FileModel extends BaseFileItem {
+    @attr() links!: FileLinks;
     @attr('fixstring') name!: string;
     @attr('fixstring') guid!: string;
     @attr('string') path!: string;
@@ -34,17 +40,26 @@ export default class File extends BaseFileItem {
     @attr('fixstringarray') tags!: string[];
     @attr('fixstring') checkout!: string;
 
-    @belongsTo('file', { inverse: 'files' }) parentFolder!: DS.PromiseObject<File> & File;
+    @belongsTo('file', { inverse: 'files' })
+    parentFolder!: DS.PromiseObject<FileModel> & FileModel;
 
     // Folder attributes
-    @hasMany('file', { inverse: 'parentFolder' }) files!: DS.PromiseManyArray<File>;
+    @hasMany('file', { inverse: 'parentFolder' })
+    files!: DS.PromiseManyArray<FileModel>;
 
     // File attributes
-    @hasMany('file-version') versions!: DS.PromiseManyArray<FileVersion>;
-    @hasMany('comment', { inverse: null }) comments!: DS.PromiseManyArray<Comment>;
+    @hasMany('file-version')
+    versions!: DS.PromiseManyArray<FileVersionModel>;
+
+    @hasMany('comment', { inverse: null })
+    comments!: DS.PromiseManyArray<CommentModel>;
+
     // TODO: In the future apiv2 may also need to support this pointing at nodes OR registrations
-    @belongsTo('node') node!: DS.PromiseObject<Node> & Node;
-    @belongsTo('user') user!: DS.PromiseObject<User> & User;
+    @belongsTo('node')
+    node!: DS.PromiseObject<NodeModel> & NodeModel;
+
+    @belongsTo('user')
+    user!: DS.PromiseObject<UserModel> & UserModel;
 
     // BaseFileItem override
     isFileModel = true;
@@ -53,20 +68,23 @@ export default class File extends BaseFileItem {
 
     flash: object | null = null;
 
-    getContents(this: File): Promise<object> {
-        return this.currentUser.authenticatedAJAX({
-            url: this.links.download,
-            type: 'GET',
-            data: {
-                direct: true,
-                mode: 'render',
-            },
-        });
+    getContents(): Promise<object> {
+        if (this.isFile) {
+            return this.currentUser.authenticatedAJAX({
+                url: getHref(this.links.download!),
+                type: 'GET',
+                data: {
+                    direct: true,
+                    mode: 'render',
+                },
+            });
+        }
+        return Promise.reject(Error('Can only get the contents of files.'));
     }
 
-    async rename(this: File, newName: string, conflict = 'replace'): Promise<void> {
+    async rename(newName: string, conflict = 'replace'): Promise<void> {
         const { data } = await this.currentUser.authenticatedAJAX({
-            url: this.links.upload,
+            url: getHref(this.links.upload),
             type: 'POST',
             xhrFields: {
                 withCredentials: true,
@@ -84,9 +102,9 @@ export default class File extends BaseFileItem {
         this.set('name', data.attributes.name);
     }
 
-    getGuid(this: File): Promise<any> {
+    getGuid(): Promise<any> {
         return this.store.findRecord(
-            (this.constructor as typeof File).modelName,
+            (this.constructor as typeof FileModel).modelName,
             this.id,
             {
                 reload: true,
@@ -99,18 +117,18 @@ export default class File extends BaseFileItem {
         );
     }
 
-    updateContents(this: File, data: string): Promise<null> {
+    updateContents(data: string): Promise<null> {
         return this.currentUser.authenticatedAJAX({
-            url: this.links.upload,
+            url: getHref(this.links.upload),
             type: 'PUT',
             xhrFields: { withCredentials: true },
             data,
         }).then(() => this.reload());
     }
 
-    move(this: File, node: Node): Promise<null> {
+    move(node: NodeModel): Promise<null> {
         return this.currentUser.authenticatedAJAX({
-            url: this.links.move,
+            url: getHref(this.links.move),
             type: 'POST',
             xhrFields: { withCredentials: true },
             headers: {
@@ -125,8 +143,8 @@ export default class File extends BaseFileItem {
     }
 }
 
-declare module 'ember-data' {
-    interface ModelRegistry {
-        'file': File;
-    }
+declare module 'ember-data/types/registries/model' {
+    export default interface ModelRegistry {
+        file: FileModel;
+    } // eslint-disable-line semi
 }

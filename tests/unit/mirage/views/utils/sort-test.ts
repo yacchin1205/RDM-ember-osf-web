@@ -7,7 +7,7 @@ import {
     dynamicSort,
     ProcessOptions,
     sort,
-} from 'ember-osf-web/mirage/views/private/utils';
+} from 'ember-osf-web/mirage/views/utils/-private';
 
 function fakeRequest(queryParams: { [key: string]: string }): Request {
     return {
@@ -15,6 +15,7 @@ function fakeRequest(queryParams: { [key: string]: string }): Request {
         url: '',
         params: {},
         queryParams,
+        method: '',
     };
 }
 

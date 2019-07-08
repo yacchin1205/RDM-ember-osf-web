@@ -1,0 +1,12 @@
+.Scope {
+    display: flex;
+
+    input {
+        margin-right: 10px;
+        flex-shrink: 0;
+    }
+}
+
+.Scope__description {
+    font-weight: normal;
+}

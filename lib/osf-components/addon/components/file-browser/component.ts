@@ -6,23 +6,24 @@ import MutableArray from '@ember/array/mutable';
 import Component from '@ember/component';
 import { next } from '@ember/runloop';
 import { task } from 'ember-concurrency';
+import { localClassNames } from 'ember-css-modules';
 import DS from 'ember-data';
 import I18N from 'ember-i18n/services/i18n';
 import Toast from 'ember-toastr/services/toast';
 import $ from 'jquery';
 
-import { localClassNames } from 'ember-osf-web/decorators/css-modules';
-import requiredAction from 'ember-osf-web/decorators/required-action';
+import { layout, requiredAction } from 'ember-osf-web/decorators/component';
 import File from 'ember-osf-web/models/file';
 import Node from 'ember-osf-web/models/node';
 import Analytics from 'ember-osf-web/services/analytics';
 import CurrentUser from 'ember-osf-web/services/current-user';
 import Ready from 'ember-osf-web/services/ready';
 import defaultTo from 'ember-osf-web/utils/default-to';
+import getHref from 'ember-osf-web/utils/get-href';
 import pathJoin from 'ember-osf-web/utils/path-join';
 import { ProjectSelectState } from 'osf-components/components/project-selector/component';
 import styles from './styles';
-import layout from './template';
+import template from './template';
 
 enum modals {
     None = '',
@@ -31,6 +32,7 @@ enum modals {
     DeleteMultiple = 'deleteMultiple',
     RenameConflict = 'renameConflict',
     Move = 'move',
+    MoveToNew = 'moveToNew',
     SuccessMove = 'successMove',
 }
 
@@ -45,11 +47,9 @@ enum modals {
  * ```
  * @class file-browser
  */
+@layout(template, styles)
 @localClassNames('file-browser')
 export default class FileBrowser extends Component {
-    layout = layout;
-    styles = styles;
-
     @service analytics!: Analytics;
     @service currentUser!: CurrentUser;
     @service i18n!: I18N;
@@ -65,7 +65,8 @@ export default class FileBrowser extends Component {
 
     clickHandler?: JQuery.EventHandlerBase<HTMLElement, JQuery.Event>;
     dismissPop?: () => void;
-    canEdit?: boolean;
+    canEdit: boolean = defaultTo(this.canEdit, false);
+    dropping: boolean = false;
     showRename: boolean = false;
     renameValue: string = '';
     multiple = true;
@@ -90,6 +91,8 @@ export default class FileBrowser extends Component {
     shiftAnchor: File | null = null;
     isNewProject?: boolean;
     isChildNode?: boolean;
+    isProjectSelectorValid: boolean = false;
+    sort: string = '';
 
     dropzoneOptions = {
         createImageThumbnails: false,
@@ -109,11 +112,11 @@ export default class FileBrowser extends Component {
             isMoving: true,
         });
 
-        const selectedItem = this.selectedItems.get('firstObject');
+        const selectedItem = this.selectedItems.firstObject;
         const isNewProject = !!this.node && !!this.node.isNew;
-        const isChildNode = !!this.node && !!this.node.links && !!this.node.links.relationships.parent;
+        const isChildNode = !!this.node && !!this.node.links && !!this.node.links.relationships!.parent;
 
-        const moveSuccess: boolean = yield this.moveFile(selectedItem as File, this.node);
+        const moveSuccess: boolean = yield this.moveFile(selectedItem as unknown as File, this.node);
 
         let successPropertyUpdates = {};
 
@@ -123,6 +126,7 @@ export default class FileBrowser extends Component {
                 isNewProject,
                 isChildNode,
                 projectSelectState: ProjectSelectState.main,
+                isProjectSelectorValid: false,
             };
         }
 
@@ -147,7 +151,7 @@ export default class FileBrowser extends Component {
 
     @computed('selectedItems.firstObject.guid')
     get link(): string | undefined {
-        const { guid } = this.selectedItems.get('firstObject') as File;
+        const { guid } = this.selectedItems.firstObject as unknown as File;
         return guid ? pathJoin(window.location.origin, guid) : undefined;
     }
 
@@ -180,7 +184,7 @@ export default class FileBrowser extends Component {
 
         const dismissPop = () => !this.isDestroyed && this.setProperties({ popupOpen: false });
 
-        const clickHandler: JQuery.EventHandlerBase<HTMLElement, JQuery.Event> = (e: JQuery.Event): void => {
+        const clickHandler: JQuery.EventHandlerBase<HTMLElement, JQuery.Event> = (e: JQuery.TriggeredEvent): void => {
             const { target } = e;
             const targetClass = $(target as Element).attr('class');
 
@@ -215,7 +219,6 @@ export default class FileBrowser extends Component {
             renameValue: '',
             showRename: false,
         });
-        this.analytics.click('button', 'Quick Files - Cancel file rename');
     }
 
     @action
@@ -224,7 +227,6 @@ export default class FileBrowser extends Component {
             showFilterClicked: false,
             filter: '',
         });
-        this.analytics.click('button', 'Quick Files - Close filter');
     }
 
     // dropzone listeners
@@ -281,7 +283,7 @@ export default class FileBrowser extends Component {
                 return;
             }
 
-            const otherItem = this.selectedItems.get('firstObject') as File;
+            const otherItem = this.selectedItems.firstObject as unknown as File;
             otherItem.set('isSelected', false);
         }
 
@@ -331,7 +333,7 @@ export default class FileBrowser extends Component {
 
     @action
     viewItem() {
-        const item = this.selectedItems.get('firstObject') as File;
+        const item = this.selectedItems.firstObject as unknown as File;
         this.openFile(item, 'view');
     }
 
@@ -342,7 +344,12 @@ export default class FileBrowser extends Component {
 
     @action
     downloadItem() {
-        window.location.href = (this.selectedItems.get('firstObject') as File).links.download;
+        const file = this.selectedItems.firstObject as unknown as File;
+        // TODO: Make this a link that looks like a button
+        window.location.href = getHref(file.links.download!);
+        if (!this.canEdit) {
+            this.analytics.click('button', 'Quick Files - Download');
+        }
     }
 
     @action
@@ -360,7 +367,7 @@ export default class FileBrowser extends Component {
     @action
     renameConflict(this: FileBrowser, conflict: string): void {
         const { renameValue, conflictingItem } = this;
-        const selectedItem = this.selectedItems.get('firstObject') as File;
+        const selectedItem = this.selectedItems.firstObject as unknown as File;
 
         this.setProperties({
             currentModal: modals.None,
@@ -376,7 +383,6 @@ export default class FileBrowser extends Component {
             renameValue: '',
             showRename: false,
         });
-        this.analytics.click('button', `Quick Files - Resolve rename conflict - ${conflict}`);
     }
 
     @action
@@ -384,7 +390,7 @@ export default class FileBrowser extends Component {
         this.analytics.track('file', 'rename', 'Quick Files - Rename file');
 
         const { renameValue } = this;
-        const selectedItem = this.selectedItems.get('firstObject') as File;
+        const selectedItem = this.selectedItems.firstObject as unknown as File;
         const conflictingItem = this.items ? this.items
             .find(item => item.itemName === renameValue) : null;
 
@@ -416,16 +422,14 @@ export default class FileBrowser extends Component {
     }
 
     @action
-    copyLink(this: FileBrowser) {
+    openSharePopup(this: FileBrowser) {
         this.set('popupOpen', true);
-
-        this.analytics.click('button', 'Quick Files - Copy share link');
 
         if (this.link) {
             return;
         }
 
-        (this.selectedItems.get('firstObject') as File).getGuid();
+        (this.selectedItems.firstObject as unknown as File).getGuid();
     }
 
     @action
@@ -433,6 +437,28 @@ export default class FileBrowser extends Component {
         this.setProperties({
             projectSelectState: ProjectSelectState.main,
             currentModal: modals.None,
+            isProjectSelectorValid: false,
         });
+    }
+
+    @action
+    projectSelected(this: FileBrowser, node: Node) {
+        this.set('node', node);
+    }
+
+    @action
+    moveToNewProject(this: FileBrowser) {
+        this.set('currentModal', modals.MoveToNew);
+    }
+
+    @action
+    afterStay(this: FileBrowser) {
+        this.set('currentModal', modals.None);
+    }
+
+    @action
+    projectCreated(this: FileBrowser, node: Node) {
+        this.set('node', node);
+        this.get('moveToProject').perform();
     }
 }

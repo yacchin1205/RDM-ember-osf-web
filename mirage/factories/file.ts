@@ -1,12 +1,13 @@
 import { Factory, faker } from 'ember-cli-mirage';
 import File from 'ember-osf-web/models/file';
 
-import { guid } from './utils';
+import { guid, guidAfterCreate } from './utils';
 
 export default Factory.extend<File>({
-    id(i: number) {
-        return guid(i, 'file');
-    },
+    id: guid('file'),
+    guid: guid('file'),
+    afterCreate: guidAfterCreate,
+
     name() {
         return faker.system.commonFileName(faker.system.commonFileExt(), faker.system.commonFileType());
     },
@@ -20,19 +21,16 @@ export default Factory.extend<File>({
     // kind: 'file',
     // currentUserCanComment: true,
     lastTouched() {
-        return faker.date.past(5);
+        return faker.date.past(2, new Date(2018, 0, 0));
     },
     materializedPath(): string {
         return `/${faker.system.commonFileName(faker.system.commonFileExt(), faker.system.commonFileType())}`;
     },
     dateModified() {
-        return faker.date.recent();
+        return faker.date.past(2, new Date(2018, 0, 0));
     },
     dateCreated() {
-        return faker.date.past(5);
-    },
-    guid(i: number) {
-        return guid(i, 'file');
+        return faker.date.past(1, new Date(2016, 0, 0));
     },
     currentVersion() {
         return faker.random.number(200);
@@ -49,3 +47,9 @@ export default Factory.extend<File>({
         return faker.random.number(1000000000);
     },
 });
+
+declare module 'ember-cli-mirage/types/registries/schema' {
+    export default interface MirageSchemaRegistry {
+        files: File;
+    } // eslint-disable-line semi
+}

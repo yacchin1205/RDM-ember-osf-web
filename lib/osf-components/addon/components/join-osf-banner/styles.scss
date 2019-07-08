@@ -10,6 +10,21 @@
     animation-delay: 2s;
     animation-fill-mode: both;
     animation-duration: 1s;
+
+    button,
+    button:active,
+    button:focus,
+    button:focus:active,
+    button:hover {
+        appearance: none;
+        outline: none;
+        border: 0;
+        background: transparent;
+        font-size: large;
+        height: 29px;
+        padding: 0 0 0 0.7em;
+        color: $color-text-gray-light;
+    }
 }
 
 .JoinOsfBanner--collapsed {

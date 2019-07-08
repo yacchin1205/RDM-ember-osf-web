@@ -21,17 +21,23 @@ const {
     CLIENT_ID: clientId,
     ENABLED_LOCALES = 'en, en-US',
     COLLECTIONS_ENABLED = false,
-    REGISTRIES_ENABLED = false,
+    REGISTRIES_ENABLED = true,
     HANDBOOK_ENABLED = false,
     HANDBOOK_DOC_GENERATION_ENABLED = false,
+    TESTS_ENABLED = false,
     FB_APP_ID,
     GIT_COMMIT: release,
     GOOGLE_ANALYTICS_ID,
     KEEN_CONFIG: keenConfig,
     LINT_ON_BUILD: lintOnBuild = false,
     MIRAGE_ENABLED = false,
+    MIRAGE_SCENARIOS = [
+        'loggedIn',
+        'dashboard',
+        'settings',
+        'meetings',
+    ],
     OAUTH_SCOPES: scope,
-    ORCID_CLIENT_ID: orcidClientId,
     OSF_PAGE_NAME: pageName = 'OSF',
     OSF_SIMPLE_BRAND: simpleBrand = 'OSF',
     OSF_SHORT_BRAND: shortBrand = 'OSF',
@@ -40,7 +46,7 @@ const {
     OSF_COOKIE_DOMAIN: cookieDomain = 'localhost',
     OSF_URL: url = 'http://localhost:5000/',
     OSF_API_URL: apiUrl = 'http://localhost:8000',
-    OSF_API_VERSION: apiVersion = '2.8',
+    OSF_API_VERSION: apiVersion = '2.14',
     OSF_RENDER_URL: renderUrl = 'http://localhost:7778/render',
     OSF_FILE_URL: waterbutlerUrl = 'http://localhost:7777/',
     OSF_HELP_URL: helpUrl = 'http://localhost:4200/help',
@@ -58,6 +64,7 @@ const {
     SHARE_API_URL: shareApiUrl = 'https://staging-share.osf.io/api/v2',
     SHARE_SEARCH_URL: shareSearchUrl = 'https://staging-share.osf.io/api/v2/search/creativeworks/_search',
     SOURCEMAPS_ENABLED: sourcemapsEnabled = true,
+    SHOW_DEV_BANNER = false,
     NAV_DROPDOWN_ENABLED = true,
     NAV_QUICKFILES_ENABLED = true,
     NAV_REGISTRATIONS_ENABLED = true,
@@ -79,7 +86,9 @@ module.exports = function(environment) {
         modulePrefix: 'ember-osf-web',
         environment,
         lintOnBuild,
+        testsEnabled: false, // Disable tests by default.
         sourcemapsEnabled,
+        showDevBanner: isTruthy(SHOW_DEV_BANNER),
         rootURL,
         assetsPrefix,
         locationType: 'auto',
@@ -169,6 +178,7 @@ module.exports = function(environment) {
             apiHeaders: {
                 ACCEPT: `application/vnd.api+json; version=${apiVersion}`,
             },
+            learnMoreUrl: 'https://cos.io/our-products/osf/',
             renderUrl,
             waterbutlerUrl,
             helpUrl,
@@ -192,8 +202,15 @@ module.exports = function(environment) {
                 authSession: 'embosf-auth-session',
                 joinBannerDismissed: 'slide', // TODO: update legacy UI to use a more unique key
             },
-            orcidClientId,
             casUrl,
+            analyticsAttrs: {
+                name: 'data-analytics-name',
+                scope: 'data-analytics-scope',
+                extra: 'data-analytics-extra',
+                category: 'data-analytics-category',
+                action: 'data-analytics-action',
+            },
+            doiUrlPrefix: 'https://doi.org/',
             simplePage: Boolean(USE_SIMPLE_PAGE),
             projectAffiliate: Boolean(MAKE_PROJECT_AFFILIATE),
         },
@@ -223,7 +240,7 @@ module.exports = function(environment) {
             globalUrl: '',
             preregUrl: 'https://cos.io/prereg/',
             statusPageUrl: 'https://status.cos.io',
-            faqPageUrl: 'http://help.osf.io/m/faqs/l/726460-faqs',
+            faqPageUrl: 'https://openscience.zendesk.com/hc/en-us/articles/360019737894',
             supportEmail: 'support@osf.io',
             contactEmail: 'contact@osf.io',
             consultationUrl: 'https://cos.io/stats_consulting/',
@@ -238,11 +255,15 @@ module.exports = function(environment) {
         },
         featureFlagNames: {
             routes: {
-                'guid-node.forks': 'ember_project_forks_page',
-                'guid-registration.forks': 'ember_project_forks_page',
-                'guid-node.analytics.index': 'ember_project_analytics_page',
-                'guid-registration.analytics.index': 'ember_project_analytics_page',
-                'guid-node.registrations': 'ember_project_registrations_page',
+                'guid-node.index': 'ember_project_detail_page',
+                'guid-registration.index': 'ember_old_registration_detail_page',
+                settings: 'ember_user_settings_page',
+                'settings.profile': 'ember_user_settings_page',
+                'settings.profile.education': 'ember_user_settings_page',
+                'settings.profile.employment': 'ember_user_settings_page',
+                'settings.profile.name': 'ember_user_settings_page',
+                'settings.profile.social': 'ember_user_settings_page',
+                'settings.account': 'ember_user_settings_account_page',
                 'settings.tokens': 'ember_user_settings_tokens_page',
                 'settings.tokens.index': 'ember_user_settings_tokens_page',
                 'settings.tokens.create': 'ember_user_settings_tokens_page',
@@ -252,11 +273,24 @@ module.exports = function(environment) {
                 'settings.developer-apps.create': 'ember_user_settings_apps_page',
                 'settings.developer-apps.edit': 'ember_user_settings_apps_page',
                 register: 'ember_auth_register',
+                'registries.overview': 'ember_registries_detail_page',
+                'registries.overview.index': 'ember_registries_detail_page',
+                'registries.overview.comments': 'ember_registries_detail_page',
+                'registries.overview.contributors': 'ember_registries_detail_page',
+                'registries.overview.children': 'ember_registries_detail_page',
+                'registries.overview.links': 'ember_registries_detail_page',
+                'meetings.index': 'ember_meetings_page',
+                'meetings.detail': 'ember_meeting_detail_page',
             },
             navigation: {
                 institutions: 'institutions_nav_bar',
             },
             storageI18n: 'storage_i18n',
+            enableInactiveSchemas: 'enable_inactive_schemas',
+            verifyEmailModals: 'ember_verify_email_modals',
+            ABTesting: {
+                homePageVersionB: 'ab_testing_home_page_version_b',
+            },
         },
         gReCaptcha: {
             siteKey: RECAPTCHA_SITE_KEY,
@@ -296,8 +330,12 @@ module.exports = function(environment) {
         'ember-cli-mirage': {
             enabled: Boolean(MIRAGE_ENABLED),
         },
+        mirageScenarios: MIRAGE_SCENARIOS,
 
         defaultProvider: 'osf',
+        pageTitle: {
+            prepend: false,
+        },
         dsconfig: {
             settingFile: '/ember_osf_web/dsconfig_js',
             wayfScript: '/ember_osf_web/embedded-wayf_js',
@@ -319,6 +357,9 @@ module.exports = function(environment) {
                     turnAuditOff: !isTruthy(A11Y_AUDIT),
                 },
             },
+            // Conditionally enable tests in development environment.
+            testsEnabled: isTruthy(TESTS_ENABLED),
+            showDevBanner: true,
         });
     }
 
@@ -328,6 +369,8 @@ module.exports = function(environment) {
             locationType: 'none',
             // Test environment needs to find assets in the "regular" location.
             assetsPrefix: '/',
+            // Always enable tests in test environment.
+            testsEnabled: true,
             // Always enable mirage for tests.
             'ember-cli-mirage': {
                 enabled: true,

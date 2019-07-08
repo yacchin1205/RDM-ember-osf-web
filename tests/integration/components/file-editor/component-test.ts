@@ -1,8 +1,10 @@
-import { click, render } from '@ember/test-helpers';
+import { render } from '@ember/test-helpers';
 import ace from 'ember-ace';
 import { setupRenderingTest } from 'ember-qunit';
 import hbs from 'htmlbars-inline-precompile';
 import { module, test } from 'qunit';
+
+import { click } from 'ember-osf-web/tests/helpers';
 
 module('Integration | Component | file-editor', hooks => {
     setupRenderingTest(hooks);
@@ -30,7 +32,7 @@ module('Integration | Component | file-editor', hooks => {
         editor.getSession().setValue('Just a test');
         assert.equal(editor.getSession().getValue(), 'Just a test');
 
-        await click('#btnRevertEditor');
+        await click('[data-test-button-revert]');
         assert.equal(editor.getSession().getValue(), 'Test text');
     });
 
@@ -46,6 +48,6 @@ module('Integration | Component | file-editor', hooks => {
         editor.getSession().setValue('Test to save this new text!');
 
         assert.expect(1);
-        await click('#btnSaveEditor');
+        await click('[data-test-button-save]');
     });
 });

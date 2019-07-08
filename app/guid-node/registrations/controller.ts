@@ -39,11 +39,16 @@ export default class GuidNodeRegistrations extends Controller {
     };
 
     getRegistrationSchemas = task(function *(this: GuidNodeRegistrations) {
-        let schemas = yield this.store.findAll('registration-schema');
+        let schemas = yield this.store.findAll('registration-schema',
+            {
+                adapterOptions: {
+                    query: {
+                        'filter[active]': true,
+                    },
+                },
+            });
         schemas = schemas.toArray();
-        schemas.sort((a: RegistrationSchema, b: RegistrationSchema) => {
-            return a.name.length > b.name.length;
-        });
+        schemas.sort((a: RegistrationSchema, b: RegistrationSchema) => a.name.length - b.name.length);
         this.set('defaultSchema', schemas.firstObject);
         this.set('selectedSchema', this.defaultSchema);
         this.set('schemas', schemas);
@@ -56,35 +61,28 @@ export default class GuidNodeRegistrations extends Controller {
         return this.tab ? this.tab : 'registrations';
     }
 
-    @computed('node.id', 'node.root.id', 'node.root.currentUserIsAdmin')
+    @computed('node.{id,root.id,root.userHasAdminPermission}')
     get isComponentRootAdmin() {
-        return this.node && this.node.id !== this.node.root.get('id') && this.node.root.get('currentUserIsAdmin');
+        return this.node && this.node.id !== this.node.root.get('id') && this.node.root.get('userHasAdminPermission');
     }
 
     @action
     changeTab(this: GuidNodeRegistrations, activeId: string) {
         this.set('tab', activeId === 'registrations' ? undefined : activeId);
-        this.analytics.click('tab', `Registrations Tab - Change tab to: ${activeId}`);
-    }
-
-    @action
-    openNewModal(this: GuidNodeRegistrations) {
-        this.set('newModalOpen', true);
-        this.analytics.click('button', 'Registrations Tab - Open new registration modal');
+        this.analytics.click('tab', `Registrations tab - Change tab to: ${activeId}`);
     }
 
     @action
     closeNewModal(this: GuidNodeRegistrations) {
         this.set('newModalOpen', false);
         this.set('selectedSchema', this.defaultSchema);
-        this.analytics.click('button', 'Registrations Tab - Close new registration modal');
     }
 
     @action
     togglePreregConsent() {
         this.toggleProperty('preregConsented');
         if (this.preregConsented) {
-            this.analytics.click('checkbox', 'Registrations Tab - Consent to Prereg Challenge ');
+            this.analytics.click('checkbox', 'Registrations tab - Consent to Prereg Challenge ');
         }
     }
 
@@ -92,18 +90,16 @@ export default class GuidNodeRegistrations extends Controller {
     closePreregModal(this: GuidNodeRegistrations) {
         this.set('preregModalOpen', false);
         this.set('selectedSchema', this.defaultSchema);
-        this.analytics.click('button', 'Registrations Tab - Close Prereg Challenge modal');
     }
 
     @action
     schemaChanged(this: GuidNodeRegistrations, schema: RegistrationSchema) {
         this.set('selectedSchema', schema);
-        this.analytics.click('radio', `Registrations Tab - Select schema: ${schema.name}`);
+        this.analytics.click('radio', `Registrations tab - Select schema: ${schema.name}`);
     }
 
     @action
     async createDraft(this: GuidNodeRegistrations) {
-        this.analytics.click('button', 'Registrations Tab - Create draft');
         if (this.selectedSchema.name === 'Prereg Challenge' && this.newModalOpen) {
             this.set('newModalOpen', false);
             this.set('preregConsented', false);

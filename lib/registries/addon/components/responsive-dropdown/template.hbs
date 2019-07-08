@@ -1,0 +1,16 @@
+<BasicDropdown
+    @verticalPosition='below'
+    @horizontalPosition='right'
+    @calculatePosition={{action 'calculatePosition'}}
+    @disabled={{@disabled}}
+    @onClose={{action 'closeDropdown'}}
+    @renderInPlace={{this.shouldRenderInPlace}}
+    as |dd|>
+
+    {{yield (hash
+        trigger=(component dd.trigger class=(local-class 'Trigger'))
+        isOpen=dd.isOpen
+        close=(action dd.actions.close)
+        content=(component dd.content overlay=this.useOverlay defaultClass=(local-class (if this.useOverlay 'reg-modal-dialog' '')))
+      )}}
+</BasicDropdown>

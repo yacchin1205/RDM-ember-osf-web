@@ -10,7 +10,6 @@ import config from 'ember-get-config';
 import Institution from 'ember-osf-web/models/institution';
 import Node from 'ember-osf-web/models/node';
 import { QueryHasManyResult } from 'ember-osf-web/models/osf-model';
-import Region from 'ember-osf-web/models/region';
 import User from 'ember-osf-web/models/user';
 import Analytics from 'ember-osf-web/services/analytics';
 import CurrentUser from 'ember-osf-web/services/current-user';
@@ -41,6 +40,7 @@ export default class Dashboard extends Controller {
     sort: string = '-last_logged';
     modalOpen: boolean = false;
     newNode: Node | null = null;
+    showNewNodeNavigation: boolean = false;
     'failedLoading-noteworthy': boolean = false;
     'failedLoading-popular': boolean = false;
 
@@ -79,7 +79,8 @@ export default class Dashboard extends Controller {
         const user: User = yield this.currentUser.user;
 
         const nodes: QueryHasManyResult<Node> = yield user.queryHasMany('nodes', {
-            embed: ['contributors', 'parent', 'root'],
+            embed: ['bibliographic_contributors', 'parent', 'root'],
+            // eslint-disable-next-line ember/no-global-jquery
             filter: this.filter ? { title: $('<div>').text(this.filter).html() } : undefined,
             page: more ? this.incrementProperty('page') : this.set('page', 1),
             sort: this.sort || undefined,
@@ -99,7 +100,7 @@ export default class Dashboard extends Controller {
         try {
             const node: Node = yield this.store.findRecord('node', id);
             const linkedNodes: QueryHasManyResult<Node> = yield node.queryHasMany('linkedNodes', {
-                embed: 'contributors',
+                embed: 'bibliographic_contributors',
                 page: { size: 5 },
             });
             this.set(dest, linkedNodes);
@@ -108,44 +109,6 @@ export default class Dashboard extends Controller {
             this.set(failedProperty, true);
         }
     });
-
-    searchNodes = task(function *(this: Dashboard, title: string) {
-        yield timeout(500);
-        const user: User = yield this.user;
-        return yield user.queryHasMany('nodes', { filter: { title } });
-    }).restartable();
-
-    createNode = task(function *(
-        this: Dashboard,
-        title: string,
-        description: string,
-        institutions: Institution[],
-        templateFrom?: Node,
-        storageRegion?: Region,
-    ) {
-        if (!title) {
-            return;
-        }
-        const node = this.store.createRecord('node', {
-            category: 'project',
-            description,
-            public: false,
-            title,
-        });
-
-        if (templateFrom) {
-            node.set('templateFrom', templateFrom.id);
-        }
-        if (institutions.length) {
-            node.set('affiliatedInstitutions', institutions.slice());
-        }
-        if (storageRegion) {
-            node.set('region', storageRegion);
-        }
-        yield node.save();
-
-        this.set('newNode', node);
-    }).drop();
 
     @alias('currentUser.user') user!: User;
 
@@ -168,26 +131,27 @@ export default class Dashboard extends Controller {
     }
 
     @action
-    toggleModal(this: Dashboard) {
-        if (this.modalOpen) {
-            this.set('newNode', null);
-        }
-
-        this.toggleProperty('modalOpen');
+    openModal(this: Dashboard) {
+        this.set('modalOpen', true);
     }
 
     @action
-    closeModal(this: Dashboard, reload = false) {
-        // Need to explicitly pass reload when the action in the onclick event of a button
-        // otherwise the first argument is a mouse event which in turn is always truthy
-
+    closeModal(this: Dashboard) {
         this.setProperties({
             modalOpen: false,
             newNode: null,
+            showNewNodeNavigation: false,
         });
+    }
 
-        if (reload) {
-            this.get('findNodes').perform();
-        }
+    @action
+    afterStay(this: Dashboard) {
+        this.get('findNodes').perform();
+    }
+
+    @action
+    projectCreated(this: Dashboard, newNode: Node) {
+        this.set('newNode', newNode);
+        this.set('showNewNodeNavigation', true);
     }
 }

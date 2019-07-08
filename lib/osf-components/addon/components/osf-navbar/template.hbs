@@ -1,72 +1,87 @@
-<div class="osf-nav-wrapper">
-    <nav class="navbar navbar-inverse navbar-fixed-top" id="navbarScope" role="navigation">
-        <div class="container">
-            <div class="navbar-header">
-                {{#global-link-to 'home' (html-attributes aria-label=(t 'navbar.go_home')) class='navbar-brand'}}
-                    <span class="osf-navbar-logo" local-class="osf-navbar-logo"></span>
-                {{/global-link-to}}
-
+<div data-analytics-scope='Nav bar' class='osf-nav-wrapper'>
+    <nav class='navbar navbar-inverse navbar-fixed-top' id='navbarScope' role='navigation'>
+        <div class='container'>
+            <div class='navbar-header'>
+                <OsfLink 
+                    data-test-nav-home-link
+                    data-analytics-name='Home'
+                    aria-label={{t 'navbar.go_home'}}
+                    class='navbar-brand'
+                    @route='home'
+                >
+                    <span class='osf-navbar-logo'></span>
+                </OsfLink>
                 {{! Current app }}
-                <div class="service-name">
-                    {{#hyper-link _activeService.route}}
-                        <span class="hidden-xs"> {{t 'general.OSF'}} </span>
+                <div class='service-name'>
+                    <OsfLink
+                        data-analytics-name={{this._activeService.name}}
+                        @route={{this._activeService.route}}
+                        @href={{this._activeService.href}}
+                    >
+                        <span class='hidden-xs'> {{t 'general.OSF'}} </span>
                         {{#if useNavDropdown}}
-                        <span class="current-service"><strong>{{_activeService.name}}</strong></span>
+                        <span class='current-service'><strong>{{this._activeService.name}}</strong></span>
                         {{/if}}
-                    {{/hyper-link}}
+                    </OsfLink>
                 </div>
 
                 {{#if useNavDropdown}}
                 {{! App list dropdown }}
-                {{#bs-dropdown
-                    classNames='dropdown primary-nav'
-                    onShow=(action 'onClickPrimaryDropdown')
+                <BsDropdown
+                    data-analytics-scope='Primary dropdown'
+                    @classNames='dropdown primary-nav'
+                    @onShow={{action this.onClickPrimaryDropdown}}
                     as |dd|
-                }}
-                    {{#dd.toggle
-                        (html-attributes aria-label=(t 'navbar.other_views'))
-                        class=(concat 'btn-link ' (local-class 'PrimaryNav__toggle'))
-                    }}
+                >
+                    <dd.toggle
+                        aria-label={{t 'navbar.other_views'}}
+                        @class={{concat 'btn-link ' (local-class 'PrimaryNav__toggle')}}
+                    >
                         {{fa-icon 'caret-down' size='2'}}
-                    {{/dd.toggle}}
-                    {{#dd.menu classNames='dropdown-menu service-dropdown' as |ddm|}}
-                        {{#each services as |service|}}
-                            {{#ddm.item (html-attributes role='menuitem')}}
-                                {{#hyper-link service.route}}
+                    </dd.toggle>
+                    <dd.menu @classNames='dropdown-menu service-dropdown' as |ddm| >
+                        {{#each this.services as |service|}}
+                            <ddm.item role='menuitem'>
+                                <OsfLink
+                                    data-analytics-name={{service.name}}
+                                    @route={{service.route}}
+                                    @href={{service.href}}
+                                >
                                     {{t 'general.OSF'}}<b>{{service.name}}</b>
-                                {{/hyper-link}}
-                            {{/ddm.item}}
+                                </OsfLink>
+                            </ddm.item>
                         {{/each}}
-                    {{/dd.menu}}
-                {{/bs-dropdown}}
+                    </dd.menu>
+                </BsDropdown>
                 {{/if}}
 
                 {{! Navigation toggle - XS screen }}
-                <a
-                    role="button"
-                    class="navbar-toggle collapsed"
-                    onclick={{action 'toggleSecondaryNavigation'}}
+                <OsfButton
+                    data-analytics-name='Toggle secondary nav xs'
                     aria-label={{t 'navbar.toggle_secondary'}}
+                    local-class='NavbarToggleXS'
+                    @class='navbar-toggle collapsed'
+                    @onClick={{action 'toggleSecondaryNavigation'}}
                 >
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
+                    <span class='icon-bar'></span>
+                    <span class='icon-bar'></span>
+                    <span class='icon-bar'></span>
+                </OsfButton>
             </div>
 
             {{! Secondary nav links }}
-            {{#bs-collapse
-                classNames='navbar-collapse navbar-right'
+            <BsCollapse
+                @classNames='navbar-collapse navbar-right'
                 local-class='secondary-navigation'
-                collapsed=(not showNavLinks)
-            }}
-                <ul class="nav navbar-nav" local-class="links">
+                @collapsed={{not this.showNavLinks}}
+            >
+                <ul class='nav navbar-nav' local-class='links'>
                     {{#let (hash
                         links=(component 'osf-navbar/x-links'
                             onLinkClicked=(action 'onLinkClicked')
                         )
                     ) as |ctx|}}
-                        {{#if hasBlock}}
+                        {{#if (has-block)}}
                             {{yield ctx}}
                         {{else}}
                             {{ctx.links}}
@@ -75,7 +90,7 @@
 
                     {{osf-navbar/auth-dropdown onLinkClicked=(action 'onLinkClicked') campaign=@campaign}}
                 </ul>
-            {{/bs-collapse}}
+            </BsCollapse>
         </div>
     </nav>
 </div>

@@ -1,5 +1,5 @@
 import { action, computed } from '@ember-decorators/object';
-import { readOnly } from '@ember-decorators/object/computed';
+import { reads } from '@ember-decorators/object/computed';
 import { service } from '@ember-decorators/service';
 import Controller from '@ember/controller';
 import Analytics from 'ember-osf-web/services/analytics';
@@ -9,11 +9,14 @@ import Registration from 'ember-osf-web/models/registration';
 import StatusMessages from 'ember-osf-web/services/status-messages';
 import Toast from 'ember-toastr/services/toast';
 
+import currentUser from 'ember-osf-web/services/current-user';
+
 export default class GuidRegistrationForks extends Controller {
     @service toast!: Toast;
     @service i18n!: I18N;
     @service statusMessages!: StatusMessages;
     @service analytics!: Analytics;
+    @service currentUser!: currentUser;
 
     toDelete: Registration | null = null;
     deleteModal = false;
@@ -22,15 +25,15 @@ export default class GuidRegistrationForks extends Controller {
 
     reloadList?: (page?: number) => void;
 
-    forksQueryParams = { embed: 'contributors' };
+    forksQueryParams = { embed: 'bibliographic_contributors' };
 
-    @readOnly('model.taskInstance.value')
+    @reads('model.taskInstance.value')
     node?: Registration;
 
     @computed('node')
     get nodeType(this: GuidRegistrationForks) {
         if (!this.node) {
-            return;
+            return undefined;
         }
         return this.node!.parent ? 'component' : 'project';
     }
@@ -55,8 +58,12 @@ export default class GuidRegistrationForks extends Controller {
     }
 
     @action
+    closeNewModal() {
+        this.set('newModal', false);
+    }
+
+    @action
     newFork(this: GuidRegistrationForks) {
-        this.analytics.click('button', 'Registration Forks - Create Fork');
         this.set('newModal', false);
         this.set('loadingNew', true);
         this.node!.makeFork().then(() => {
@@ -78,7 +85,6 @@ export default class GuidRegistrationForks extends Controller {
 
     @action
     delete(this: GuidRegistrationForks) {
-        this.analytics.click('button', 'Registration Forks - Delete Fork');
         this.set('deleteModal', false);
         const node = this.toDelete;
         if (!node) {

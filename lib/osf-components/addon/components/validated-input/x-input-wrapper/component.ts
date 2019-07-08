@@ -2,19 +2,22 @@ import { className, classNames } from '@ember-decorators/component';
 import { computed } from '@ember-decorators/object';
 import { equal } from '@ember-decorators/object/computed';
 import Component from '@ember/component';
-import { ValidationStatus } from '../base-component';
-import layout from './template';
 
+import { layout } from 'ember-osf-web/decorators/component';
+
+import { ValidationStatus } from '../base-component';
+import template from './template';
+
+@layout(template)
 @classNames('form-group')
 export default class ValidatedXInputWrapper extends Component {
-    layout = layout;
-
     // Required arguments
-    model!: any;
+    changeset!: any;
     valuePath!: string;
     validationStatus!: ValidationStatus;
 
     // Optional arguments
+    errors?: string;
     label?: string;
 
     @className

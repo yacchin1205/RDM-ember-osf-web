@@ -5,6 +5,7 @@
     "ember-engine"
   ],
   "dependencies": {
+    "ember-angle-bracket-invocation-polyfill": "*",
     "ember-bootstrap": "*",
     "ember-cli-addon-docs": "*",
     "ember-cli-addon-docs-typedoc": "*",
@@ -13,10 +14,13 @@
     "ember-cli-sass": "*",
     "ember-cli-typescript": "*",
     "ember-code-snippet": "*",
+    "ember-content-placeholders": "https://github.com/cos-forks/ember-content-placeholders#master#2018-07-19",
     "ember-cp-validations": "*",
     "ember-css-modules": "*",
     "ember-css-modules-sass": "*",
     "ember-font-awesome": "*",
+    "ember-onbeforeunload": "*",
+    "ember-power-select": "*",
     "ember-tag-input": "*"
   },
   "ember-addon": {

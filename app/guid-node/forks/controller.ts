@@ -1,5 +1,5 @@
 import { action, computed } from '@ember-decorators/object';
-import { readOnly } from '@ember-decorators/object/computed';
+import { reads } from '@ember-decorators/object/computed';
 import { service } from '@ember-decorators/service';
 import Controller from '@ember/controller';
 import Analytics from 'ember-osf-web/services/analytics';
@@ -9,11 +9,14 @@ import Node from 'ember-osf-web/models/node';
 import StatusMessages from 'ember-osf-web/services/status-messages';
 import Toast from 'ember-toastr/services/toast';
 
+import currentUser from 'ember-osf-web/services/current-user';
+
 export default class GuidNodeForks extends Controller {
     @service toast!: Toast;
     @service i18n!: I18N;
     @service statusMessages!: StatusMessages;
     @service analytics!: Analytics;
+    @service currentUser!: currentUser;
 
     toDelete: Node | null = null;
     deleteModal = false;
@@ -22,15 +25,15 @@ export default class GuidNodeForks extends Controller {
 
     reloadList?: (page?: number) => void; // bound by paginated-list
 
-    forksQueryParams = { embed: 'contributors' };
+    forksQueryParams = { embed: 'bibliographic_contributors' };
 
-    @readOnly('model.taskInstance.value')
+    @reads('model.taskInstance.value')
     node?: Node;
 
     @computed('node')
     get nodeType(this: GuidNodeForks) {
         if (!this.node) {
-            return;
+            return undefined;
         }
         return this.node.parent ? 'component' : 'project';
     }
@@ -56,7 +59,6 @@ export default class GuidNodeForks extends Controller {
 
     @action
     newFork(this: GuidNodeForks) {
-        this.analytics.click('button', 'Project Forks - Create Fork');
         this.set('newModal', false);
         this.set('loadingNew', true);
         this.node!.makeFork().then(() => {
@@ -78,7 +80,6 @@ export default class GuidNodeForks extends Controller {
 
     @action
     delete(this: GuidNodeForks) {
-        this.analytics.click('button', 'Project Forks - Delete Fork');
         this.set('deleteModal', false);
         const node = this.toDelete;
         if (!node) {

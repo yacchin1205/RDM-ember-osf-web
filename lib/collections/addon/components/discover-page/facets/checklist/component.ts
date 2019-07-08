@@ -3,16 +3,20 @@ import { service } from '@ember-decorators/service';
 import { setProperties } from '@ember/object';
 import { task } from 'ember-concurrency';
 import DS from 'ember-data';
+
+import { layout } from 'ember-osf-web/decorators/component';
 import Collection from 'ember-osf-web/models/collection';
 import CollectionProvider from 'ember-osf-web/models/collection-provider';
+
 import Base from '../base/component';
 import styles from './styles';
-import layout from './template';
+import template from './template';
 
 interface Item {
     key: string;
 }
 
+@layout(template, styles)
 export default abstract class SearchFacetChecklist extends Base.extend({
     didInsertElement(this: SearchFacetChecklist, ...args: any[]) {
         this._super(...args);
@@ -60,6 +64,7 @@ export default abstract class SearchFacetChecklist extends Base.extend({
                 (acc, val) => [...acc, ...(val[this.modelAttribute] as string[])],
                 [],
             )
+            .sort()
             .map(key => ({ key }));
 
         this.allItems.pushObjects(allItems);
@@ -76,9 +81,6 @@ export default abstract class SearchFacetChecklist extends Base.extend({
         this.context.updateFilters();
     }),
 }) {
-    layout = layout;
-    styles = styles;
-
     @service store!: DS.Store;
 
     allItems: Item[] = [];

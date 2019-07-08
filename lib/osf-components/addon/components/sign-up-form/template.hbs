@@ -1,9 +1,14 @@
-<form local-class="SignUpForm" {{action 'submit' on='submit'}}>
+<form
+    data-analytics-scope='Sign up form'
+    local-class='SignUpForm'
+    {{action 'submit' on='submit'}}
+>
+    {{! template-lint-disable no-implicit-this }}
     {{validated-input/text
         data-test-sign-up-full-name
         model=this.userRegistration
         valuePath='fullName'
-        showMessages=this.didValidate
+        shouldShowMessages=this.didValidate
         disabled=this.hasSubmitted
         placeholder=(t 'osf-components.sign-up-form.full_name')
         ariaLabel=(t 'osf-components.sign-up-form.full_name')
@@ -12,7 +17,7 @@
         data-test-sign-up-email-1
         model=this.userRegistration
         valuePath='email1'
-        showMessages=this.didValidate
+        shouldShowMessages=this.didValidate
         disabled=this.hasSubmitted
         placeholder=(t 'osf-components.sign-up-form.contact_email')
         ariaLabel=(t 'osf-components.sign-up-form.contact_email')
@@ -21,7 +26,7 @@
         data-test-sign-up-email-2
         model=this.userRegistration
         valuePath='email2'
-        showMessages=this.didValidate
+        shouldShowMessages=this.didValidate
         disabled=this.hasSubmitted
         placeholder=(t 'osf-components.sign-up-form.confirm_email')
         ariaLabel=(t 'osf-components.sign-up-form.confirm_email')
@@ -31,55 +36,61 @@
         password=true
         model=this.userRegistration
         valuePath='password'
-        showMessages=this.didValidate
+        shouldShowMessages=this.didValidate
         disabled=this.hasSubmitted
-        onKeyUp=(perform strength this.userRegistration.password)
+        onKeyUp=(perform this.strength this.userRegistration.password)
         placeholder=(t 'osf-components.sign-up-form.password')
         ariaLabel=(t 'osf-components.sign-up-form.password')
     }}
-    <div class="row" hidden={{not progress}}>
-        <div class="col-xs-12">
-            <div class="progress" local-class="CreatePassword">
+    {{! template-lint-enable no-implicit-this }}
+    <div class='row' hidden={{not this.progress}}>
+        <div class='col-xs-12'>
+            <div class='progress' local-class='CreatePassword'>
                 <div
-                    class="progress-bar progress-bar-sm progress-bar-{{progress}} progress-bar-{{progressStyle}}"
-                    role="progressbar">
+                    class='progress-bar progress-bar-sm progress-bar-{{this.progress}} progress-bar-{{this.progressStyle}}'
+                    role='progressbar'>
                 </div>
             </div>
         </div>
     </div>
+    {{! template-lint-disable no-implicit-this }}
     {{#validated-input/checkbox
         data-test-sign-up-tos
         model=this.userRegistration
         valuePath='acceptedTermsOfService'
-        showMessages=this.didValidate
+        shouldShowMessages=this.didValidate
         disabled=this.hasSubmitted
         local-class='tos-checkbox'
     }}
-        {{sign-up-policy}}
+        <SignUpPolicy />
     {{/validated-input/checkbox}}
+    {{! template-lint-enable no-implicit-this }}
     {{#if this.hasSubmitted}}
-        <div class="osf-box-lt" local-class="help-block">
-            <p class="ext-success p-xs">{{t 'osf-components.sign-up-form.registration_success' email=this.userRegistration.email1}}</p>
+        <div class='osf-box-lt' local-class='help-block'>
+            <p class='ext-success p-xs'>{{t 'osf-components.sign-up-form.registration_success' email=this.userRegistration.email1}}</p>
         </div>
     {{else}}
-        <div class="col-md-12" local-class="RecaptchaParent">
+        <div class='col-md-12' local-class='RecaptchaParent'>
+            {{! template-lint-disable no-implicit-this }}
             {{validated-input/recaptcha
                 data-test-recaptcha
                 model=this.userRegistration
                 valuePath='recaptchaResponse'
-                showMessages=this.didValidate
+                shouldShowMessages=this.didValidate
                 bindReset=(action (mut this.resetRecaptcha))
             }}
+            {{! template-lint-enable no-implicit-this }}
         </div>
         <div>
-            <button data-test-sign-up-button
-                type="submit"
-                class="btn btn-success"
-                {{action submit}}
-                {{action 'click' 'button' 'Home - sign_up' target=analytics}}
+            <OsfButton
+                data-test-sign-up-button
+                data-analytics-name='Submit sign up'
+                @buttonType='submit'
+                @type='success'
+                @onClick={{action this.submit}}
             >
                 {{t 'osf-components.sign-up-form.sign_up_button_label'}}
-            </button>
+            </OsfButton>
         </div>
     {{/if}}
 </form>

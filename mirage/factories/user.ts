@@ -1,21 +1,35 @@
-import { Factory, faker, trait, Trait } from 'ember-cli-mirage';
+import { association, Factory, faker, trait, Trait } from 'ember-cli-mirage';
 
 import User from 'ember-osf-web/models/user';
 
-import { guid } from './utils';
+import { guid, guidAfterCreate } from './utils';
 
-export interface UserTraits {
-    withNodes: Trait;
-    loggedIn: Trait;
+export interface MirageUser extends User {
+    contributorIds: string[];
 }
 
-export default Factory.extend<User & UserTraits>({
-    id(i: number) {
-        return guid(i, 'user');
+export interface UserTraits {
+    withFiles: Trait;
+    loggedIn: Trait;
+    withInstitutions: Trait;
+    withSettings: Trait;
+    withAlternateEmail: Trait;
+    withUnconfirmedEmail: Trait;
+    withUnverifiedEmail: Trait;
+    withUnverifiedEmails: Trait;
+    withUsRegion: Trait;
+}
+
+export default Factory.extend<MirageUser & UserTraits>({
+    id: guid('user'),
+    afterCreate(user, server) {
+        guidAfterCreate(user, server);
+        server.create('user-email', { user, primary: true });
+        if (!user.fullName && (user.givenName || user.familyName)) {
+            user.update('fullName', [user.givenName, user.familyName].filter(Boolean).join(' '));
+        }
     },
-    fullName() {
-        return `${faker.name.firstName()} ${faker.name.lastName()}`;
-    },
+
     givenName() {
         return faker.name.firstName();
     },
@@ -38,18 +52,80 @@ export default Factory.extend<User & UserTraits>({
     acceptedTermsOfService: true,
     canViewReviews: false,
     social: {},
+    defaultRegion: association(),
     dateRegistered() {
-        return faker.date.past();
+        return faker.date.past(2, new Date(2018, 0, 0));
     },
-    withNodes: trait({
+
+    withFiles: trait<MirageUser>({
         afterCreate(user, server) {
-            server.createList('node', 5, { user }, 'withContributors');
+            server.createList('file', 5, { user });
         },
     }),
-    loggedIn: trait({
+
+    withInstitutions: trait<MirageUser>({
+        afterCreate(user, server) {
+            server.createList('institution', 3, { users: [user] });
+        },
+    }),
+
+    loggedIn: trait<MirageUser>({
         afterCreate(currentUser, server) {
-            server.create('root', { currentUser });
-            server.createList('file', 5, { user: currentUser });
+            const root = server.schema.roots.first();
+            if (root) {
+                root.update({ currentUser });
+            } else {
+                server.create('root', { currentUser });
+            }
+        },
+    }),
+
+    withSettings: trait<MirageUser>({
+        afterCreate(user, server) {
+            server.create('user-setting', { user });
+        },
+    }),
+
+    withAlternateEmail: trait<MirageUser>({
+        afterCreate(user, server) {
+            server.create('user-email', { user });
+        },
+    }),
+
+    withUnconfirmedEmail: trait<MirageUser>({
+        afterCreate(user, server) {
+            server.create('user-email', { user, confirmed: false });
+        },
+    }),
+
+    withUnverifiedEmail: trait<MirageUser>({
+        afterCreate(user, server) {
+            server.create('user-email', { user, verified: false });
+        },
+    }),
+
+    withUnverifiedEmails: trait<MirageUser>({
+        afterCreate(user, server) {
+            server.create('user-email', { user, verified: false, isMerge: true });
+            server.create('user-email', { user, verified: false, isMerge: false });
+        },
+    }),
+    withUsRegion: trait<MirageUser>({
+        afterCreate(user, server) {
+            const defaultRegion = server.schema.regions.find('us');
+            user.update({ defaultRegion });
         },
     }),
 });
+
+declare module 'ember-cli-mirage/types/registries/model' {
+    export default interface MirageModelRegistry {
+        user: MirageUser;
+    } // eslint-disable-line semi
+}
+
+declare module 'ember-cli-mirage/types/registries/schema' {
+    export default interface MirageSchemaRegistry {
+        users: MirageUser;
+    } // eslint-disable-line semi
+}

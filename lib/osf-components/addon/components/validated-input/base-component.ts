@@ -1,12 +1,20 @@
 // This component is derived from ember-cp-validations.
 // See https://github.com/offirgolan/ember-cp-validations for more information
 import { computed } from '@ember-decorators/object';
+import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
 import { defineProperty } from '@ember/object';
-import { alias as aliasMacro, oneWay as oneWayMacro } from '@ember/object/computed';
+import {
+    alias as aliasMacro,
+    bool as boolMacro,
+    oneWay as oneWayMacro,
+} from '@ember/object/computed';
 import { isEmpty } from '@ember/utils';
+import { ChangesetDef } from 'ember-changeset/types';
 import { ResultCollection } from 'ember-cp-validations';
-import DS from 'ember-data';
+import DS, { AttributesFor, RelationshipsFor } from 'ember-data';
+import I18n from 'ember-i18n/services/i18n';
+
 import defaultTo from 'ember-osf-web/utils/default-to';
 
 export enum ValidationStatus {
@@ -16,30 +24,68 @@ export enum ValidationStatus {
     HasWarning,
 }
 
-export default abstract class BaseValidatedInput extends Component {
+export default abstract class BaseValidatedInput<M extends DS.Model> extends Component {
     // Required arguments
-    model!: DS.Model;
-    valuePath!: keyof DS.Model;
+    valuePath!: AttributesFor<M> | RelationshipsFor<M>;
 
     // Optional arguments
+    changeset?: ChangesetDef & DS.Model;
     label?: string;
     ariaLabel?: string;
     placeholder?: string;
     disabled: boolean = defaultTo(this.disabled, false);
-    showMessages: boolean = defaultTo(this.showMessages, true);
+    shouldShowMessages: boolean = defaultTo(this.shouldShowMessages, true);
+    model?: M;
 
     // Private properties
-    validation?: ResultCollection; // defined in constructor
-    value: any; // defined in constructor
+    @service i18n!: I18n;
 
-    @computed('showMessages', 'value', 'validation.{isInvalid,isValidating,warnings.[]}')
+    // defined in constructor
+    errors?: string[];
+    value: any;
+    isInvalid?: boolean;
+    isValidating?: boolean;
+    validation?: ResultCollection;
+
+    @computed('errors', 'validation.options')
+    get isRequired(): boolean {
+        if (!this.validation) {
+            return false;
+        }
+        const { options } = this.validation;
+        if (!options) {
+            return false;
+        }
+        if (!options.presence) {
+            return false;
+        }
+        if (options.presence.disabled) {
+            return false;
+        }
+        if (options.presence.presence) {
+            return true;
+        }
+        return false;
+    }
+
+    @computed('placeholder', 'isRequired')
+    get _placeholder(): string {
+        return this.placeholder || this.i18n.t(this.isRequired ? 'general.required' : 'general.optional');
+    }
+
+    @computed('shouldShowMessages', 'value', 'isInvalid', 'isValidating')
     get validationStatus(): ValidationStatus {
-        const { showMessages, validation, value } = this;
-
+        const {
+            shouldShowMessages,
+            value,
+            validation,
+            isValidating,
+            isInvalid,
+        } = this;
         switch (true) {
-        case !validation || !showMessages || validation.isValidating:
+        case !shouldShowMessages || isValidating:
             return ValidationStatus.Hidden;
-        case validation && validation.isInvalid:
+        case isInvalid:
             return ValidationStatus.HasError;
         case validation && !isEmpty(validation.warnings):
             return ValidationStatus.HasWarning;
@@ -52,8 +98,18 @@ export default abstract class BaseValidatedInput extends Component {
 
     constructor(...args: any[]) {
         super(...args);
-
-        defineProperty(this, 'validation', oneWayMacro(`model.validations.attrs.${this.valuePath}`));
-        defineProperty(this, 'value', aliasMacro(`model.${this.valuePath}`));
+        if (this.changeset) {
+            defineProperty(this, 'validation', oneWayMacro(`changeset.data.validations.attrs.${this.valuePath}`));
+            defineProperty(this, 'errors', oneWayMacro(`changeset.error.${this.valuePath}.validation`));
+            defineProperty(this, 'value', aliasMacro(`changeset.${this.valuePath}`));
+            defineProperty(this, 'isValidating', oneWayMacro('changeset.isValidating'));
+            defineProperty(this, 'isInvalid', boolMacro(`changeset.error.${this.valuePath}`));
+        } else if (this.model) {
+            defineProperty(this, 'validation', oneWayMacro(`model.validations.attrs.${this.valuePath}`));
+            defineProperty(this, 'errors', oneWayMacro(`model.validations.attrs.${this.valuePath}.errors`));
+            defineProperty(this, 'value', aliasMacro(`model.${this.valuePath}`));
+            defineProperty(this, 'isValidating', oneWayMacro(`model.validations.attrs.${this.valuePath}.isValidating`));
+            defineProperty(this, 'isInvalid', oneWayMacro(`model.validations.attrs.${this.valuePath}.isInvalid`));
+        }
     }
 }

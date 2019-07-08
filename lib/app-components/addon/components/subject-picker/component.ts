@@ -1,4 +1,3 @@
-
 import { action } from '@ember-decorators/object';
 import { alias } from '@ember-decorators/object/computed';
 import { service } from '@ember-decorators/service';
@@ -6,16 +5,23 @@ import Component from '@ember/component';
 import EmberObject, { setProperties } from '@ember/object';
 import { task } from 'ember-concurrency';
 import DS from 'ember-data';
+
+import { layout } from 'ember-osf-web/decorators/component';
 import Provider from 'ember-osf-web/models/provider';
 import Taxonomy from 'ember-osf-web/models/taxonomy';
 import Analytics from 'ember-osf-web/services/analytics';
 import Theme from 'ember-osf-web/services/theme';
 import defaultTo from 'ember-osf-web/utils/default-to';
 import styles from './styles';
-import layout from './template';
+import template from './template';
 
-function arrayEquals<T>(arr1: T[], arr2: T[]) {
-    return arr1.length === arr2.length && arr1.reduce((acc, val, i) => acc && val === arr2[i], true);
+interface ObjectWithId {
+    [i: string]: any;
+    id: string;
+}
+
+function arrayEquals(arr1: ObjectWithId[], arr2: ObjectWithId[]) {
+    return arr1.length === arr2.length && arr1.every((val, i) => val.id === arr2[i].id);
 }
 
 function arrayStartsWith(arr: Taxonomy[], prefix: Taxonomy[]) {
@@ -27,12 +33,12 @@ interface Column extends EmberObject {
     selection: Taxonomy | null;
 }
 
+@layout(template, styles)
 export default class SubjectPicker extends Component.extend({
     didInsertElement(this: SubjectPicker, ...args: any[]) {
         this._super(...args);
 
         this.setProperties({
-            initialSubjects: [],
             hasChanged: false,
             columns: new Array(3)
                 .fill(null)
@@ -45,24 +51,27 @@ export default class SubjectPicker extends Component.extend({
         this.get('querySubjects').perform();
     },
 
-    querySubjects: task(function *(this: SubjectPicker, parents = 'null', tier = 0): IterableIterator<any> {
-        const column: Column = this.columns.objectAt(tier)!;
+    querySubjects: task(
+        function *(
+            this: SubjectPicker,
+            parents: string = 'null',
+            tier: number = 0,
+        ): IterableIterator<any> {
+            const column: Column = this.columns.objectAt(tier)!;
 
-        const taxonomies: Taxonomy[] = yield this.provider.queryHasMany('taxonomies', {
-            filter: {
-                parents,
-            },
-            page: {
-                size: 150, // Law category has 117 (Jan 2018)
-            },
-        });
+            const taxonomies: Taxonomy[] = yield this.provider.queryHasMany('taxonomies', {
+                filter: {
+                    parents,
+                },
+                page: {
+                    size: 150, // Law category has 117 (Jan 2018)
+                },
+            });
 
-        column.set('subjects', taxonomies ? taxonomies.toArray() : []);
-    }),
+            column.set('subjects', taxonomies ? taxonomies.toArray() : []);
+        },
+    ),
 }) {
-    layout = layout;
-    styles = styles;
-
     @service analytics!: Analytics;
     @service store!: DS.Store;
     @service theme!: Theme;
@@ -71,8 +80,11 @@ export default class SubjectPicker extends Component.extend({
 
     columns!: Column[];
     editMode: boolean = defaultTo(this.editMode, false);
-    initialSubjects: any[] = [];
-    currentSubjects: any[] = this.currentSubjects;
+    currentSubjects: any[] = defaultTo(this.currentSubjects, []);
+    // Deep-copy the nested `currentSubjects` to `initialSubjects`.
+    // Therefore any operation on `currentSubjects` will not affect `initialSubjects`.
+    // So that we can restore to `initialSubjects` if needed.
+    initialSubjects: any[] = this.currentSubjects.map(item => [...item]);
     hasChanged: boolean = false;
 
     resetColumnSelections() {
@@ -95,17 +107,18 @@ export default class SubjectPicker extends Component.extend({
         this.set('hasChanged', true);
         this.resetColumnSelections();
 
-        this.currentSubjects.removeAt(index);
+        const tempSubjects: Taxonomy[][] = this.currentSubjects.slice();
+        tempSubjects.removeAt(index);
+        this.set('currentSubjects', tempSubjects);
     }
 
     @action
     select(this: SubjectPicker, tier: number, selected: Taxonomy) {
         this.analytics.track('button', 'click', `Collections - ${this.editMode ? 'Edit' : 'Submit'} - Discipline Add`);
-
-        if (!this.currentSubjects) {
-            this.set('currentSubjects', []);
-        }
-
+        // All new selected subjects are first added to `tempSubjects` before saving back to `this.currentSubjects`.
+        // This is because Ember does not recognize an array model attribute as dirty
+        // if we directly push objects to the array.
+        const tempSubjects: Taxonomy[][] = [...this.currentSubjects];
         this.set('hasChanged', true);
         const column = this.columns[tier];
 
@@ -125,12 +138,12 @@ export default class SubjectPicker extends Component.extend({
 
         // An existing tag has this prefix, and this is the lowest level of the taxonomy, so no need to fetch child
         // results
-        if (nextTier === totalColumns || !this.currentSubjects.some(item => arrayStartsWith(item, currentSelection))) {
+        if (nextTier === totalColumns || !tempSubjects.some(item => arrayStartsWith(item, currentSelection))) {
             let existingParent;
 
             for (let i = 1; i <= currentSelection.length; i++) {
                 const sub = currentSelection.slice(0, i);
-                existingParent = this.currentSubjects.find(item => arrayEquals(item, sub));
+                existingParent = tempSubjects.find(item => arrayEquals(item, sub));
 
                 // The parent exists, append the subject to it
                 if (existingParent) {
@@ -140,8 +153,9 @@ export default class SubjectPicker extends Component.extend({
             }
 
             if (!existingParent) {
-                this.currentSubjects.pushObject(currentSelection);
+                tempSubjects.pushObject(currentSelection);
             }
+            this.set('currentSubjects', tempSubjects);
         }
 
         // Bail out if we're at the last column.
