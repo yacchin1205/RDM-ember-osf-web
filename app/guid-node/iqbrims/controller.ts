@@ -85,6 +85,16 @@ export default class GuidNodeIQBRIMS extends Controller {
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('laboId', laboId);
         this.notifyPropertyChange('isFilled');
+        status.save();
+    }
+
+    @action
+    valueChanged(this: GuidNodeIQBRIMS) {
+        if (!this.status) {
+            return;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.save();
     }
 
     @computed('status.state')
@@ -113,7 +123,7 @@ export default class GuidNodeIQBRIMS extends Controller {
     }
 
     @action
-    saveInput(this: GuidNodeIQBRIMS) {
+    submit(this: GuidNodeIQBRIMS) {
         if (!this.status) {
             throw new EmberError('Illegal status');
         }
@@ -166,22 +176,13 @@ export default class GuidNodeIQBRIMS extends Controller {
         });
     }
 
-    @action
-    discardInput(this: GuidNodeIQBRIMS) {
-        if (!this.status) {
-            throw new EmberError('Illegal status');
-        }
-        const status = this.status.content as IQBRIMSStatusModel;
-        status.rollbackAttributes();
-    }
-
-    @computed('manuscriptFiles.changed', 'dataFiles.changed', 'checklistFiles.changed')
+    @computed('manuscriptFiles.filled', 'dataFiles.filled', 'checklistFiles.filled')
     get hasChangedFiles() {
-        return this.manuscriptFiles.changed || this.dataFiles.changed || this.checklistFiles.changed;
+        return this.manuscriptFiles.filled || this.dataFiles.filled || this.checklistFiles.filled;
     }
 
-    @computed('status.state', 'status.isDirectlySubmitData', 'manuscriptFiles.filled',
-        'dataFiles.filled', 'checklistFiles.filled')
+    @computed('status.state', 'status.isDirectlySubmitData', 'manuscriptFiles.hasError',
+        'dataFiles.hasError', 'checklistFiles.hasError')
     get isFilled() {
         if (!this.status) {
             return false;
@@ -194,22 +195,18 @@ export default class GuidNodeIQBRIMS extends Controller {
             if (!status.acceptedDate || status.acceptedDate.length === 0) {
                 return false;
             }
-            if (status.state === 'initialized') {
-                if (!status.isDirectlySubmitData && !this.dataFiles.filled) {
-                    return false;
-                }
-                if (!this.checklistFiles.filled) {
-                    return false;
-                }
+            if (!status.isDirectlySubmitData && this.dataFiles.hasError) {
+                return false;
+            }
+            if (this.checklistFiles.hasError) {
+                return false;
             }
         }
         if (!status.laboId || status.laboId.length === 0) {
             return false;
         }
-        if (status.state === 'initialized') {
-            if (!this.manuscriptFiles.filled) {
-                return false;
-            }
+        if (this.manuscriptFiles.hasError) {
+            return false;
         }
         return true;
     }

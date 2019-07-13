@@ -100,6 +100,7 @@
                                     model=this
                                     valuePath='acceptedDate'
                                     shouldShowMessages=@didValidate
+                                    change=(action this.valueChanged)
                                 }}
                             {{else}}
                                 {{this.acceptedDate}}
@@ -118,6 +119,7 @@
                                     class='form-control'
                                     value=this.journalName
                                     type='text'
+                                    change=(action this.valueChanged)
                                 }}
                             {{else}}
                                 {{this.journalName}}
@@ -134,6 +136,7 @@
                                     class='form-control'
                                     value=this.doi
                                     type='text'
+                                    change=(action this.valueChanged)
                                 }}
                             {{else}}
                                 {{this.doi}}
@@ -148,6 +151,7 @@
                                     model=this
                                     valuePath='publishDate'
                                     shouldShowMessages=@didValidate
+                                    change=(action this.valueChanged)
                                 }}
                             {{else}}
                                 {{this.publishDate}}
@@ -164,6 +168,7 @@
                                     class='form-control'
                                     value=this.volume
                                     type='text'
+                                    change=(action this.valueChanged)
                                 }}
                             {{else}}
                                 {{this.volume}}
@@ -180,6 +185,7 @@
                                     class='form-control'
                                     value=this.pageNumber
                                     type='text'
+                                    change=(action this.valueChanged)
                                 }}
                             {{else}}
                                 {{this.pageNumber}}
@@ -431,20 +437,12 @@
                     <div class='text-right' local-class='IQBRIMS__buttons'>
                         {{#if this.submitting}}
                             <OsfButton @type='default'>
-                                {{t 'iqbrims.discard_button'}}
-                            </OsfButton>
-                            <OsfButton @type='default'>
                                 {{t 'iqbrims.processing_submit_button'}}
                             </OsfButton>
                         {{else}}
-                            <OsfButton @type='default'
-                                       @disabled={{not this.status.hasDirtyAttributes}}
-                                       @onClick={{action this.discardInput}}>
-                                {{t 'iqbrims.discard_button'}}
-                            </OsfButton>
                             <OsfButton @type='success'
-                                       @disabled={{not (and this.isFilled (or this.isPageDirty this.hasChangedFiles))}}
-                                       @onClick={{action this.saveInput}}>
+                                       @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
+                                       @onClick={{action this.submit}}>
                                 {{t 'iqbrims.submit_button'}}
                             </OsfButton>
                         {{/if}}
