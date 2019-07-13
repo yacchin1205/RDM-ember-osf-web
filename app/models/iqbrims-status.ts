@@ -5,6 +5,7 @@ export default class IQBRIMSStatusModel extends OsfModel {
     @attr('boolean') isAdmin!: boolean;
     @attr('string') taskUrl?: string;
     @attr('string') state!: string;
+    @attr('string') edit?: string;
     @attr('string') laboId?: string;
     @attr('string') contributorType?: string;
     @attr('string') acceptedDate?: string;
