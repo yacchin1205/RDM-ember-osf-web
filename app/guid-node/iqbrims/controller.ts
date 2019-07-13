@@ -529,11 +529,11 @@ export default class GuidNodeIQBRIMS extends Controller {
         if (!this.status || !this.status.get('isFulfilled')) {
             return false;
         }
-        if (window.location.hash === '#deposit') {
-            return true;
-        }
         const status = this.status.content as IQBRIMSStatusModel;
         if (status.state === 'deposit') {
+            return true;
+        }
+        if (status.edit === 'deposit') {
             return true;
         }
         return false;
@@ -544,11 +544,11 @@ export default class GuidNodeIQBRIMS extends Controller {
         if (!this.status || !this.status.get('isFulfilled')) {
             return false;
         }
-        if (window.location.hash === '#check') {
-            return true;
-        }
         const status = this.status.content as IQBRIMSStatusModel;
         if (status.state === 'check') {
+            return true;
+        }
+        if (status.edit === 'check') {
             return true;
         }
         return false;
@@ -658,7 +658,7 @@ export default class GuidNodeIQBRIMS extends Controller {
 
     @action
     startDeposit(this: GuidNodeIQBRIMS) {
-        window.location.hash = '#deposit';
+        window.location.href = '?edit=deposit';
         this.notifyPropertyChange('modeCheck');
         this.notifyPropertyChange('modeDeposit');
         this.notifyPropertyChange('modeEdit');
@@ -666,7 +666,7 @@ export default class GuidNodeIQBRIMS extends Controller {
 
     @action
     startCheck(this: GuidNodeIQBRIMS) {
-        window.location.hash = '#check';
+        window.location.href = '?edit=check';
         this.notifyPropertyChange('modeCheck');
         this.notifyPropertyChange('modeDeposit');
         this.notifyPropertyChange('modeEdit');
