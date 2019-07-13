@@ -22,7 +22,6 @@ export default class IQBRIMSFileBrowser extends EmberObject {
     gdEmpty = false;
     filled = false;
     hasError = false;
-    noFilesError = false;
     rejectedFiles: string[] = [];
     acceptExtensions: string[] | null = null;
     rejectExtensions: string[] | null = null;
@@ -302,22 +301,18 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         let rejectedFiles: string[] = [];
         if (files.length === 0) {
             this.set('filled', false);
-            this.set('noFilesError', true);
         } else if (this.acceptExtensions != null) {
             const extensions = this.acceptExtensions;
             const rejecteds = files.filter(file => !extensions.includes(this.getExtension(file.get('name'))));
             this.set('filled', rejecteds.length === 0);
-            this.set('noFilesError', false);
             rejectedFiles = rejecteds.map(file => file.get('name'));
         } else if (this.rejectExtensions != null) {
             const extensions = this.rejectExtensions;
             const rejecteds = files.filter(file => extensions.includes(this.getExtension(file.get('name'))));
             this.set('filled', rejecteds.length === 0);
-            this.set('noFilesError', false);
             rejectedFiles = rejecteds.map(file => file.get('name'));
         } else {
             this.set('filled', true);
-            this.set('noFilesError', false);
         }
         this.set('rejectedFiles', rejectedFiles);
         this.set('hasError', rejectedFiles.length > 0);
