@@ -1369,7 +1369,7 @@ export default {
         paper_title: 'Paper Title',
         contributors: 'Co-author/Worker',
         edit_contributors: 'Edit',
-        labo: 'Research Field',
+        labo: 'Laboratory',
         email: 'Email for Notification',
         accepted_date: 'Accepted Date',
         journal_name: 'Journal Name',
