@@ -23,6 +23,7 @@ import { Permission } from './osf-model';
 import PreprintModel from './preprint';
 import RegionModel from './region';
 import RegistrationModel from './registration';
+import UserModel from './user';
 import WikiModel from './wiki';
 
 const Validations = buildValidations({
@@ -114,6 +115,9 @@ export default class NodeModel extends BaseFileItem.extend(Validations, Collecta
 
     @hasMany('institution', { inverse: 'nodes' })
     affiliatedInstitutions!: DS.PromiseManyArray<InstitutionModel> | InstitutionModel[];
+    @belongsTo('user') creator!: DS.PromiseObject<User> & UserModel;
+    @attr('number') quotaRate!: number;
+    @attr('number') quotaThreshold!: number;
 
     @hasMany('comment', { inverse: 'node' })
     comments!: DS.PromiseManyArray<CommentModel>;
