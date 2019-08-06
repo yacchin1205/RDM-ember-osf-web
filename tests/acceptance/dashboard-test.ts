@@ -202,15 +202,15 @@ module('Acceptance | dashboard', hooks => {
         );
         server.create(
             'contributor',
-            { node: nodeOne, users: currentUser, index: 0, permission: 'admin', bibliographic: true },
+            { node: nodeOne, users: currentUser, index: 0, permission: Permission.Admin, bibliographic: true },
         );
         server.create(
             'contributor',
-            { node: nodeTwo, users: currentUser, index: 0, permission: 'admin', bibliographic: true },
+            { node: nodeTwo, users: currentUser, index: 0, permission: Permission.Admin, bibliographic: true },
         );
         server.create(
             'contributor',
-            { node: nodeThree, users: currentUser, index: 0, permission: 'admin', bibliographic: true },
+            { node: nodeThree, users: currentUser, index: 0, permission: Permission.Admin, bibliographic: true },
         );
         await visit('/dashboard');
         assert.dom('img[alt*="Missing translation"]').doesNotExist();
