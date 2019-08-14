@@ -144,7 +144,7 @@ export default class FileModel extends BaseFileItem {
 
     moveOnCurrentProject(newProvider: string, newPath: string): Promise<null> {
         return this.currentUser.authenticatedAJAX({
-            url: this.links.move,
+            url: getHref(this.links.move),
             type: 'POST',
             xhrFields: { withCredentials: true },
             headers: {
