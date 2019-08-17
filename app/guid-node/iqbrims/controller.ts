@@ -181,7 +181,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         return this.manuscriptFiles.filled || this.dataFiles.filled || this.checklistFiles.filled;
     }
 
-    @computed('status.state', 'status.isDirectlySubmitData', 'manuscriptFiles.hasError',
+    @computed('status.{state,isDirectlySubmitData}', 'manuscriptFiles.hasError',
         'dataFiles.hasError', 'checklistFiles.hasError')
     get isFilled() {
         if (!this.status) {
@@ -469,6 +469,18 @@ export default class GuidNodeIQBRIMS extends Controller {
         return conts.map(c => c.users.content as UserModel);
     }
 
+    @computed('node.contributors.[]')
+    get contributorEmails() {
+        if (!this.node) {
+            return null;
+        }
+        const usernames = this.node.contributors.map(c => {
+            const user = c.users.content as UserModel;
+            return user.fullName;
+        });
+        return [`(Email address of ${usernames.join(',')})`];
+    }
+
     @computed('status.laboList')
     get laboList() {
         if (!this.status || !this.status.get('isFulfilled')) {
@@ -478,12 +490,10 @@ export default class GuidNodeIQBRIMS extends Controller {
         if (!status.laboList) {
             return [];
         }
-        const labos = status.laboList.map(labo => {
-            return {
-                id: labo.substring(0, labo.indexOf(':')),
-                text: labo.substring(labo.indexOf(':') + 1),
-            };
-        });
+        const labos = status.laboList.map(labo => ({
+            id: labo.substring(0, labo.indexOf(':')),
+            text: labo.substring(labo.indexOf(':') + 1),
+        }));
         return labos;
     }
 
@@ -491,9 +501,8 @@ export default class GuidNodeIQBRIMS extends Controller {
     get modeUnknown() {
         if (!this.status || !this.status.get('isFulfilled')) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     @computed('status.state')
