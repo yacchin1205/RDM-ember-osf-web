@@ -115,8 +115,12 @@ export default class NodeModel extends BaseFileItem.extend(Validations, Collecta
 
     @hasMany('institution', { inverse: 'nodes' })
     affiliatedInstitutions!: DS.PromiseManyArray<InstitutionModel> | InstitutionModel[];
-    @belongsTo('user') creator!: DS.PromiseObject<UserModel> & UserModel;
+
+    @belongsTo('user', { inverse: null })
+    creator!: DS.PromiseObject<UserModel> & UserModel;
+
     @attr('number') quotaRate!: number;
+
     @attr('number') quotaThreshold!: number;
 
     @hasMany('comment', { inverse: 'node' })
