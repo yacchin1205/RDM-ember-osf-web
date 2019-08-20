@@ -6,7 +6,13 @@
         {{else if this.modeAdmin}}
             <i>{{t 'iqbrims.management_project'}}</i>
             <div>
-                <a href='{{this.flowableTaskUrl}}' target='_blank' rel='noopener'>{{t 'iqbrims.flowable_task_service'}}</a>
+                <a data-test-task-url
+                    href='{{this.flowableTaskUrl}}'
+                    target='_blank'
+                    rel='noopener'
+                >
+                    {{t 'iqbrims.flowable_task_service'}}
+                </a>
             </div>
         {{else if (or this.modeDeposit this.modeCheck)}}
             {{#if this.modeDeposit}}
@@ -32,7 +38,7 @@
                 <h2 local-class='IQBRIMS__header_1'>{{t 'iqbrims.header_overview' }}</h2>
                 <div class='form-group row'>
                     <label class='col-sm-2' for='paper_title'>{{t 'iqbrims.paper_title'}}</label>
-                    <div class='col-sm-10'>
+                    <div data-test-paper-title class='col-sm-10'>
                         {{this.paperTitle}}
                     </div>
                 </div>
@@ -62,9 +68,13 @@
                     <label class='col-sm-2' for='labo'>
                         {{t 'iqbrims.labo'}} <span local-class='IQBRIMS__required'>*</span>
                     </label>
-                    <div class='col-sm-10'>
+                    <div data-test-labo-name class='col-sm-10'>
                         {{#if this.modeEdit}}
-                            <select class='form-control' onchange={{action this.laboChanged value='target.value'}}>
+                            <select
+                                data-test-labo-selection
+                                class='form-control'
+                                onchange={{action this.laboChanged value='target.value'}}
+                            >
                                 <option selected={{if (eq this.laboId '') 'selected'}} value=''>
                                     {{t 'iqbrims.placeholders.labo'}}
                                 </option>
@@ -111,7 +121,7 @@
                         <label class='col-sm-2' for='journal_name'>
                             {{t 'iqbrims.journal_name'}} <span local-class='IQBRIMS__required'>*</span>
                         </label>
-                        <div class='col-sm-10'>
+                        <div data-test-journal-name class='col-sm-10'>
                             {{#if this.modeEdit}}
                                 {{input
                                     name='journal_name'
@@ -419,7 +429,8 @@
                                 {{t 'iqbrims.processing_submit_button'}}
                             </OsfButton>
                         {{else}}
-                            <OsfButton @type='success'
+                            <OsfButton data-test-submit-button
+                                       @type='success'
                                        @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
                                        @onClick={{action this.submit}}>
                                 {{t 'iqbrims.submit_button'}}
@@ -430,7 +441,8 @@
             </div>
         {{else}}
             <div class='form-group'>
-                <OsfButton @type='primary'
+                <OsfButton data-test-start-deposit
+                           @type='primary'
                            @onClick={{action this.startDeposit}}>
                     {{t 'iqbrims.deposit_button'}}
                 </OsfButton>
@@ -439,7 +451,8 @@
                 </small>
             </div>
             <div class='form-group'>
-                <OsfButton @type='primary'
+                <OsfButton data-test-start-check
+                           @type='primary'
                            @onClick={{action this.startCheck}}>
                     {{t 'iqbrims.check_button'}}
                 </OsfButton>
