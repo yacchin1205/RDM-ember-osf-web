@@ -33,8 +33,6 @@ const {
     OAUTH_SCOPES: scope,
     ORCID_CLIENT_ID: orcidClientId,
     OSF_PAGE_NAME: pageName = 'OSF',
-    OSF_SIMPLE_BRAND: simpleBrand = 'OSF',
-    OSF_SHORT_BRAND: shortBrand = 'OSF',
     OSF_LONG_BRAND: longBrand = 'Open Science Framework',
     OSF_STATUS_COOKIE: statusCookie = 'osf_status',
     OSF_COOKIE_DOMAIN: cookieDomain = 'localhost',
@@ -155,8 +153,6 @@ module.exports = function(environment) {
         },
         OSF: {
             pageName,
-            simpleBrand,
-            shortBrand,
             longBrand,
             clientId,
             scope,
