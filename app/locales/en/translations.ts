@@ -5,9 +5,7 @@ const {
     organization,
     OSF: {
         pageName,
-        simpleBrand,
-        shortBrand,
-        longBrand,
+	longBrand,
     },
     signUpPolicy: {
         privacyPolicyLink,
@@ -107,7 +105,7 @@ export default {
         settings: 'Settings',
         project: 'project',
         component: 'component',
-        hosted_on_the_osf: `Hosted on ${shortBrand}`,
+        hosted_on_the_osf: 'Hosted on GakuNin RDM',
         please_confirm: 'Please confirm',
         proj_admin: 'Project Administrator',
         quota_notice: 'NII Storage Quota Notice',
@@ -152,7 +150,7 @@ export default {
     feedback: {
         button_text: 'Feedback',
         placeholder: 'Share your feedback',
-        follow_up_label: `Contact me about further opportunities to improve ${shortBrand}.`,
+        follow_up_label: 'Contact me about further opportunities to improve GakuNin RDM.',
         title: 'Send feedback',
         confirm_button_text: 'Send',
         thank_you: 'Thank you!',
@@ -198,8 +196,8 @@ export default {
             title: 'How to use the file browser',
             upload: '<b>Upload:</b> Upload single files via drag and drop or by clicking the upload button.',
             select: '<b>Select rows:</b> Click on a row to show further actions in the toolbar. Use Command or Shift keys to select multiple files.',
-            folders: `<b>Folders:</b> Not supported; consider an ${shortBrand} project for uploading and managing many files.`,
-            open1: `<b>Open files:</b> Click a file name to view the file on ${shortBrand}.`,
+            folders: '<b>Folders:</b> Not supported; consider a GakuNin RDM project for uploading and managing many files.',
+            open1: '<b>Open files:</b> Click a file name to view the file on GakuNin RDM.',
             open2: '<b>Open files in new tab:</b> Press Command (Ctrl in Windows) and click a file name to open it in a new tab.',
             download: '<b>Download as zip:</b> Click the "Download as zip" button in the toolbar to download all files as a .zip.',
         },
@@ -233,7 +231,7 @@ export default {
         create_new_project_button: 'Create new project',
         quicksearch: {
             search: 'Search your projects',
-            other_links: `Go to <a href="/myprojects/">My Projects</a> to organize your work ${useSearch ? 'or <a href="/search/">search</a> ' : 'in '}${shortBrand}`,
+            other_links: `Go to <a href="/myprojects/">My Projects</a> to organize your work ${useSearch ? 'or <a href="/search/">search</a> ' : 'in '}GakuNin RDM`,
             no_results: 'No results found.',
             no_projects: {
                 line1: 'You have no projects yet. Create a project with the button on the top right.',
@@ -254,12 +252,12 @@ export default {
         },
         meetings: {
             title: 'Hosting a conference or meeting?',
-            description: `Use the ${shortBrand} for Meetings service to provide a central location for conference submissions.`,
+            description: 'Use the GakuNin RDM for Meetings service to provide a central location for conference submissions.',
             button: 'View meetings',
         },
         preprints: {
             title: 'Browse the latest research',
-            description: `Check out the latest preprints hosted on ${shortBrand} covering a variety of research areas.`,
+            description: 'Check out the latest preprints hosted on GakuNin RDM covering a variety of research areas.',
             button: 'View preprints',
         },
     },
@@ -292,7 +290,7 @@ export default {
     },
     move_to_project: {
         create_new_project: 'Create new project',
-        connect_to_existing: `Connect file to existing ${shortBrand} project`,
+        connect_to_existing: 'Connect file to existing GakuNin RDM project',
         enter_project_title: 'Enter project title',
         new_project_message: 'You have selected to create a new public project for your file. Users will still have access to your file unless the project becomes private.',
         choose_project: 'Choose project',
@@ -301,8 +299,8 @@ export default {
         no_projects_exist_error: 'You have no available projects. Go back to create a new project.',
         could_not_create_project: 'Could not create project. Please try again.',
         convert_or_copy_message: {
-            project: `Clicking "Move file" will immediately make changes to your ${shortBrand} project and move your file.`,
-            component: `Clicking "Move file" will immediately make changes to your ${shortBrand} component and move your file.`,
+            project: 'Clicking "Move file" will immediately make changes to your GakuNin RDM project and move your file.',
+            component: 'Clicking "Move file" will immediately make changes to your GakuNin RDM component and move your file.',
         },
         no_longer_public_warning: {
             project: 'Files moved to private projects will no longer be public or discoverable by others.',
@@ -328,19 +326,19 @@ export default {
         reviews: 'My Reviewing',
         search: 'Search',
         search_help: 'Search help',
-        search_the_OSF: `Search ${shortBrand}`,
+        search_the_OSF: 'Search GakuNin RDM',
         send_search: 'Send search query',
         support: 'Support',
         toggle_primary: 'Toggle primary navigation',
         toggle_secondary: 'Toggle secondary navigation',
-        other_views: `Other ${shortBrand} views`,
+        other_views: 'Other GakuNin RDM views',
         login: 'Login',
         join: 'Join',
     },
     auth_dropdown: {
         log_out: 'Log Out',
         my_profile: 'My Profile',
-        osf_support: `${simpleBrand} Support`,
+        osf_support: 'RDM Support',
         sign_up: 'Sign Up',
         sign_in: 'Sign In',
         user_gravatar: 'User gravatar',
@@ -349,10 +347,10 @@ export default {
     support: {
         title: 'Support',
         faq_title: 'Frequently asked questions',
-        faq_paragraph: `How can it be free? How will ${shortBrand} be useful to my research? What is a registration? Get your questions about ${shortBrand} answered on our <a href="{{faqPageUrl}}" data-analytics-name="faq_link">FAQ page</a>.`,
+        faq_paragraph: 'How can it be free? How will GakuNin RDM be useful to my research? What is a registration? Get your questions about GakuNin RDM answered on our <a href="{{faqPageUrl}}" data-analytics-name="faq_link">FAQ page</a>.',
         faq_button: 'Visit FAQ',
-        guides_title: `${shortBrand} guides`,
-        guides_paragraph: `Learn how to use ${shortBrand} for improving your research workflow. Read our <a href="{{helpUrl}}" data-analytics-name="guides_link">guides</a> for step-by-step screenshots that show you the basics of project structures, version control, privacy, files, add-on support, and more!`,
+        guides_title: 'GakuNin RDM guides',
+        guides_paragraph: 'Learn how to use GakuNin RDM for improving your research workflow. Read our <a href="{{helpUrl}}" data-analytics-name="guides_link">guides</a> for step-by-step screenshots that show you the basics of project structures, version control, privacy, files, add-on support, and more!',
         guides_button: 'Visit guides',
         contact_title: 'Get in touch',
         contact_questions: 'For technical support or other questions,',
@@ -374,8 +372,8 @@ export default {
         body: 'The requested resource could not be found. If this should not have occurred and the issue persists, please report it to <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.',
         registries: {
             contact: 'support@osf.io',
-            go_to: `Go to ${shortBrand} Registries`,
-            line1: `The page you were looking for is not found on the ${shortBrand} Registries service.`,
+            go_to: 'Go to GakuNin RDM Registries',
+            line1: 'The page you were looking for is not found on the GakuNin RDM Registries service.',
             line2: 'If this should not have occurred and the issue persists, please report it to ',
         },
     },
@@ -403,12 +401,12 @@ export default {
     },
     home: {
         title: 'Home',
-        youtube_modal_title: `Getting Started with ${shortBrand}`,
+        youtube_modal_title: 'Getting Started with GakuNin RDM',
         alert_logged_out: 'You have successfully logged out.',
         brand: longBrand,
         tagline: 'A scholarly commons to connect the entire research cycle',
-        youtube_label: `${shortBrand} YouTube Video`,
-        osf_screenshot_alt: `Screenshot of ${shortBrand}`,
+        youtube_label: 'GakuNin RDM YouTube Video',
+        osf_screenshot_alt: 'Screenshot of GakuNin RDM',
         signup_title: 'Free and open source. Start now.',
         collaboration: 'Simplified Scholarly Collaboration',
         management: 'Cloud-based management for your projects.',
@@ -419,11 +417,11 @@ export default {
         control_access_paragraph: '<strong>You control which parts of your project are public or private</strong> making it easy to collaborate with the worldwide community or just your team.',
         control_access_span: 'Project-level Permissions',
         workflow_title: 'Respect for your workflow',
-        workflow_paragraph: `<strong>Connect your favorite third party services</strong> directly to ${shortBrand}.`,
+        workflow_paragraph: '<strong>Connect your favorite third party services</strong> directly to GakuNin RDM.',
         workflow_span: '3rd Party Integrations',
-        student_main: `"${shortBrand} is a game changer for those wanting to effectively share their research process in the spirit of collaboration."`,
+        student_main: '"GakuNin RDM is a game changer for those wanting to effectively share their research process in the spirit of collaboration."',
         student_attrib: '<strong>Patricia Ayala</strong>, Research Services Librarian, University of Toronto',
-        integrations_title: `${shortBrand} integrations make your <strong>workflow more efficient</strong>`,
+        integrations_title: 'GakuNin RDM integrations make your <strong>workflow more efficient</strong>',
         integrations_alt_dropbox: 'Dropbox logo',
         integrations_alt_github: 'Github logo',
         integrations_alt_amazon: 'Amazon S3 logo',
@@ -442,37 +440,37 @@ export default {
         features_analytics_title: 'View project analytics',
         features_analytics_paragraph: 'Access <strong>project data</strong> ranging from visits over time to top referring websites.',
         features_archive_title: 'Archive your data',
-        features_archive_paragraph: `Computer or collaborator explode? With ${shortBrand} <strong>you will never lose your project data.</strong>`,
+        features_archive_paragraph: 'Computer or collaborator explode? With GakuNin RDM <strong>you will never lose your project data.</strong>',
         features_collaboration_title: 'Control access and collaboration',
         features_collaboration_paragraph: 'Add others to your projects to collaborate, or provide private access to view.',
         features_workflow_title: 'Supercharge your workflow',
-        features_workflow_paragraph: `${shortBrand} helps individuals, teams and labs make their <strong>research processes more efficient.</strong>`,
+        features_workflow_paragraph: 'GakuNin RDM helps individuals, teams and labs make their <strong>research processes more efficient.</strong>',
         features_registration_title: 'Registration',
         features_registration_paragraph: '<strong>Preserve the state of a project at important parts of its lifecycle</strong> such as the onset of data collection.',
         global_title: '<strong>Contribute</strong> to global scientific efforts',
-        global_paragraph: `Labs and teams across the globe use ${shortBrand} to open their projects up to the scientific community. You can browse the newest and most popular public projects`,
+        global_paragraph: 'Labs and teams across the globe use GakuNin RDM to open their projects up to the scientific community. You can browse the newest and most popular public projects',
         global_link: 'right here.',
         global_label: 'Get involved',
         non_profit_title: 'We are a <strong>mission-driven non-profit</strong>',
-        non_profit_paragraph1: `${shortBrand} is a free, open source service of the`,
+        non_profit_paragraph1: 'GakuNin RDM is a free, open source service of the',
         non_profit_link: `${organization}.`,
         non_profit_paragraph2: 'We’re aligning scientific practices with scientific values by improving openness, integrity and reproducibility of research.',
         non_profit_label: 'Non-Profit',
-        users_title: `<strong>Teachers, researchers, and global teams rely</strong> on ${shortBrand}`,
+        users_title: '<strong>Teachers, researchers, and global teams rely</strong> on GakuNin RDM',
         users_1_alt: 'Richard Ball',
         users_1_title: 'Making research reproducible &amp; verifiable',
-        users_1_paragraph: `The ${shortBrand} helps our students understand and apply sound data management principles to their work. And since we have easy access to all of the files the students are working with, it greatly enhances our ability to offer them constructive guidance.`,
+        users_1_paragraph: 'The GakuNin RDM helps our students understand and apply sound data management principles to their work. And since we have easy access to all of the files the students are working with, it greatly enhances our ability to offer them constructive guidance.',
         users_1_small: 'Richard Ball, Professor of Economics, Haverford College',
         users_2_title: 'Version control makes life easier',
-        users_2_paragraph: `The ${shortBrand} makes version control effortless. My PI, my lab mates, and I have access to previous versions of a file at any time&#151;and the most current version is always readily available.`,
+        users_2_paragraph: 'The GakuNin RDM makes version control effortless. My PI, my lab mates, and I have access to previous versions of a file at any time&#151;and the most current version is always readily available.',
         users_2_small: 'Erica Baranski, PhD Student, Social and Personality Psychology Funder Lab, UC Riverside',
         users_2_alt: 'Erica Baranski',
         users_3_alt: 'Anne Allison',
         users_3_title: 'A centralized hub of information',
-        users_3_paragraph: `The ${shortBrand} creates a centralized hub of information where I can oversee a diversity of research projects across multiple classes. The centralization, organization, and anywhere-access save me the time and energy necessary for managing these projects.`,
+        users_3_paragraph: 'The GakuNin RDM creates a centralized hub of information where I can oversee a diversity of research projects across multiple classes. The centralization, organization, and anywhere-access save me the time and energy necessary for managing these projects.',
         users_3_small: 'Anne Allison, Associate Professor of Biology at Piedmont Virginia Community College',
         free_title1: 'Free and open source.',
-        free_title2: `${shortBrand} is a public good built to support your research.`,
+        free_title2: 'GakuNin RDM is a public good built to support your research.',
         free_link: 'Get started',
         learn_more: 'Learn more',
     },
@@ -570,7 +568,7 @@ export default {
     },
     // These keys come from the "osf_status" cookie set by Flask to expose status messages added to the session with push_status_message()
     status: {
-        welcome_message: `<h1>Welcome to ${shortBrand}!</h1><p>Visit our <a href="https://openscience.zendesk.com/hc/en-us" target="_blank" rel="noreferrer">Guides</a> to learn about creating a project, or get inspiration from <a href="https://osf.io/explore/activity/#popularPublicProjects">popular public projects</a>.</p>`,
+        welcome_message: '<h1>Welcome to GakuNin RDM!</h1><p>Visit our <a href="https://openscience.zendesk.com/hc/en-us" target="_blank" rel="noreferrer">Guides</a> to learn about creating a project, or get inspiration from <a href="https://osf.io/explore/activity/#popularPublicProjects">popular public projects</a>.</p>',
         alternate_email_error: 'The email address has <b>NOT</b> been added to your account. Please log out and revisit the link in your email. Thank you.',
         remove_addon: 'Because the GitHub add-on for {{extra.category}} "{{extra.title}}" was authenticated by {{extra.user}}, authentication information has been deleted.',
         project_deleted: 'Project has been successfully deleted.',
@@ -586,8 +584,8 @@ export default {
         error_directories: 'Cannot upload directories, applications, or packages',
     },
     join_osf: {
-        header: `Start managing your projects on ${shortBrand} today.`,
-        pitch: `Free and easy to use, ${shortBrand} supports the entire research lifecycle: planning, execution, reporting, archiving, and discovery.`,
+        header: 'Start managing your projects on GakuNin RDM today.',
+        pitch: 'Free and easy to use, GakuNin RDM supports the entire research lifecycle: planning, execution, reporting, archiving, and discovery.',
         create_account: 'Create an account',
         learn_more: 'learn more',
         hide_message: 'Hide this message',
@@ -682,9 +680,9 @@ export default {
         linkedin: 'LinkedIn',
     },
     institutions: {
-        description: `${shortBrand} Institutions is a free scholarly web tool that enhances transparency, fosters collaboration, and increases the visibility of research outputs at the institutional level.`,
+        description: 'GakuNin RDM Institutions is a free scholarly web tool that enhances transparency, fosters collaboration, and increases the visibility of research outputs at the institutional level.',
         read_more: 'Read more',
-        footer: `Interested in setting up an ${shortBrand} Institutions page for your research institution?`,
+        footer: 'Interested in setting up a GakuNin RDM Institutions page for your research institution?',
         contact_us: 'Contact us',
         title: 'Institutions',
         search_placeholder: 'Search institutions',
@@ -708,8 +706,8 @@ export default {
     },
     app_components: {
         branded_navbar: {
-            my_osf_projects: `My ${shortBrand} Projects`,
-            on_the_osf: `On the ${shortBrand}:`,
+            my_osf_projects: 'My GakuNin RDM Projects',
+            on_the_osf: 'On the GakuNin RDM:',
         },
         error_page: {
             email_message: 'If this should not have occurred and the issue persists, please report it to',
@@ -917,7 +915,7 @@ export default {
             services_heading: 'Collection Services',
             services_paragraph: 'Leading collection service providers use this open source infrastructure to support their communities.',
             service_bottom: {
-                p1: `Create your own branded collection service backed by the ${shortBrand}.`,
+                p1: 'Create your own branded collection service backed by the GakuNin RDM.',
                 div: {
                     line1: 'Check out the',
                     linkText1: 'open source code',
@@ -1042,14 +1040,14 @@ export default {
 
         facets: {
             registration_type: {
-                title: `${shortBrand} Registration Type`,
-                only_available_with_osf: `Only available with ${shortBrand} Registries`,
+                title: 'GakuNin RDM Registration Type',
+                only_available_with_osf: 'Only available with GakuNin RDM Registries',
                 registration_schema_error: 'An error occurred getting registration types. Please try again.',
             },
         },
 
         application: {
-            page_title: `${shortBrand} Registries`,
+            page_title: 'GakuNin RDM Registries',
         },
 
         discover: {
@@ -1089,7 +1087,7 @@ export default {
                     paragraph: 'Leading registry service providers use this open source infrastructure to support their communities.',
                 },
                 bottom: {
-                    p1: `Create your own branded registry backed by the ${shortBrand}.`,
+                    p1: 'Create your own branded registry backed by the GakuNin RDM.',
                     div: {
                         line1: 'Check out the',
                         linkText1: 'open source code',
@@ -1373,7 +1371,7 @@ export default {
             <ul>
                 <li>are discoverable</li>
                 <li>are citable</li>
-                <li>can be affiliated with ${shortBrand} for Institutions partners</li>
+                <li>can be affiliated with GakuNin RDM for Institutions partners</li>
                 <li>promote open practices among peers</li>
             </ul>
             <p>
