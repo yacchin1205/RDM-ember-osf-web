@@ -252,6 +252,9 @@ module.exports = function(environment) {
         home: {
             youtubeId: '2TV21gOzfhw',
         },
+        navbar: {
+            useDropdown: false,
+        },
         secondaryNavbarId: '__secondaryOSFNavbar__',
         engines: {
             // App Engines should always be enabled in production builds

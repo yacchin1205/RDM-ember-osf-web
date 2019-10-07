@@ -3,10 +3,10 @@
         <div class='container'>
             <div class='navbar-header'>
                 {{! template-lint-disable no-implicit-this }}
-                {{#global-link-to 
-                    'home' 
-                    data-test-nav-home-link 
-                    (html-attributes aria-label=(t 'navbar.go_home')) 
+                {{#global-link-to
+                    'home'
+                    data-test-nav-home-link
+                    (html-attributes aria-label=(t 'navbar.go_home'))
                     class='navbar-brand'
                 }}
                     <span class='osf-navbar-logo'></span>
@@ -16,10 +16,13 @@
                 <div class='service-name'>
                     {{#hyper-link this._activeService.route}}
                         <span class='hidden-xs'> {{t 'general.OSF'}} </span>
+                        {{#if useNavDropdown}}
                         <span class='current-service'><strong>{{this._activeService.name}}</strong></span>
+                        {{/if}}
                     {{/hyper-link}}
                 </div>
 
+                {{#if useNavDropdown}}
                 {{! App list dropdown }}
                 <BsDropdown
                     @classNames='dropdown primary-nav'
@@ -42,6 +45,7 @@
                         {{/each}}
                     </dd.menu>
                 </BsDropdown>
+                {{/if}}
 
                 {{! Navigation toggle - XS screen }}
                 <OsfButton

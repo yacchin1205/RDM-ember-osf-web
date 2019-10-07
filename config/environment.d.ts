@@ -156,6 +156,9 @@ declare const config: {
     home: {
         youtubeId: string;
     };
+    navbar: {
+        useDropdown: boolean;
+    },
     secondaryNavbarId: string;
     'ember-a11y-testing'?: {
         componentOptions: {

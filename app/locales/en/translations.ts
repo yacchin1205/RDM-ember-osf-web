@@ -34,7 +34,7 @@ export default {
         },
     },
     general: {
-        OSF: 'OSF',
+        OSF: 'GakuNin RDM STG3', // for DEMO
         share: 'Share',
         embed: 'Embed',
         download: 'Download',
