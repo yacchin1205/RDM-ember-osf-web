@@ -141,6 +141,22 @@ export default class FileModel extends BaseFileItem {
             }),
         }).then(() => this.reload());
     }
+
+    moveOnCurrentProject(newProvider: string, newPath: string): Promise<null> {
+        return this.currentUser.authenticatedAJAX({
+            url: getHref(this.links.move),
+            type: 'POST',
+            xhrFields: { withCredentials: true },
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data: JSON.stringify({
+                action: 'move',
+                path: newPath,
+                provider: newProvider,
+            }),
+        }).then(() => this.reload());
+    }
 }
 
 declare module 'ember-data/types/registries/model' {

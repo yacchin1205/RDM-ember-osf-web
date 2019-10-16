@@ -6,6 +6,7 @@ import { reportDelete } from './views/comment';
 import { createDeveloperApp, resetClientSecret } from './views/developer-app';
 import { createFork, createRegistrationFork } from './views/fork';
 import { guidDetail } from './views/guid';
+import { iqbrimsStatus } from './views/iqbrims-status';
 import { createNode } from './views/node';
 import { osfNestedResource, osfResource, osfToManyRelationship } from './views/osf-resource';
 import { forkRegistration, registrationDetail } from './views/registration';
@@ -17,7 +18,7 @@ import { updatePassword } from './views/user-password';
 import * as userSettings from './views/user-setting';
 import * as wb from './views/wb';
 
-const { OSF: { apiUrl } } = config;
+const { OSF: { apiUrl, url } } = config;
 
 export default function(this: Server) {
     this.passthrough(); // pass through all requests on currrent domain
@@ -62,6 +63,7 @@ export default function(this: Server) {
         only: ['related', 'add', 'remove'],
         path: '/nodes/:parentID/relationships/institutions',
     });
+    osfNestedResource(this, 'node', 'addons', { only: ['index'] });
 
     osfResource(this, 'registration', { except: ['show'] });
     this.get('/registrations/:id', registrationDetail);
@@ -157,4 +159,14 @@ export default function(this: Server) {
         only: ['related'],
         path: '/meetings/:parentID/submissions/',
     });
+
+    // Endpoint on web pod
+    const apiNamespace = this.namespace;
+    this.urlPrefix = url;
+    this.namespace = '/api/v1';
+
+    this.get('/project/:id/iqbrims/status', iqbrimsStatus);
+
+    this.urlPrefix = apiUrl;
+    this.namespace = apiNamespace;
 }

@@ -2,7 +2,7 @@
     {{#if this.showFilter}}
         <div class='col-xs-9 filter-input'>
             {{input
-                (html-attributes 
+                (html-attributes
                     data-test-filter-input='filter'
                     aria-label=(t 'file_browser.filtering')
                 )
@@ -50,7 +50,7 @@
                 aria-label={{t 'general.rename'}}
                 local-class='action-button'
                 @onClick={{action this.rename}}
-                @class='pull-right' 
+                @class='pull-right'
             >
                 {{fa-icon 'pencil'}}
             </OsfButton>
@@ -62,7 +62,7 @@
                     data-analytics-name='Upload'
                     local-class='action-button'
                     @bubble={{true}}
-                    @class='dz-upload-button'
+                    @class='{{this.dzUploadButtonClass}}'
                     @disabled={{this.isUploading}}
                 >
                     {{fa-icon 'upload'}}
@@ -72,11 +72,11 @@
             {{#if this.selectedItems}}
                 {{! TODO: show available actions for selected files }}
                 {{#if (eq this.selectedItems.length 1)}}
-                    <OsfButton 
+                    <OsfButton
                         data-test-share-dialog-button
                         data-analytics-name='Share'
-                        local-class='action-button' 
-                        @class='popover-toggler' 
+                        local-class='action-button'
+                        @class='popover-toggler'
                         @onClick={{action this.openSharePopup}}
                     >
                         {{fa-icon 'share-alt'}}
@@ -98,7 +98,7 @@
                             {{/if}}
                         </BsPopover>
                     </OsfButton>
-                    <OsfButton 
+                    <OsfButton
                         data-test-download-button
                         data-analytics-name={{if (not this.canEdit) 'Download'}}
                         local-class='action-button'
@@ -165,10 +165,10 @@
                     {{/if}}
                 {{/if}}
             {{else if this.hasItems}}
-                <OsfButton 
+                <OsfButton
                     data-test-download-zip-button
                     data-analytics-name={{if (not this.canEdit) 'Download Zip'}}
-                    local-class='action-button' 
+                    local-class='action-button'
                     local-class='action-button'
                     @bubble={{true}}
                     @onClick={{action this.downloadZip}}
@@ -221,7 +221,7 @@
     </div>
     <div class='col-lg-2 col-md-2 col-sm-3 hidden-xs' local-class='file-browser-header header'>
         <span local-class='sortable-column'>{{t 'general.modified'}}</span>
-        <SortButton 
+        <SortButton
             @sortAction={{action (mut this.sort)}}
             @sort={{this.sort}}
             @sortBy='dateModified'
