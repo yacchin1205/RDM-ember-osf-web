@@ -371,7 +371,7 @@ export default {
         title: 'Page not found',
         body: 'The requested resource could not be found. If this should not have occurred and the issue persists, please report it to <a href="mailto:{{supportEmail}}">{{supportEmail}}</a>.',
         registries: {
-            contact: 'support@osf.io',
+            contact: 'rdm_support@nii.ac.jp',
             go_to: 'Go to GakuNin RDM Registries',
             line1: 'The page you were looking for is not found on the GakuNin RDM Registries service.',
             line2: 'If this should not have occurred and the issue persists, please report it to ',

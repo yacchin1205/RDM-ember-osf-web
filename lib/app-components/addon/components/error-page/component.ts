@@ -22,6 +22,6 @@ export default class ErrorPage extends Component {
         const { isProvider, provider } = this.theme;
 
         // TODO: get default support email from config
-        return isProvider && provider && provider.emailSupport ? provider.emailSupport : 'support@osf.io';
+        return isProvider && provider && provider.emailSupport ? provider.emailSupport : 'rdm_support@nii.ac.jp';
     }
 }
