@@ -207,10 +207,14 @@ export default class GuidNodeIQBRIMS extends Controller {
             if (pos > 0) {
                 url = url.substring(0, pos + 1);
             }
-            this.set('submitting', false);
             this.set('submitted', true);
             window.location.hash = '';
-            window.location.reload();
+            const qIndex = window.location.href.indexOf('?');
+            if (qIndex >= 0) {
+                window.location.href = window.location.href.substring(0, qIndex);
+            } else {
+                window.location.reload();
+            }
         }).catch(() => {
             const message = this.i18n.t('iqbrims.failed_to_submit');
             this.toast.error(message);
@@ -452,7 +456,7 @@ export default class GuidNodeIQBRIMS extends Controller {
     @computed('status.state')
     get isPaperVisible() {
         if (!this.status || !this.status.get('isFulfilled')) {
-            return true;
+            return false;
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (!status.workflowPaperPermissions) {
@@ -464,7 +468,7 @@ export default class GuidNodeIQBRIMS extends Controller {
     @computed('status.state')
     get isPaperUploadable() {
         if (!this.status || !this.status.get('isFulfilled')) {
-            return true;
+            return false;
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (!status.workflowPaperPermissions) {
@@ -476,7 +480,7 @@ export default class GuidNodeIQBRIMS extends Controller {
     @computed('status.state')
     get isRawVisible() {
         if (!this.status || !this.status.get('isFulfilled')) {
-            return true;
+            return false;
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (!status.workflowRawPermissions) {
@@ -488,7 +492,7 @@ export default class GuidNodeIQBRIMS extends Controller {
     @computed('status.state')
     get isRawUploadable() {
         if (!this.status || !this.status.get('isFulfilled')) {
-            return true;
+            return false;
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (!status.workflowRawPermissions) {
@@ -500,7 +504,7 @@ export default class GuidNodeIQBRIMS extends Controller {
     @computed('status.state')
     get isChecklistVisible() {
         if (!this.status || !this.status.get('isFulfilled')) {
-            return true;
+            return false;
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (!status.workflowChecklistPermissions) {
@@ -512,7 +516,7 @@ export default class GuidNodeIQBRIMS extends Controller {
     @computed('status.state')
     get isChecklistUploadable() {
         if (!this.status || !this.status.get('isFulfilled')) {
-            return true;
+            return false;
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (!status.workflowChecklistPermissions) {
@@ -760,14 +764,31 @@ export default class GuidNodeIQBRIMS extends Controller {
         return this.checklistFiles.buildUrl(files);
     }
 
-    @computed('tab')
+    @computed('tab', 'status.state')
     get activeTab() {
-        return this.tab ? this.tab : 'IQBRIMS__overflow_view_paper';
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return undefined;
+        }
+        if (this.tab) {
+            return this.tab;
+        }
+        let tab = 'overview';
+        if (this.isPaperUploadable) {
+            tab = 'paper';
+        } else if (this.modeDeposit && this.isRawUploadable) {
+            tab = 'raw';
+        } else if (this.modeDeposit && this.isChecklistUploadable) {
+            tab = 'checklist';
+        }
+        this.set('tab', tab);
+        return tab;
     }
 
     @action
     changeTab(this: GuidNodeIQBRIMS, activeId: string) {
-        this.set('tab', activeId === 'IQBRIMS__overflow_view_paper' ? undefined : activeId);
+        if (activeId) {
+            this.set('tab', activeId);
+        }
     }
 
     @action

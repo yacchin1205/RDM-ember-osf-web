@@ -54,7 +54,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         const url = `/${node.id}/iqbrims`;
 
         await visit(url);
-        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.ok(currentURL().endsWith(`${url}?tab=overview`), `We are on ${url}`);
         assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
         await percySnapshot(assert);
         assert.dom('[data-test-task-url]').doesNotExist();
@@ -84,7 +84,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         const url = `/${node.id}/iqbrims`;
 
         await visit(url);
-        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.ok(currentURL().endsWith(`${url}?tab=paper`), `We are on ${url}`);
         assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
         await percySnapshot(assert);
         assert.dom('[data-test-task-url]').doesNotExist();
@@ -115,7 +115,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         const url = `/${node.id}/iqbrims`;
 
         await visit(url);
-        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.ok(currentURL().endsWith(`${url}?tab=raw`), `We are on ${url}`);
         assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
         await percySnapshot(assert);
         assert.dom('[data-test-task-url]').doesNotExist();
@@ -147,7 +147,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         const url = `/${node.id}/iqbrims`;
 
         await visit(url);
-        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.ok(currentURL().endsWith(`${url}?tab=checklist`), `We are on ${url}`);
         assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
         await percySnapshot(assert);
         assert.dom('[data-test-task-url]').doesNotExist();
@@ -179,7 +179,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         const url = `/${node.id}/iqbrims`;
 
         await visit(url);
-        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.ok(currentURL().endsWith(`${url}?tab=overview`), `We are on ${url}`);
         assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
         await percySnapshot(assert);
         assert.dom('[data-test-task-url]').doesNotExist();
@@ -209,7 +209,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         const url = `/${node.id}/iqbrims`;
 
         await visit(url);
-        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.ok(currentURL().endsWith(`${url}?tab=overview`), `We are on ${url}`);
         assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
         await percySnapshot(assert);
         assert.dom('[data-test-task-url]').doesNotExist();
@@ -239,7 +239,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         const url = `/${node.id}/iqbrims`;
 
         await visit(url);
-        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.ok(currentURL().endsWith(`${url}?tab=paper`), `We are on ${url}`);
         assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
         await percySnapshot(assert);
         assert.dom('[data-test-task-url]').doesNotExist();
@@ -270,7 +270,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         const url = `/${node.id}/iqbrims`;
 
         await visit(url);
-        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.ok(currentURL().endsWith(`${url}?tab=overview`), `We are on ${url}`);
         assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
         await percySnapshot(assert);
         assert.dom('[data-test-task-url]').doesNotExist();
