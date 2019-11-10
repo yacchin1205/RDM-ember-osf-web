@@ -5,7 +5,7 @@ const {
     organization,
     OSF: {
         pageName,
-	longBrand,
+        longBrand,
     },
     signUpPolicy: {
         privacyPolicyLink,
@@ -1792,5 +1792,7 @@ export default {
         uploader_rejected_manuscript_files: 'Cannot upload TIFF, PNG, JPEG:',
         uploader_rejected_data_files: 'Can upload only ZIP, Excel:',
         uploader_rejected_checklist_files: 'Can upload only PDF:',
+        file_confirm_dialog_title: 'ファイルの提出',
+        file_confirm_dialog_body: 'ファイル提出後は変更・追加はできません。よろしいですか？',
     },
 };

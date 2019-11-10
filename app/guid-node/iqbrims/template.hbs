@@ -264,21 +264,16 @@
                                 @addFile={{perform this.manuscriptFiles.addFile}}
                                 @buildUrl={{action this.buildManuscriptFileUrl}}
                             />
-                        {{/if}}
-                        <div class='text-right' local-class='IQBRIMS__buttons'>
-                            {{#if this.submitting}}
-                                <OsfButton @type='default'>
-                                    {{t 'iqbrims.processing_submit_button'}}
-                                </OsfButton>
-                            {{else}}
-                                <OsfButton data-test-submit-button
+                            <div class='text-right' local-class='IQBRIMS__buttons'>
+                                <OsfButton data-test-submit-paper-button
                                            @type='success'
                                            @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
-                                           @onClick={{action this.submitPaper}}>
+                                           @onClick={{action (mut this.showPaperConfirmDialog) true}}
+                                >
                                     {{t 'iqbrims.submit_button'}}
                                 </OsfButton>
-                            {{/if}}
-                        </div>
+                            </div>
+                        {{/if}}
                     </tab.pane>
                     {{#if this.modeDeposit}}
                         <tab.pane
@@ -370,21 +365,16 @@
                                     @addFile={{perform this.dataFiles.addFile}}
                                     @buildUrl={{action this.buildDataFileUrl}}
                                 />
-                            {{/if}}
-                            <div class='text-right' local-class='IQBRIMS__buttons'>
-                                {{#if this.submitting}}
-                                    <OsfButton @type='default'>
-                                        {{t 'iqbrims.processing_submit_button'}}
-                                    </OsfButton>
-                                {{else}}
-                                    <OsfButton data-test-submit-button
+                                <div class='text-right' local-class='IQBRIMS__buttons'>
+                                    <OsfButton data-test-submit-raw-button
                                                @type='success'
                                                @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
-                                               @onClick={{action this.submitRaw}}>
+                                               @onClick={{action (mut this.showRawConfirmDialog) true}}
+                                    >
                                         {{t 'iqbrims.submit_button'}}
                                     </OsfButton>
-                                {{/if}}
-                            </div>
+                                </div>
+                            {{/if}}
                         </tab.pane>
                         <tab.pane
                             @id='IQBRIMS__checklist'
@@ -453,21 +443,16 @@
                                     @addFile={{perform this.checklistFiles.addFile}}
                                     @buildUrl={{action this.buildChecklistFileUrl}}
                                 />
-                            {{/if}}
-                            <div class='text-right' local-class='IQBRIMS__buttons'>
-                                {{#if this.submitting}}
-                                    <OsfButton @type='default'>
-                                        {{t 'iqbrims.processing_submit_button'}}
-                                    </OsfButton>
-                                {{else}}
-                                    <OsfButton data-test-submit-button
+                                <div class='text-right' local-class='IQBRIMS__buttons'>
+                                    <OsfButton data-test-submit-checklist-button
                                                @type='success'
                                                @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
-                                               @onClick={{action this.submitChecklist}}>
+                                               @onClick={{action (mut this.showChecklistConfirmDialog) true}}
+                                    >
                                         {{t 'iqbrims.submit_button'}}
                                     </OsfButton>
-                                {{/if}}
-                            </div>
+                                </div>
+                            {{/if}}
                         </tab.pane>
                     {{/if}}
                 </BsTab>
@@ -496,3 +481,111 @@
         {{/if}}
     </div>
 </div>
+
+<BsModal
+    data-test-paper-confirm-modal
+    @open={{this.showPaperConfirmDialog}}
+    @onHidden={{action (mut this.showPaperConfirmDialog) false}}
+    as |modal|
+>
+    <modal.header>
+        <h4>
+            {{t 'iqbrims.file_confirm_dialog_title'}}
+        </h4>
+    </modal.header>
+    <modal.body>
+        {{t 'iqbrims.file_confirm_dialog_body'}}
+    </modal.body>
+    <modal.footer>
+        <BsButton
+            @disabled={{this.submitting}}
+            @onClick={{action this.closeDialogs}}
+        >
+            {{t 'general.cancel'}}
+        </BsButton>
+        {{#if this.submitting}}
+            <BsButton @type='default'>
+                {{t 'iqbrims.processing_submit_button'}}
+            </BsButton>
+        {{else}}
+            <BsButton
+                @onClick={{action this.submitPaper}}
+                @type='success'
+            >
+                {{t 'general.ok'}}
+            </BsButton>
+        {{/if}}
+    </modal.footer>
+</BsModal>
+
+<BsModal
+    data-test-raw-confirm-modal
+    @open={{this.showRawConfirmDialog}}
+    @onHidden={{action (mut this.showRawConfirmDialog) false}}
+    as |modal|
+>
+    <modal.header>
+        <h4>
+            {{t 'iqbrims.file_confirm_dialog_title'}}
+        </h4>
+    </modal.header>
+    <modal.body>
+        {{t 'iqbrims.file_confirm_dialog_body'}}
+    </modal.body>
+    <modal.footer>
+        <BsButton
+            @disabled={{this.submitting}}
+            @onClick={{action this.closeDialogs}}
+        >
+            {{t 'general.cancel'}}
+        </BsButton>
+        {{#if this.submitting}}
+            <BsButton @type='default'>
+                {{t 'iqbrims.processing_submit_button'}}
+            </BsButton>
+        {{else}}
+            <BsButton
+                @onClick={{action this.submitRaw}}
+                @type='success'
+            >
+                {{t 'general.ok'}}
+            </BsButton>
+        {{/if}}
+    </modal.footer>
+</BsModal>
+
+<BsModal
+    data-test-checklist-confirm-modal
+    @open={{this.showChecklistConfirmDialog}}
+    @onHidden={{action (mut this.showChecklistConfirmDialog) false}}
+    as |modal|
+>
+    <modal.header>
+        <h4>
+            {{t 'iqbrims.file_confirm_dialog_title'}}
+        </h4>
+    </modal.header>
+    <modal.body>
+        {{t 'iqbrims.file_confirm_dialog_body'}}
+    </modal.body>
+    <modal.footer>
+        <BsButton
+            @disabled={{this.submitting}}
+            @onClick={{action this.closeDialogs}}
+        >
+            {{t 'general.cancel'}}
+        </BsButton>
+        {{#if this.submitting}}
+            <BsButton @type='default'>
+                {{t 'iqbrims.processing_submit_button'}}
+            </BsButton>
+        {{else}}
+            <BsButton
+                @onClick={{action this.submitChecklist}}
+                @type='success'
+            >
+                {{t 'general.ok'}}
+            </BsButton>
+        {{/if}}
+    </modal.footer>
+</BsModal>

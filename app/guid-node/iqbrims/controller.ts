@@ -43,6 +43,9 @@ export default class GuidNodeIQBRIMS extends Controller {
     checklistFiles = new IQBRIMSFileBrowser(this, 'チェックリスト');
     newFolderRequest?: object;
     workingFolderName = 'IQB-RIMS Temporary files';
+    showPaperConfirmDialog = false;
+    showRawConfirmDialog = false;
+    showChecklistConfirmDialog = false;
 
     @computed('manuscriptFiles.loading', 'dataFiles.loading', 'checklistFiles.loading')
     get loadingForDeposit(): boolean {
@@ -765,6 +768,13 @@ export default class GuidNodeIQBRIMS extends Controller {
     @action
     changeTab(this: GuidNodeIQBRIMS, activeId: string) {
         this.set('tab', activeId === 'IQBRIMS__overflow_view_paper' ? undefined : activeId);
+    }
+
+    @action
+    closeDialogs() {
+        this.set('showPaperConfirmDialog', false);
+        this.set('showRawConfirmDialog', false);
+        this.set('showChecklistConfirmDialog', false);
     }
 }
 
