@@ -1,7 +1,9 @@
 {{! using unsafeTitle here to avoid double encoding because the title helper does its own }}
 {{title (t 'iqbrims.page_title' nodeTitle=this.model.taskInstance.value.unsafeTitle)}}
 <div class='container' local-class='IQBRIMS'>
-    <div local-class='IQBRIMS__editor'>
+    <div
+        local-class='IQBRIMS__editor {{if (not this.isPaperVisible) 'IQBRIMS__paper_disabled'}} {{if (not this.isRawVisible) 'IQBRIMS__raw_disabled'}} {{if (not this.isChecklistVisible) 'IQBRIMS__checklist_disabled'}}'
+    >
         {{#if this.modeUnknown}}
         {{else if this.modeAdmin}}
             <i>{{t 'iqbrims.management_project'}}</i>
@@ -16,25 +18,15 @@
             </div>
         {{else if (or this.modeDeposit this.modeCheck)}}
             {{#if this.modeDeposit}}
-                {{#if (and this.loadingForDeposit this.modeEdit)}}
+                {{#if this.loadingForDeposit}}
                     {{t 'iqbrims.loading'}}
                 {{/if}}
             {{else if this.modeCheck}}
-                {{#if (and this.loadingForCheck this.modeEdit)}}
+                {{#if this.loadingForCheck}}
                     {{t 'iqbrims.loading'}}
                 {{/if}}
             {{/if}}
             <div local-class='IQBRIMS__{{if this.modeDeposit this.panelStatusForDeposit this.panelStatusForCheck}}'>
-                {{#if (not this.modeEdit)}}
-                    <div class='form-group row'>
-                        <div class='pull-right'>
-                            <OsfButton @type='default'
-                                       @onClick={{action this.startEdit}}>
-                                {{fa-icon 'edit'}} {{t 'iqbrims.edit_button'}}
-                            </OsfButton>
-                        </div>
-                    </div>
-                {{/if}}
                 <BsTab
                     @activeId={{this.activeTab}}
                     @onChange={{action this.changeTab}}
@@ -78,24 +70,20 @@
                                 {{t 'iqbrims.labo'}} <span local-class='IQBRIMS__required'>*</span>
                             </label>
                             <div data-test-labo-name class='col-sm-10'>
-                                {{#if this.modeEdit}}
-                                    <select
-                                        data-test-labo-selection
-                                        class='form-control'
-                                        onchange={{action this.laboChanged value='target.value'}}
-                                    >
-                                        <option selected={{if (eq this.laboId '') 'selected'}} value=''>
-                                            {{t 'iqbrims.placeholders.labo'}}
+                                <select
+                                    data-test-labo-selection
+                                    class='form-control'
+                                    onchange={{action this.laboChanged value='target.value'}}
+                                >
+                                    <option selected={{if (eq this.laboId '') 'selected'}} value=''>
+                                        {{t 'iqbrims.placeholders.labo'}}
+                                    </option>
+                                    {{#each this.laboList as |item|}}
+                                        <option selected={{if (eq this.laboId item.id) 'selected'}} value='{{item.id}}'>
+                                            {{item.text}}
                                         </option>
-                                        {{#each this.laboList as |item|}}
-                                            <option selected={{if (eq this.laboId item.id) 'selected'}} value='{{item.id}}'>
-                                                {{item.text}}
-                                            </option>
-                                        {{/each}}
-                                    </select>
-                                {{else}}
-                                    {{this.laboName}}
-                                {{/if}}
+                                    {{/each}}
+                                </select>
                             </div>
                         </div>
                         <div class='form-group row'>
@@ -114,16 +102,12 @@
                                     {{t 'iqbrims.accepted_date'}} <span local-class='IQBRIMS__required'>*</span>
                                 </label>
                                 <div class='col-sm-10'>
-                                    {{#if this.modeEdit}}
-                                        {{validated-input/date
-                                            model=this
-                                            valuePath='acceptedDate'
-                                            shouldShowMessages=@didValidate
-                                            change=(action this.valueChanged)
-                                        }}
-                                    {{else}}
-                                        {{this.acceptedDate}}
-                                    {{/if}}
+                                    {{validated-input/date
+                                        model=this
+                                        valuePath='acceptedDate'
+                                        shouldShowMessages=@didValidate
+                                        change=(action this.valueChanged)
+                                    }}
                                 </div>
                             </div>
                             <div class='form-group row'>
@@ -131,84 +115,64 @@
                                     {{t 'iqbrims.journal_name'}} <span local-class='IQBRIMS__required'>*</span>
                                 </label>
                                 <div data-test-journal-name class='col-sm-10'>
-                                    {{#if this.modeEdit}}
-                                        {{input
-                                            name='journal_name'
-                                            placeholder=(t 'iqbrims.placeholders.journal_name')
-                                            class='form-control'
-                                            value=this.journalName
-                                            type='text'
-                                            change=(action this.valueChanged)
-                                        }}
-                                    {{else}}
-                                        {{this.journalName}}
-                                    {{/if}}
+                                    {{input
+                                        name='journal_name'
+                                        placeholder=(t 'iqbrims.placeholders.journal_name')
+                                        class='form-control'
+                                        value=this.journalName
+                                        type='text'
+                                        change=(action this.valueChanged)
+                                    }}
                                 </div>
                             </div>
                             <div class='form-group row'>
                                 <label class='col-sm-2' for='doi'>{{t 'iqbrims.doi'}}</label>
                                 <div class='col-sm-10'>
-                                    {{#if this.modeEdit}}
-                                        {{input
-                                            name='doi'
-                                            placeholder=(t 'iqbrims.placeholders.doi')
-                                            class='form-control'
-                                            value=this.doi
-                                            type='text'
-                                            change=(action this.valueChanged)
-                                        }}
-                                    {{else}}
-                                        {{this.doi}}
-                                    {{/if}}
+                                    {{input
+                                        name='doi'
+                                        placeholder=(t 'iqbrims.placeholders.doi')
+                                        class='form-control'
+                                        value=this.doi
+                                        type='text'
+                                        change=(action this.valueChanged)
+                                    }}
                                 </div>
                             </div>
                             <div class='form-group row'>
                                 <label class='col-sm-2' for='publish_date'>{{t 'iqbrims.publish_date'}}</label>
                                 <div class='col-sm-10'>
-                                    {{#if this.modeEdit}}
-                                        {{validated-input/date
-                                            model=this
-                                            valuePath='publishDate'
-                                            shouldShowMessages=@didValidate
-                                            change=(action this.valueChanged)
-                                        }}
-                                    {{else}}
-                                        {{this.publishDate}}
-                                    {{/if}}
+                                    {{validated-input/date
+                                        model=this
+                                        valuePath='publishDate'
+                                        shouldShowMessages=@didValidate
+                                        change=(action this.valueChanged)
+                                    }}
                                 </div>
                             </div>
                             <div class='form-group row'>
                                 <label class='col-sm-2' for='volume'>{{t 'iqbrims.volume'}}</label>
                                 <div class='col-sm-10'>
-                                    {{#if this.modeEdit}}
-                                        {{input
-                                            name='volume'
-                                            placeholder=(t 'iqbrims.placeholders.volume')
-                                            class='form-control'
-                                            value=this.volume
-                                            type='text'
-                                            change=(action this.valueChanged)
-                                        }}
-                                    {{else}}
-                                        {{this.volume}}
-                                    {{/if}}
+                                    {{input
+                                        name='volume'
+                                        placeholder=(t 'iqbrims.placeholders.volume')
+                                        class='form-control'
+                                        value=this.volume
+                                        type='text'
+                                        change=(action this.valueChanged)
+                                    }}
                                 </div>
                             </div>
                             <div class='form-group row'>
                                 <label class='col-sm-2' for='page_number'>{{t 'iqbrims.page_number'}}</label>
                                 <div class='col-sm-10'>
-                                    {{#if this.modeEdit}}
-                                        {{input
-                                            name='page_number'
-                                            placeholder=(t 'iqbrims.placeholders.page_number')
-                                            class='form-control'
-                                            value=this.pageNumber
-                                            type='text'
-                                            change=(action this.valueChanged)
-                                        }}
-                                    {{else}}
-                                        {{this.pageNumber}}
-                                    {{/if}}
+                                    {{input
+                                        name='page_number'
+                                        placeholder=(t 'iqbrims.placeholders.page_number')
+                                        class='form-control'
+                                        value=this.pageNumber
+                                        type='text'
+                                        change=(action this.valueChanged)
+                                    }}
                                 </div>
                             </div>
                             <div class='form-group row'>
@@ -218,9 +182,23 @@
                                 </div>
                             </div>
                         {{/if}}
+                        <div class='text-right' local-class='IQBRIMS__buttons'>
+                            {{#if this.submitting}}
+                                <OsfButton @type='default'>
+                                    {{t 'iqbrims.processing_submit_button'}}
+                                </OsfButton>
+                            {{else}}
+                                <OsfButton data-test-submit-button
+                                           @type='success'
+                                           @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
+                                           @onClick={{action this.submitOverview}}>
+                                    {{t 'iqbrims.submit_button'}}
+                                </OsfButton>
+                            {{/if}}
+                        </div>
                     </tab.pane>
                     <tab.pane
-                        @id='IQBRIMS__manuscripts'
+                        @id='IQBRIMS__paper'
                         @title={{t 'iqbrims.header_manuscripts' }}
                     >
                         <h2 local-class='IQBRIMS__header'>{{t 'iqbrims.header_manuscripts' }}</h2>
@@ -261,7 +239,7 @@
                             <div class='row' local-class='IQBRIMS__file_footer'>
                             </div>
                         {{/if}}
-                        {{#if (and this.modeEdit this.isPaperWritable)}}
+                        {{#if this.isPaperUploadable}}
                             {{#if this.manuscriptFiles.rejectedFiles.length}}
                                 <div local-class='IQBRIMS__file_error'>
                                     {{t 'iqbrims.uploader_rejected_manuscript_files'}}
@@ -269,6 +247,7 @@
                                 </div>
                             {{/if}}
                             <FileBrowser
+                                data-test-paper-uploader
                                 @dzUploadButtonClass='dz-manuscript-upload-button'
                                 @user={{this.user}}
                                 @items={{this.manuscriptFiles.files}}
@@ -286,10 +265,24 @@
                                 @buildUrl={{action this.buildManuscriptFileUrl}}
                             />
                         {{/if}}
+                        <div class='text-right' local-class='IQBRIMS__buttons'>
+                            {{#if this.submitting}}
+                                <OsfButton @type='default'>
+                                    {{t 'iqbrims.processing_submit_button'}}
+                                </OsfButton>
+                            {{else}}
+                                <OsfButton data-test-submit-button
+                                           @type='success'
+                                           @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
+                                           @onClick={{action this.submitPaper}}>
+                                    {{t 'iqbrims.submit_button'}}
+                                </OsfButton>
+                            {{/if}}
+                        </div>
                     </tab.pane>
                     {{#if this.modeDeposit}}
                         <tab.pane
-                            @id='IQBRIMS__submit_data'
+                            @id='IQBRIMS__raw'
                             @title={{t 'iqbrims.header_data' }}
                         >
                             <h2 local-class='IQBRIMS__header'>{{t 'iqbrims.header_data' }}</h2>
@@ -352,7 +345,7 @@
                                     </div>
                                 </div>
                             {{/if}}
-                            {{#if (and this.modeEdit this.isRawWritable)}}
+                            {{#if this.isRawUploadable}}
                                 {{#if this.dataFiles.rejectedFiles.length}}
                                     <div local-class='IQBRIMS__file_error'>
                                         {{t 'iqbrims.uploader_rejected_data_files'}}
@@ -360,6 +353,7 @@
                                     </div>
                                 {{/if}}
                                 <FileBrowser
+                                    data-test-raw-uploader
                                     @dzUploadButtonClass='dz-data-upload-button'
                                     @user={{this.user}}
                                     @items={{this.dataFiles.files}}
@@ -377,6 +371,20 @@
                                     @buildUrl={{action this.buildDataFileUrl}}
                                 />
                             {{/if}}
+                            <div class='text-right' local-class='IQBRIMS__buttons'>
+                                {{#if this.submitting}}
+                                    <OsfButton @type='default'>
+                                        {{t 'iqbrims.processing_submit_button'}}
+                                    </OsfButton>
+                                {{else}}
+                                    <OsfButton data-test-submit-button
+                                               @type='success'
+                                               @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
+                                               @onClick={{action this.submitRaw}}>
+                                        {{t 'iqbrims.submit_button'}}
+                                    </OsfButton>
+                                {{/if}}
+                            </div>
                         </tab.pane>
                         <tab.pane
                             @id='IQBRIMS__checklist'
@@ -420,7 +428,7 @@
                                 <div class='row' local-class='IQBRIMS__file_footer'>
                                 </div>
                             {{/if}}
-                            {{#if (and this.modeEdit this.isChecklistWritable)}}
+                            {{#if this.isChecklistUploadable}}
                                 {{#if this.checklistFiles.rejectedFiles.length}}
                                     <div local-class='IQBRIMS__file_error'>
                                         {{t 'iqbrims.uploader_rejected_checklist_files'}}
@@ -428,6 +436,7 @@
                                     </div>
                                 {{/if}}
                                 <FileBrowser
+                                    data-test-checklist-uploader
                                     @dzUploadButtonClass='dz-checklist-upload-button'
                                     @user={{this.user}}
                                     @items={{this.checklistFiles.files}}
@@ -445,25 +454,23 @@
                                     @buildUrl={{action this.buildChecklistFileUrl}}
                                 />
                             {{/if}}
+                            <div class='text-right' local-class='IQBRIMS__buttons'>
+                                {{#if this.submitting}}
+                                    <OsfButton @type='default'>
+                                        {{t 'iqbrims.processing_submit_button'}}
+                                    </OsfButton>
+                                {{else}}
+                                    <OsfButton data-test-submit-button
+                                               @type='success'
+                                               @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
+                                               @onClick={{action this.submitChecklist}}>
+                                        {{t 'iqbrims.submit_button'}}
+                                    </OsfButton>
+                                {{/if}}
+                            </div>
                         </tab.pane>
                     {{/if}}
                 </BsTab>
-                {{#if this.modeEdit}}
-                    <div class='text-right' local-class='IQBRIMS__buttons'>
-                        {{#if this.submitting}}
-                            <OsfButton @type='default'>
-                                {{t 'iqbrims.processing_submit_button'}}
-                            </OsfButton>
-                        {{else}}
-                            <OsfButton data-test-submit-button
-                                       @type='success'
-                                       @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
-                                       @onClick={{action this.submit}}>
-                                {{t 'iqbrims.submit_button'}}
-                            </OsfButton>
-                        {{/if}}
-                    </div>
-                {{/if}}
             </div>
         {{else}}
             <div class='form-group'>

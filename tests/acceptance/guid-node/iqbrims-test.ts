@@ -63,6 +63,122 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         assert.dom('[data-test-labo-selection]').exists();
         assert.dom('[data-test-journal-name]').exists();
         assert.dom('[data-test-submit-button]').exists();
+        assert.dom('[data-test-paper-uploader]').doesNotExist();
+        assert.dom('[data-test-raw-uploader]').doesNotExist();
+        assert.dom('[data-test-checklist-uploader]').doesNotExist();
+        assert.dom('[data-test-start-deposit]').doesNotExist();
+        assert.dom('[data-test-start-check]').doesNotExist();
+    });
+
+    test('logged in, deposit, overview submitted', async assert => {
+        const node = server.create('node', { id: 'i9bri' });
+        server.create('iqbrims-status', {
+            id: node.id,
+            isAdmin: false,
+            state: 'deposit',
+            workflowPaperPermissions: ['VISIBLE', 'WRITABLE', 'UPLOADABLE'],
+        });
+        const url = `/${node.id}/iqbrims`;
+
+        await visit(url);
+        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
+        await percySnapshot(assert);
+        assert.dom('[data-test-task-url]').doesNotExist();
+        assert.dom('[data-test-paper-title]').exists();
+        assert.dom('[data-test-labo-name]').exists();
+        assert.dom('[data-test-labo-selection]').exists();
+        assert.dom('[data-test-journal-name]').exists();
+        assert.dom('[data-test-submit-button]').exists();
+        assert.dom('[data-test-paper-uploader]').exists();
+        assert.dom('[data-test-raw-uploader]').doesNotExist();
+        assert.dom('[data-test-checklist-uploader]').doesNotExist();
+        assert.dom('[data-test-start-deposit]').doesNotExist();
+        assert.dom('[data-test-start-check]').doesNotExist();
+    });
+
+    test('logged in, deposit, paper submitted', async assert => {
+        const node = server.create('node', { id: 'i9bri' });
+        server.create('iqbrims-status', {
+            id: node.id,
+            isAdmin: false,
+            state: 'deposit',
+            workflowPaperPermissions: ['VISIBLE'],
+            workflowRawPermissions: ['VISIBLE', 'WRITABLE', 'UPLOADABLE'],
+        });
+        const url = `/${node.id}/iqbrims`;
+
+        await visit(url);
+        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
+        await percySnapshot(assert);
+        assert.dom('[data-test-task-url]').doesNotExist();
+        assert.dom('[data-test-paper-title]').exists();
+        assert.dom('[data-test-labo-name]').exists();
+        assert.dom('[data-test-labo-selection]').exists();
+        assert.dom('[data-test-journal-name]').exists();
+        assert.dom('[data-test-submit-button]').exists();
+        assert.dom('[data-test-paper-uploader]').doesNotExist();
+        assert.dom('[data-test-raw-uploader]').exists();
+        assert.dom('[data-test-checklist-uploader]').doesNotExist();
+        assert.dom('[data-test-start-deposit]').doesNotExist();
+        assert.dom('[data-test-start-check]').doesNotExist();
+    });
+
+    test('logged in, deposit, rawdata submitted', async assert => {
+        const node = server.create('node', { id: 'i9bri' });
+        server.create('iqbrims-status', {
+            id: node.id,
+            isAdmin: false,
+            state: 'deposit',
+            workflowPaperPermissions: ['VISIBLE'],
+            workflowRawPermissions: ['VISIBLE'],
+            workflowChecklistPermissions: ['VISIBLE', 'WRITABLE', 'UPLOADABLE'],
+        });
+        const url = `/${node.id}/iqbrims`;
+
+        await visit(url);
+        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
+        await percySnapshot(assert);
+        assert.dom('[data-test-task-url]').doesNotExist();
+        assert.dom('[data-test-paper-title]').exists();
+        assert.dom('[data-test-labo-name]').exists();
+        assert.dom('[data-test-labo-selection]').exists();
+        assert.dom('[data-test-journal-name]').exists();
+        assert.dom('[data-test-submit-button]').exists();
+        assert.dom('[data-test-paper-uploader]').doesNotExist();
+        assert.dom('[data-test-raw-uploader]').doesNotExist();
+        assert.dom('[data-test-checklist-uploader]').exists();
+        assert.dom('[data-test-start-deposit]').doesNotExist();
+        assert.dom('[data-test-start-check]').doesNotExist();
+    });
+
+    test('logged in, deposit, checklist submitted', async assert => {
+        const node = server.create('node', { id: 'i9bri' });
+        server.create('iqbrims-status', {
+            id: node.id,
+            isAdmin: false,
+            state: 'deposit',
+            workflowPaperPermissions: ['VISIBLE'],
+            workflowRawPermissions: ['VISIBLE'],
+            workflowChecklistPermissions: ['VISIBLE'],
+        });
+        const url = `/${node.id}/iqbrims`;
+
+        await visit(url);
+        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
+        await percySnapshot(assert);
+        assert.dom('[data-test-task-url]').doesNotExist();
+        assert.dom('[data-test-paper-title]').exists();
+        assert.dom('[data-test-labo-name]').exists();
+        assert.dom('[data-test-labo-selection]').exists();
+        assert.dom('[data-test-journal-name]').exists();
+        assert.dom('[data-test-submit-button]').exists();
+        assert.dom('[data-test-paper-uploader]').doesNotExist();
+        assert.dom('[data-test-raw-uploader]').doesNotExist();
+        assert.dom('[data-test-checklist-uploader]').doesNotExist();
         assert.dom('[data-test-start-deposit]').doesNotExist();
         assert.dom('[data-test-start-check]').doesNotExist();
     });
@@ -87,39 +203,20 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         assert.dom('[data-test-labo-selection]').exists();
         assert.dom('[data-test-journal-name]').doesNotExist();
         assert.dom('[data-test-submit-button]').exists();
+        assert.dom('[data-test-paper-uploader]').doesNotExist();
+        assert.dom('[data-test-raw-uploader]').doesNotExist();
+        assert.dom('[data-test-checklist-uploader]').doesNotExist();
         assert.dom('[data-test-start-deposit]').doesNotExist();
         assert.dom('[data-test-start-check]').doesNotExist();
     });
 
-    test('logged in, deposit submitted', async assert => {
-        const node = server.create('node', { id: 'i9bri' });
-        server.create('iqbrims-status', {
-            id: node.id,
-            isAdmin: false,
-            state: 'deposit',
-        });
-        const url = `/${node.id}/iqbrims`;
-
-        await visit(url);
-        assert.equal(currentURL(), url, `We are on ${url}`);
-        assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
-        await percySnapshot(assert);
-        assert.dom('[data-test-task-url]').doesNotExist();
-        assert.dom('[data-test-paper-title]').exists();
-        assert.dom('[data-test-labo-name]').exists();
-        assert.dom('[data-test-labo-selection]').doesNotExist();
-        assert.dom('[data-test-journal-name]').exists();
-        assert.dom('[data-test-submit-button]').doesNotExist();
-        assert.dom('[data-test-start-deposit]').doesNotExist();
-        assert.dom('[data-test-start-check]').doesNotExist();
-    });
-
-    test('logged in, check submitted', async assert => {
+    test('logged in, check, overview submitted', async assert => {
         const node = server.create('node', { id: 'i9bri' });
         server.create('iqbrims-status', {
             id: node.id,
             isAdmin: false,
             state: 'check',
+            workflowPaperPermissions: ['VISIBLE', 'WRITABLE', 'UPLOADABLE'],
         });
         const url = `/${node.id}/iqbrims`;
 
@@ -130,10 +227,40 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         assert.dom('[data-test-task-url]').doesNotExist();
         assert.dom('[data-test-paper-title]').exists();
         assert.dom('[data-test-labo-name]').exists();
-        assert.dom('[data-test-labo-selection]').doesNotExist();
+        assert.dom('[data-test-labo-selection]').exists();
         assert.dom('[data-test-journal-name]').doesNotExist();
-        assert.dom('[data-test-journal-input]').doesNotExist();
-        assert.dom('[data-test-submit-button]').doesNotExist();
+        assert.dom('[data-test-submit-button]').exists();
+        assert.dom('[data-test-paper-uploader]').exists();
+        assert.dom('[data-test-raw-uploader]').doesNotExist();
+        assert.dom('[data-test-checklist-uploader]').doesNotExist();
+        assert.dom('[data-test-start-deposit]').doesNotExist();
+        assert.dom('[data-test-start-check]').doesNotExist();
+    });
+
+    test('logged in, check, paper submitted', async assert => {
+        const node = server.create('node', { id: 'i9bri' });
+        server.create('iqbrims-status', {
+            id: node.id,
+            isAdmin: false,
+            state: 'check',
+            workflowPaperPermissions: ['VISIBLE'],
+            workflowRawPermissions: ['VISIBLE', 'WRITABLE', 'UPLOADABLE'],
+        });
+        const url = `/${node.id}/iqbrims`;
+
+        await visit(url);
+        assert.equal(currentURL(), url, `We are on ${url}`);
+        assert.equal(currentRouteName(), 'guid-node.iqbrims', 'We are at guid-node.iqbrims');
+        await percySnapshot(assert);
+        assert.dom('[data-test-task-url]').doesNotExist();
+        assert.dom('[data-test-paper-title]').exists();
+        assert.dom('[data-test-labo-name]').exists();
+        assert.dom('[data-test-labo-selection]').exists();
+        assert.dom('[data-test-journal-name]').doesNotExist();
+        assert.dom('[data-test-submit-button]').exists();
+        assert.dom('[data-test-paper-uploader]').doesNotExist();
+        assert.dom('[data-test-raw-uploader]').doesNotExist();
+        assert.dom('[data-test-checklist-uploader]').doesNotExist();
         assert.dom('[data-test-start-deposit]').doesNotExist();
         assert.dom('[data-test-start-check]').doesNotExist();
     });

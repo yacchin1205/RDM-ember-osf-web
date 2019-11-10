@@ -78,6 +78,24 @@
     margin-bottom: 2em;
 }
 
+.IQBRIMS__paper_disabled [href = '#IQBRIMS__paper'] {
+    pointer-events: none;
+    cursor: default;
+    color: #ccc;
+}
+
+.IQBRIMS__raw_disabled [href = '#IQBRIMS__raw'] {
+    pointer-events: none;
+    cursor: default;
+    color: #ccc;
+}
+
+.IQBRIMS__checklist_disabled [href = '#IQBRIMS__checklist'] {
+    pointer-events: none;
+    cursor: default;
+    color: #ccc;
+}
+
 .IQBRIMS .IQBRIMS__checkbox {
     input {
         margin-left: 0;

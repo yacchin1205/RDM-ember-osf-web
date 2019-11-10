@@ -55,19 +55,13 @@ export default class GuidNodeIQBRIMS extends Controller {
         return this.manuscriptFiles.get('loading');
     }
 
-    @computed('modeEdit', 'modeDeposit', 'loadingForDeposit')
+    @computed('modeDeposit', 'loadingForDeposit')
     get panelStatusForDeposit(): string {
-        if (!this.modeEdit) {
-            return 'loaded';
-        }
         return this.loadingForDeposit ? 'loading' : 'loaded';
     }
 
-    @computed('modeEdit', 'modeDeposit', 'loadingForCheck')
+    @computed('modeDeposit', 'loadingForCheck')
     get panelStatusForCheck(): string {
-        if (!this.modeEdit) {
-            return 'loaded';
-        }
         return this.loadingForCheck ? 'loading' : 'loaded';
     }
 
@@ -126,12 +120,55 @@ export default class GuidNodeIQBRIMS extends Controller {
     }
 
     @action
-    submit(this: GuidNodeIQBRIMS) {
+    submitOverview(this: GuidNodeIQBRIMS) {
         if (!this.status) {
             throw new EmberError('Illegal status');
         }
-        this.set('submitting', true);
         const status = this.status.content as IQBRIMSStatusModel;
+        if (!status.workflowPaperPermissions) {
+            status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+        }
+        this.submit(status);
+    }
+
+    @action
+    submitPaper(this: GuidNodeIQBRIMS) {
+        if (!this.status) {
+            throw new EmberError('Illegal status');
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE']);
+        if (!status.workflowRawPermissions) {
+            status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+        }
+        this.submit(status);
+    }
+
+    @action
+    submitRaw(this: GuidNodeIQBRIMS) {
+        if (!this.status) {
+            throw new EmberError('Illegal status');
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE']);
+        if (!status.workflowChecklistPermissions) {
+            status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+        }
+        this.submit(status);
+    }
+
+    @action
+    submitChecklist(this: GuidNodeIQBRIMS) {
+        if (!this.status) {
+            throw new EmberError('Illegal status');
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE']);
+        this.submit(status);
+    }
+
+    submit(status: IQBRIMSStatusModel) {
+        this.set('submitting', true);
         const prevState = status.get('state');
         if (this.modeDeposit) {
             status.set('state', 'deposit');
@@ -410,39 +447,75 @@ export default class GuidNodeIQBRIMS extends Controller {
     }
 
     @computed('status.state')
-    get isPaperWritable() {
+    get isPaperVisible() {
         if (!this.status || !this.status.get('isFulfilled')) {
             return true;
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (!status.workflowPaperPermissions) {
-            return true;
+            return false;
         }
-        return status.workflowPaperPermissions.includes('WRITABLE');
+        return status.workflowPaperPermissions.includes('VISIBLE');
     }
 
     @computed('status.state')
-    get isRawWritable() {
+    get isPaperUploadable() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return true;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (!status.workflowPaperPermissions) {
+            return false;
+        }
+        return status.workflowPaperPermissions.includes('UPLOADABLE');
+    }
+
+    @computed('status.state')
+    get isRawVisible() {
         if (!this.status || !this.status.get('isFulfilled')) {
             return true;
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (!status.workflowRawPermissions) {
-            return true;
+            return false;
         }
-        return status.workflowRawPermissions.includes('WRITABLE');
+        return status.workflowRawPermissions.includes('VISIBLE');
     }
 
     @computed('status.state')
-    get isChecklistWritable() {
+    get isRawUploadable() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return true;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (!status.workflowRawPermissions) {
+            return false;
+        }
+        return status.workflowRawPermissions.includes('UPLOADABLE');
+    }
+
+    @computed('status.state')
+    get isChecklistVisible() {
         if (!this.status || !this.status.get('isFulfilled')) {
             return true;
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (!status.workflowChecklistPermissions) {
+            return false;
+        }
+        return status.workflowChecklistPermissions.includes('VISIBLE');
+    }
+
+    @computed('status.state')
+    get isChecklistUploadable() {
+        if (!this.status || !this.status.get('isFulfilled')) {
             return true;
         }
-        return status.workflowChecklistPermissions.includes('WRITABLE');
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (!status.workflowChecklistPermissions) {
+            return false;
+        }
+        return status.workflowChecklistPermissions.includes('UPLOADABLE');
     }
 
     @computed('node.contributors.[]')
@@ -515,22 +588,6 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         return status.isAdmin;
-    }
-
-    @computed('status.state')
-    get modeEdit() {
-        if (!this.status || !this.status.get('isFulfilled')) {
-            return false;
-        }
-        const status = this.status.content as IQBRIMSStatusModel;
-        if (this.submitting) {
-            return true;
-        }
-        if ((status.state === 'deposit' || status.state === 'check')
-            && window.location.hash !== '#edit') {
-            return false;
-        }
-        return true;
     }
 
     @computed('status.state')
@@ -670,7 +727,6 @@ export default class GuidNodeIQBRIMS extends Controller {
         window.location.href = '?edit=deposit';
         this.notifyPropertyChange('modeCheck');
         this.notifyPropertyChange('modeDeposit');
-        this.notifyPropertyChange('modeEdit');
     }
 
     @action
@@ -678,7 +734,6 @@ export default class GuidNodeIQBRIMS extends Controller {
         window.location.href = '?edit=check';
         this.notifyPropertyChange('modeCheck');
         this.notifyPropertyChange('modeDeposit');
-        this.notifyPropertyChange('modeEdit');
     }
 
     @action
