@@ -110,7 +110,6 @@
                                         model=this
                                         valuePath='acceptedDate'
                                         shouldShowMessages=@didValidate
-                                        change=(action this.valueChanged)
                                     }}
                                 </div>
                             </div>
@@ -125,7 +124,6 @@
                                         class='form-control'
                                         value=this.journalName
                                         type='text'
-                                        change=(action this.valueChanged)
                                     }}
                                 </div>
                             </div>
@@ -138,7 +136,6 @@
                                         class='form-control'
                                         value=this.doi
                                         type='text'
-                                        change=(action this.valueChanged)
                                     }}
                                 </div>
                             </div>
@@ -149,7 +146,6 @@
                                         model=this
                                         valuePath='publishDate'
                                         shouldShowMessages=@didValidate
-                                        change=(action this.valueChanged)
                                     }}
                                 </div>
                             </div>
@@ -162,7 +158,6 @@
                                         class='form-control'
                                         value=this.volume
                                         type='text'
-                                        change=(action this.valueChanged)
                                     }}
                                 </div>
                             </div>
@@ -175,7 +170,6 @@
                                         class='form-control'
                                         value=this.pageNumber
                                         type='text'
-                                        change=(action this.valueChanged)
                                     }}
                                 </div>
                             </div>
@@ -194,9 +188,13 @@
                             {{else}}
                                 <OsfButton data-test-submit-button
                                            @type='success'
-                                           @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
+                                           @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasDirty))}}
                                            @onClick={{action this.submitOverview}}>
-                                    {{t 'iqbrims.submit_button'}}
+                                    {{#if this.isNotSubmitted}}
+                                        {{t 'iqbrims.submit_button'}}
+                                    {{else}}
+                                        {{t 'iqbrims.confirm_button'}}
+                                    {{/if}}
                                 </OsfButton>
                             {{/if}}
                         </div>
@@ -271,7 +269,7 @@
                             <div class='text-right' local-class='IQBRIMS__buttons'>
                                 <OsfButton data-test-submit-paper-button
                                            @type='success'
-                                           @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
+                                           @disabled={{not this.hasChangedPaperFiles}}
                                            @onClick={{action (mut this.showPaperConfirmDialog) true}}
                                 >
                                     {{t 'iqbrims.submit_button'}}
@@ -372,7 +370,7 @@
                                 <div class='text-right' local-class='IQBRIMS__buttons'>
                                     <OsfButton data-test-submit-raw-button
                                                @type='success'
-                                               @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
+                                               @disabled={{not this.hasChangedRawFiles}}
                                                @onClick={{action (mut this.showRawConfirmDialog) true}}
                                     >
                                         {{t 'iqbrims.submit_button'}}
@@ -450,7 +448,7 @@
                                 <div class='text-right' local-class='IQBRIMS__buttons'>
                                     <OsfButton data-test-submit-checklist-button
                                                @type='success'
-                                               @disabled={{not (and this.isFilled (or this.isNotSubmitted this.hasChangedFiles))}}
+                                               @disabled={{not this.hasChangedChecklistFiles}}
                                                @onClick={{action (mut this.showChecklistConfirmDialog) true}}
                                     >
                                         {{t 'iqbrims.submit_button'}}

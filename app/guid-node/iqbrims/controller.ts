@@ -88,15 +88,6 @@ export default class GuidNodeIQBRIMS extends Controller {
         status.save();
     }
 
-    @action
-    valueChanged(this: GuidNodeIQBRIMS) {
-        if (!this.status) {
-            return;
-        }
-        const status = this.status.content as IQBRIMSStatusModel;
-        status.save();
-    }
-
     @computed('status.state')
     get laboId() {
         if (!this.status || !this.status.get('isFulfilled')) {
@@ -128,6 +119,12 @@ export default class GuidNodeIQBRIMS extends Controller {
             throw new EmberError('Illegal status');
         }
         const status = this.status.content as IQBRIMSStatusModel;
+        if (this.modeDeposit) {
+            status.set('state', 'deposit');
+        } else if (this.modeCheck) {
+            status.set('state', 'check');
+        }
+        status.set('isDirty', false);
         if (!status.workflowPaperPermissions) {
             status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
         }
@@ -140,11 +137,20 @@ export default class GuidNodeIQBRIMS extends Controller {
             throw new EmberError('Illegal status');
         }
         const status = this.status.content as IQBRIMSStatusModel;
-        status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE']);
-        if (!status.workflowRawPermissions) {
-            status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
-        }
-        this.submit(status);
+        this.set('submitting', true);
+        const mfiles = this.manuscriptFiles.files;
+        Promise.all((mfiles !== null ? mfiles : [])
+            .map(f => f.moveOnCurrentProject('iqbrims', '/最終原稿・組図/')))
+            .then(() => {
+                status.set('isDirty', false);
+                status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE']);
+                if (!status.workflowRawPermissions) {
+                    status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+                }
+                this.submit(status);
+            }).catch(() => {
+                this.submitError(status);
+            });
     }
 
     @action
@@ -153,11 +159,20 @@ export default class GuidNodeIQBRIMS extends Controller {
             throw new EmberError('Illegal status');
         }
         const status = this.status.content as IQBRIMSStatusModel;
-        status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE']);
-        if (!status.workflowChecklistPermissions) {
-            status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
-        }
-        this.submit(status);
+        this.set('submitting', true);
+        const dfiles = this.dataFiles.files;
+        Promise.all((dfiles !== null ? dfiles : [])
+            .map(f => f.moveOnCurrentProject('iqbrims', '/生データ/')))
+            .then(() => {
+                status.set('isDirty', false);
+                status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE']);
+                if (!status.workflowChecklistPermissions) {
+                    status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+                }
+                this.submit(status);
+            }).catch(() => {
+                this.submitError(status);
+            });
     }
 
     @action
@@ -166,66 +181,67 @@ export default class GuidNodeIQBRIMS extends Controller {
             throw new EmberError('Illegal status');
         }
         const status = this.status.content as IQBRIMSStatusModel;
-        status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE']);
-        this.submit(status);
+        this.set('submitting', true);
+        const cfiles = this.checklistFiles.files;
+        Promise.all((cfiles !== null ? cfiles : [])
+            .map(f => f.moveOnCurrentProject('iqbrims', '/チェックリスト/')))
+            .then(() => {
+                status.set('isDirty', false);
+                status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE']);
+                this.submit(status);
+            }).catch(() => {
+                this.submitError(status);
+            });
     }
 
     submit(status: IQBRIMSStatusModel) {
         this.set('submitting', true);
-        const prevState = status.get('state');
-        if (this.modeDeposit) {
-            status.set('state', 'deposit');
-        } else if (this.modeCheck) {
-            status.set('state', 'check');
-        }
         status.save().then(() => {
-            const mfiles = this.manuscriptFiles.files;
-            if (mfiles != null) {
-                mfiles.forEach(f => {
-                    f.moveOnCurrentProject('iqbrims', '/最終原稿・組図/');
-                });
-            }
-            if (this.modeDeposit) {
-                const dfiles = this.dataFiles.files;
-                if (dfiles != null) {
-                    dfiles.forEach(f => {
-                        f.moveOnCurrentProject('iqbrims', '/生データ/');
-                    });
-                }
-                const cfiles = this.checklistFiles.files;
-                if (cfiles != null) {
-                    cfiles.forEach(f => {
-                        f.moveOnCurrentProject('iqbrims', '/チェックリスト/');
-                    });
-                }
-            }
-            let url = window.location.href;
-            if (url.endsWith('/')) {
-                url = url.substring(0, url.length - 1);
-            }
-            const pos = url.lastIndexOf('/');
-            if (pos > 0) {
-                url = url.substring(0, pos + 1);
-            }
             this.set('submitted', true);
-            window.location.hash = '';
-            const qIndex = window.location.href.indexOf('?');
-            if (qIndex >= 0) {
-                window.location.href = window.location.href.substring(0, qIndex);
-            } else {
-                window.location.reload();
-            }
+            this.refresh();
         }).catch(() => {
-            const message = this.i18n.t('iqbrims.failed_to_submit');
-            this.toast.error(message);
-            status.set('state', prevState);
-            this.set('submitting', false);
+            this.submitError(status);
         });
     }
 
-    @computed('manuscriptFiles.filled', 'dataFiles.filled', 'checklistFiles.filled')
-    get hasChangedFiles() {
-        return this.manuscriptFiles.filled || this.dataFiles.filled || this.checklistFiles.filled;
+    submitError(status: IQBRIMSStatusModel) {
+        status.rollbackAttributes();
+        const message = this.i18n.t('iqbrims.failed_to_submit');
+        this.toast.error(message);
+        this.set('submitting', false);
+    }
+
+    refresh() {
+        let url = window.location.href;
+        if (url.endsWith('/')) {
+            url = url.substring(0, url.length - 1);
+        }
+        const pos = url.lastIndexOf('/');
+        if (pos > 0) {
+            url = url.substring(0, pos + 1);
+        }
+        window.location.hash = '';
+        const qIndex = window.location.href.indexOf('?');
+        if (qIndex >= 0) {
+            window.location.href = window.location.href.substring(0, qIndex);
+        } else {
+            window.location.reload();
+        }
+    }
+
+    @computed('manuscriptFiles.filled')
+    get hasChangedPaperFiles() {
+        return this.manuscriptFiles.filled;
+    }
+
+    @computed('dataFiles.filled')
+    get hasChangedRawFiles() {
+        return this.dataFiles.filled;
+    }
+
+    @computed('checklistFiles.filled')
+    get hasChangedChecklistFiles() {
+        return this.checklistFiles.filled;
     }
 
     @computed('status.{state,isDirectlySubmitData}', 'manuscriptFiles.hasError',
@@ -284,7 +300,9 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('acceptedDate', v === null ? '' : v.toISOString());
+        status.set('isDirty', true);
         this.notifyPropertyChange('isFilled');
+        this.statusUpdated();
     }
 
     @computed('status.state')
@@ -305,7 +323,9 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('journalName', v);
+        status.set('isDirty', true);
         this.notifyPropertyChange('isFilled');
+        this.statusUpdated();
     }
 
     @computed('status.state')
@@ -326,6 +346,8 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('doi', v);
+        status.set('isDirty', true);
+        this.statusUpdated();
     }
 
     @computed('status.state')
@@ -346,6 +368,8 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('publishDate', v === null ? '' : v.toISOString());
+        status.set('isDirty', true);
+        this.statusUpdated();
     }
 
     @computed('status.state')
@@ -366,6 +390,8 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('volume', v);
+        status.set('isDirty', true);
+        this.statusUpdated();
     }
 
     @computed('status.state')
@@ -386,6 +412,8 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('pageNumber', v);
+        status.set('isDirty', true);
+        this.statusUpdated();
     }
 
     @computed('status.isDirectlySubmitData')
@@ -403,6 +431,19 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('isDirectlySubmitData', v);
+        this.statusUpdated();
+    }
+
+    statusUpdated(force = false) {
+        if (!this.status) {
+            throw new EmberError('Illegal status');
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (force || status.hasDirtyAttributes) {
+            status.save().then(() => {
+                this.notifyPropertyChange('hasDirty');
+            });
+        }
     }
 
     @computed('status.state')
@@ -634,6 +675,15 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         return status.state === 'initialized';
+    }
+
+    @computed('status.state')
+    get hasDirty() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return false;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        return status.isDirty;
     }
 
     get gdProvider(): FileProviderModel | null | undefined {

@@ -143,19 +143,32 @@ export default class FileModel extends BaseFileItem {
     }
 
     moveOnCurrentProject(newProvider: string, newPath: string): Promise<null> {
-        return this.currentUser.authenticatedAJAX({
-            url: getHref(this.links.move),
-            type: 'POST',
-            xhrFields: { withCredentials: true },
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            data: JSON.stringify({
-                action: 'move',
-                path: newPath,
-                provider: newProvider,
-            }),
-        }).then(() => this.reload());
+        return new Promise<null>((resolve, reject) => {
+            this.currentUser.authenticatedAJAX({
+                url: getHref(this.links.move),
+                type: 'POST',
+                xhrFields: { withCredentials: true },
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: JSON.stringify({
+                    action: 'move',
+                    path: newPath,
+                    provider: newProvider,
+                }),
+            }).then(() => {
+                this.reload();
+                resolve();
+            }).catch(error => {
+                if (error.status === 410) {
+                    // Gone
+                    this.reload();
+                    resolve();
+                } else {
+                    reject(error);
+                }
+            });
+        });
     }
 }
 

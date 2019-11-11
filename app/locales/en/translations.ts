@@ -1785,6 +1785,7 @@ export default {
             page_number: 'N',
         },
         submit_button: 'Submit',
+        confirm_button: 'Confirm',
         processing_submit_button: 'Submitting...',
         discard_button: 'Discard Changes',
         failed_to_submit: 'Failed to submit',

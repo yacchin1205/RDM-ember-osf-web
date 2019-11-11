@@ -3,6 +3,7 @@ import OsfModel from './osf-model';
 
 export default class IQBRIMSStatusModel extends OsfModel {
     @attr('boolean') isAdmin!: boolean;
+    @attr('boolean') isDirty?: boolean;
     @attr('string') taskUrl?: string;
     @attr('string') state!: string;
     @attr('string') edit?: string;
