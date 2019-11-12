@@ -204,7 +204,7 @@
                         @title={{t 'iqbrims.header_manuscripts' }}
                     >
                         <h2 local-class='IQBRIMS__header'>{{t 'iqbrims.header_manuscripts' }}</h2>
-                        {{#if (not this.isNotSubmitted)}}
+                        {{#if (not this.isPaperUploadable)}}
                             <div class='form-group row'>
                                 <label class='col-sm-2'>{{t 'iqbrims.submit_manuscripts'}}</label>
                                 <div class='col-sm-10'>
@@ -240,8 +240,7 @@
                             {{/if}}
                             <div class='row' local-class='IQBRIMS__file_footer'>
                             </div>
-                        {{/if}}
-                        {{#if this.isPaperUploadable}}
+                        {{else}}
                             {{#if this.manuscriptFiles.rejectedFiles.length}}
                                 <div local-class='IQBRIMS__file_error'>
                                     {{t 'iqbrims.uploader_rejected_manuscript_files'}}
@@ -283,13 +282,19 @@
                             @title={{t 'iqbrims.header_data' }}
                         >
                             <h2 local-class='IQBRIMS__header'>{{t 'iqbrims.header_data' }}</h2>
-                            {{#if (not this.isNotSubmitted)}}
+                            {{#if this.isRawUploadable}}
                                 <div class='form-group row'>
-                                    <label class='col-sm-2'>{{t 'iqbrims.submit_data'}}</label>
-                                    <div class='col-sm-10'>
-                                        {{this.workflowRawState}}
+                                    <div class='col-sm-12 checkbox' local-class='IQBRIMS__checkbox'>
+                                        {{input
+                                            name='is_directly_submit_data'
+                                            id='is_directly_submit_data'
+                                            checked=this.isDirectlySubmitData
+                                            type='checkbox'
+                                        }}
+                                        <label for='is_directly_submit_data'>{{t 'iqbrims.directly_submit_data'}}</label>
                                     </div>
                                 </div>
+                            {{else}}
                                 <div class='form-group row'>
                                     <div class='col-sm-12 checkbox' local-class='IQBRIMS__checkbox'>
                                         {{#if this.isDirectlySubmitData}}
@@ -298,6 +303,14 @@
                                             <i class='fa fa-square'></i>
                                         {{/if}}
                                         <label for='is_directly_submit_data'>{{t 'iqbrims.directly_submit_data'}}</label>
+                                    </div>
+                                </div>
+                            {{/if}}
+                            {{#if (not this.isRawUploadable)}}
+                                <div class='form-group row'>
+                                    <label class='col-sm-2'>{{t 'iqbrims.submit_data'}}</label>
+                                    <div class='col-sm-10'>
+                                        {{this.workflowRawState}}
                                     </div>
                                 </div>
                                 <div class='row' local-class='IQBRIMS__file_header'>
@@ -330,19 +343,6 @@
                                 <div class='row' local-class='IQBRIMS__file_footer'>
                                 </div>
                             {{else}}
-                                <div class='form-group row'>
-                                    <div class='col-sm-12 checkbox' local-class='IQBRIMS__checkbox'>
-                                        {{input
-                                            name='is_directly_submit_data'
-                                            id='is_directly_submit_data'
-                                            checked=this.isDirectlySubmitData
-                                            type='checkbox'
-                                        }}
-                                        <label for='is_directly_submit_data'>{{t 'iqbrims.directly_submit_data'}}</label>
-                                    </div>
-                                </div>
-                            {{/if}}
-                            {{#if this.isRawUploadable}}
                                 {{#if this.dataFiles.rejectedFiles.length}}
                                     <div local-class='IQBRIMS__file_error'>
                                         {{t 'iqbrims.uploader_rejected_data_files'}}
@@ -370,7 +370,7 @@
                                 <div class='text-right' local-class='IQBRIMS__buttons'>
                                     <OsfButton data-test-submit-raw-button
                                                @type='success'
-                                               @disabled={{not this.hasChangedRawFiles}}
+                                               @disabled={{not (or this.hasChangedRawFiles this.isDirectlySubmitData)}}
                                                @onClick={{action (mut this.showRawConfirmDialog) true}}
                                     >
                                         {{t 'iqbrims.submit_button'}}
@@ -383,7 +383,7 @@
                             @title={{t 'iqbrims.header_checklist' }}
                         >
                             <h2 local-class='IQBRIMS__header'>{{t 'iqbrims.header_checklist' }}</h2>
-                            {{#if (not this.isNotSubmitted)}}
+                            {{#if (not this.isChecklistUploadable)}}
                                 <div class='form-group row'>
                                     <label class='col-sm-2'>{{t 'iqbrims.submit_checklist'}}</label>
                                     <div class='col-sm-10'>
@@ -419,8 +419,7 @@
                                 {{/if}}
                                 <div class='row' local-class='IQBRIMS__file_footer'>
                                 </div>
-                            {{/if}}
-                            {{#if this.isChecklistUploadable}}
+                            {{else}}
                                 {{#if this.checklistFiles.rejectedFiles.length}}
                                     <div local-class='IQBRIMS__file_error'>
                                         {{t 'iqbrims.uploader_rejected_checklist_files'}}
