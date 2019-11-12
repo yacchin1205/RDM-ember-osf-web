@@ -229,13 +229,9 @@
                                     </div>
                                 </div>
                             {{/each}}
-                            {{#if this.manuscriptFiles.gdLoading}}
+                            {{#if (or this.manuscriptFiles.gdLoading this.manuscriptFiles.gdEmpty)}}
                                 <div class='row' local-class='IQBRIMS__file_body'>
                                     <div class='col-md-12'>{{t 'iqbrims.submitted_loading'}}</div>
-                                </div>
-                            {{else if this.manuscriptFiles.gdEmpty}}
-                                <div class='row' local-class='IQBRIMS__file_body'>
-                                    <div class='col-md-12'>{{t 'iqbrims.submitted_no_data'}}</div>
                                 </div>
                             {{/if}}
                             <div class='row' local-class='IQBRIMS__file_footer'>
@@ -331,13 +327,13 @@
                                         </div>
                                     </div>
                                 {{/each}}
-                                {{#if this.dataFiles.gdLoading}}
-                                    <div class='row' local-class='IQBRIMS__file_body'>
-                                        <div class='col-md-12'>{{t 'iqbrims.submitted_loading'}}</div>
-                                    </div>
-                                {{else if this.dataFiles.gdEmpty}}
+                                {{#if (and this.isDirectlySubmitData this.dataFiles.gdEmpty)}}
                                     <div class='row' local-class='IQBRIMS__file_body'>
                                         <div class='col-md-12'>{{t 'iqbrims.submitted_no_data'}}</div>
+                                    </div>
+                                {{else if (or this.dataFiles.gdLoading this.dataFiles.gdEmpty)}}
+                                    <div class='row' local-class='IQBRIMS__file_body'>
+                                        <div class='col-md-12'>{{t 'iqbrims.submitted_loading'}}</div>
                                     </div>
                                 {{/if}}
                                 <div class='row' local-class='IQBRIMS__file_footer'>
@@ -408,13 +404,9 @@
                                         </div>
                                     </div>
                                 {{/each}}
-                                {{#if this.checklistFiles.gdLoading}}
+                                {{#if (or this.checklistFiles.gdLoading this.checklistFiles.gdEmpty)}}
                                     <div class='row' local-class='IQBRIMS__file_body'>
                                         <div class='col-md-12'>{{t 'iqbrims.submitted_loading'}}</div>
-                                    </div>
-                                {{else if this.checklistFiles.gdEmpty}}
-                                    <div class='row' local-class='IQBRIMS__file_body'>
-                                        <div class='col-md-12'>{{t 'iqbrims.submitted_no_data'}}</div>
                                     </div>
                                 {{/if}}
                                 <div class='row' local-class='IQBRIMS__file_footer'>

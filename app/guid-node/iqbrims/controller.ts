@@ -125,6 +125,9 @@ export default class GuidNodeIQBRIMS extends Controller {
             status.set('state', 'check');
         }
         status.set('isDirty', false);
+        if (!status.workflowOverallState) {
+            status.set('workflowOverallState', 'processing');
+        }
         if (!status.workflowPaperPermissions) {
             status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
         }
@@ -144,6 +147,9 @@ export default class GuidNodeIQBRIMS extends Controller {
             .then(() => {
                 status.set('isDirty', false);
                 status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE']);
+                if (!status.workflowPaperState) {
+                    status.set('workflowPaperState', 'processing');
+                }
                 if (!status.workflowRawPermissions) {
                     status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
                 }
@@ -166,6 +172,9 @@ export default class GuidNodeIQBRIMS extends Controller {
             .then(() => {
                 status.set('isDirty', false);
                 status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE']);
+                if (!status.workflowRawState) {
+                    status.set('workflowRawState', 'processing');
+                }
                 if (!status.workflowChecklistPermissions) {
                     status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
                 }
@@ -187,6 +196,9 @@ export default class GuidNodeIQBRIMS extends Controller {
             .map(f => f.moveOnCurrentProject('iqbrims', '/チェックリスト/')))
             .then(() => {
                 status.set('isDirty', false);
+                if (!status.workflowChecklistState) {
+                    status.set('workflowChecklistState', 'processing');
+                }
                 status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE']);
                 this.submit(status);
             }).catch(() => {
