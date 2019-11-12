@@ -2,7 +2,7 @@
 {{title (t 'iqbrims.page_title' nodeTitle=this.model.taskInstance.value.unsafeTitle)}}
 <div class='container' local-class='IQBRIMS'>
     <div
-        local-class='IQBRIMS__editor {{if (not this.isPaperVisible) 'IQBRIMS__paper_disabled'}} {{if (not this.isRawVisible) 'IQBRIMS__raw_disabled'}} {{if (not this.isChecklistVisible) 'IQBRIMS__checklist_disabled'}}'
+        local-class='IQBRIMS__editor {{if this.submitting 'IQBRIMS__overview_disabled'}} {{if (or this.submitting (not this.isPaperVisible)) 'IQBRIMS__paper_disabled'}} {{if (or this.submitting (not this.isRawVisible)) 'IQBRIMS__raw_disabled'}} {{if (or this.submitting (not this.isChecklistVisible)) 'IQBRIMS__checklist_disabled'}}'
     >
         {{#if this.modeUnknown}}
         {{else if this.modeAdmin}}
