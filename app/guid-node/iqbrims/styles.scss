@@ -61,6 +61,17 @@
     display: none;
 }
 
+.IQBRIMS__editor [data-test-file-item-link] {
+    pointer-events: none;
+    cursor: default;
+}
+
+.IQBRIMS__editor [data-test-version-link] {
+    pointer-events: none;
+    cursor: default;
+    color: #333;
+}
+
 .IQBRIMS__editor [data-test-move-button] {
     display: none;
 }
