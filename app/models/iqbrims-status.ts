@@ -17,6 +17,7 @@ export default class IQBRIMSStatusModel extends OsfModel {
     @attr('string') pageNumber?: string;
     @attr('fixstringarray') laboList?: string[];
     @attr('boolean') isDirectlySubmitData!: boolean;
+    @attr('string') filesComment?: string;
     @attr('boolean') hasPaper?: boolean;
     @attr('boolean') hasRaw?: boolean;
     @attr('boolean') hasChecklist?: boolean;

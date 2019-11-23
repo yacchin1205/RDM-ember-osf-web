@@ -173,7 +173,7 @@
                             </div>
                             <div class='form-group row'>
                                 <label class='col-sm-2' for='page_number'>{{t 'iqbrims.submit_files'}}</label>
-                                <div class='col-sm-10' local-class='IQBRIMS__checkbox'>
+                                <div class='col-sm-10' local-class='IQBRIMS__has_files'>
                                     {{#if this.isNotSubmitted}}
                                         {{input
                                             name='has_paper'
@@ -222,6 +222,19 @@
                                 </div>
                             </div>
                         {{/if}}
+                        <div class='form-group row'>
+                            <label class='col-sm-2' for='files_comment'>{{t 'iqbrims.files_comment'}}</label>
+                            <div class='col-sm-10'>
+                                <textarea
+                                    data-test-files-comment
+                                    name='files_comment'
+                                    class='form-control'
+                                    placeholder={{t 'iqbrims.placeholders.files_comment'}}
+                                    value={{this.filesComment}}
+                                    onchange={{action this.filesCommentChanged value='target.value'}}
+                                />
+                            </div>
+                        </div>
                         <div class='form-group row'>
                             <label class='col-sm-2' for='page_number'>{{t 'iqbrims.workflow_overall_state'}}</label>
                             <div class='col-sm-10'>

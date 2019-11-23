@@ -464,6 +464,28 @@ export default class GuidNodeIQBRIMS extends Controller {
         this.statusUpdated();
     }
 
+    @computed('status.filesComment')
+    get filesComment() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return '';
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (status.filesComment === undefined) {
+            return '';
+        }
+        return status.filesComment;
+    }
+
+    @action
+    filesCommentChanged(this: GuidNodeIQBRIMS, v: string) {
+        if (!this.status) {
+            throw new EmberError('Illegal status');
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.set('filesComment', v);
+        this.statusUpdated();
+    }
+
     @computed('status.hasPaper')
     get hasPaper() {
         if (!this.status || !this.status.get('isFulfilled')) {

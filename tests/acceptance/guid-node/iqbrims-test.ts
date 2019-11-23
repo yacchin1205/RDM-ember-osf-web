@@ -62,6 +62,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         assert.dom('[data-test-labo-name]').exists();
         assert.dom('[data-test-labo-selection]').exists();
         assert.dom('[data-test-journal-name]').exists();
+        assert.dom('[data-test-files-comment]').exists();
         assert.dom('[data-test-submit-button]').exists();
         assert.dom('[data-test-paper-uploader]').doesNotExist();
         assert.dom('[data-test-submit-paper-button]').doesNotExist();
@@ -92,6 +93,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         assert.dom('[data-test-labo-name]').exists();
         assert.dom('[data-test-labo-selection]').doesNotExist();
         assert.dom('[data-test-journal-name]').exists();
+        assert.dom('[data-test-files-comment]').exists();
         assert.dom('[data-test-submit-button]').exists();
         assert.dom('[data-test-paper-uploader]').exists();
         assert.dom('[data-test-submit-paper-button]').exists();
@@ -123,6 +125,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         assert.dom('[data-test-labo-name]').exists();
         assert.dom('[data-test-labo-selection]').doesNotExist();
         assert.dom('[data-test-journal-name]').exists();
+        assert.dom('[data-test-files-comment]').exists();
         assert.dom('[data-test-submit-button]').exists();
         assert.dom('[data-test-paper-uploader]').doesNotExist();
         assert.dom('[data-test-submit-paper-button]').doesNotExist();
@@ -155,6 +158,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         assert.dom('[data-test-labo-name]').exists();
         assert.dom('[data-test-labo-selection]').doesNotExist();
         assert.dom('[data-test-journal-name]').exists();
+        assert.dom('[data-test-files-comment]').exists();
         assert.dom('[data-test-submit-button]').exists();
         assert.dom('[data-test-paper-uploader]').doesNotExist();
         assert.dom('[data-test-submit-paper-button]').doesNotExist();
@@ -187,6 +191,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         assert.dom('[data-test-labo-name]').exists();
         assert.dom('[data-test-labo-selection]').doesNotExist();
         assert.dom('[data-test-journal-name]').exists();
+        assert.dom('[data-test-files-comment]').exists();
         assert.dom('[data-test-submit-button]').exists();
         assert.dom('[data-test-paper-uploader]').doesNotExist();
         assert.dom('[data-test-submit-paper-button]').doesNotExist();
@@ -217,6 +222,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         assert.dom('[data-test-labo-name]').exists();
         assert.dom('[data-test-labo-selection]').exists();
         assert.dom('[data-test-journal-name]').doesNotExist();
+        assert.dom('[data-test-files-comment]').exists();
         assert.dom('[data-test-submit-button]').exists();
         assert.dom('[data-test-paper-uploader]').doesNotExist();
         assert.dom('[data-test-submit-paper-button]').doesNotExist();
@@ -247,6 +253,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         assert.dom('[data-test-labo-name]').exists();
         assert.dom('[data-test-labo-selection]').doesNotExist();
         assert.dom('[data-test-journal-name]').doesNotExist();
+        assert.dom('[data-test-files-comment]').exists();
         assert.dom('[data-test-submit-button]').exists();
         assert.dom('[data-test-paper-uploader]').exists();
         assert.dom('[data-test-submit-paper-button]').exists();
@@ -278,6 +285,7 @@ module('Acceptance | guid-node/iqbrims', hooks => {
         assert.dom('[data-test-labo-name]').exists();
         assert.dom('[data-test-labo-selection]').doesNotExist();
         assert.dom('[data-test-journal-name]').doesNotExist();
+        assert.dom('[data-test-files-comment]').exists();
         assert.dom('[data-test-submit-button]').exists();
         assert.dom('[data-test-paper-uploader]').doesNotExist();
         assert.dom('[data-test-submit-paper-button]').doesNotExist();
