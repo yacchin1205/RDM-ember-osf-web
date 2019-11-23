@@ -43,28 +43,26 @@
                                 {{this.paperTitle}}
                             </div>
                         </div>
-                        {{#if this.modeDeposit}}
-                            <div class='form-group row'>
-                                <label class='col-sm-2' for='contributors'>{{t 'iqbrims.contributors'}}</label>
-                                <div class='col-sm-10'>
-                                    <div>
-                                        {{this.owner.fullName}}
-                                    </div>
-                                    {{#each this.otherContributors as |item|}}
-                                        <div>
-                                            {{item.fullName}}
-                                        </div>
-                                    {{/each}}
-                                    <OsfLink @href='./contributors' @target='_blank'>
-                                        <OsfButton
-                                            @type='default'
-                                            @size='xs'>
-                                            <i class='fa fa-edit'> {{t 'iqbrims.edit_contributors'}}</i>
-                                        </OsfButton>
-                                    </OsfLink>
+                        <div class='form-group row'>
+                            <label class='col-sm-2' for='contributors'>{{t 'iqbrims.contributors'}}</label>
+                            <div class='col-sm-10'>
+                                <div>
+                                    {{this.owner.fullName}}
                                 </div>
+                                {{#each this.otherContributors as |item|}}
+                                    <div>
+                                        {{item.fullName}}
+                                    </div>
+                                {{/each}}
+                                <OsfLink @href='./contributors' @target='_blank'>
+                                    <OsfButton
+                                        @type='default'
+                                        @size='xs'>
+                                        <i class='fa fa-edit'> {{t 'iqbrims.edit_contributors'}}</i>
+                                    </OsfButton>
+                                </OsfLink>
                             </div>
-                        {{/if}}
+                        </div>
                         <div class='form-group row'>
                             <label class='col-sm-2' for='labo'>
                                 {{t 'iqbrims.labo'}} <span local-class='IQBRIMS__required'>*</span>
