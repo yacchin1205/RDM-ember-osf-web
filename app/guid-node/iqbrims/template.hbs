@@ -172,12 +172,62 @@
                                 </div>
                             </div>
                             <div class='form-group row'>
-                                <label class='col-sm-2' for='page_number'>{{t 'iqbrims.workflow_overall_state'}}</label>
-                                <div class='col-sm-10'>
-                                    {{this.workflowOverallState}}
+                                <label class='col-sm-2' for='page_number'>{{t 'iqbrims.submit_files'}}</label>
+                                <div class='col-sm-10' local-class='IQBRIMS__checkbox'>
+                                    {{#if this.isNotSubmitted}}
+                                        {{input
+                                            name='has_paper'
+                                            id='has_paper'
+                                            checked=this.hasPaper
+                                            type='checkbox'
+                                        }}
+                                    {{else}}
+                                        {{#if this.hasPaper}}
+                                            <i class='fa fa-check-square'></i>
+                                        {{else}}
+                                            <i class='fa fa-square'></i>
+                                        {{/if}}
+                                    {{/if}}
+                                    <label for='has_paper'>{{t 'iqbrims.has_paper'}}</label>
+                                    {{#if this.isNotSubmitted}}
+                                        {{input
+                                            name='has_raw'
+                                            id='has_raw'
+                                            checked=this.hasRaw
+                                            type='checkbox'
+                                        }}
+                                    {{else}}
+                                        {{#if this.hasRaw}}
+                                            <i class='fa fa-check-square'></i>
+                                        {{else}}
+                                            <i class='fa fa-square'></i>
+                                        {{/if}}
+                                    {{/if}}
+                                    <label for='has_raw'>{{t 'iqbrims.has_raw'}}</label>
+                                    {{#if this.isNotSubmitted}}
+                                        {{input
+                                            name='has_checklist'
+                                            id='has_checklist'
+                                            checked=this.hasChecklist
+                                            type='checkbox'
+                                        }}
+                                    {{else}}
+                                        {{#if this.hasChecklist}}
+                                            <i class='fa fa-check-square'></i>
+                                        {{else}}
+                                            <i class='fa fa-square'></i>
+                                        {{/if}}
+                                    {{/if}}
+                                    <label for='has_checklist'>{{t 'iqbrims.has_checklist'}}</label>
                                 </div>
                             </div>
                         {{/if}}
+                        <div class='form-group row'>
+                            <label class='col-sm-2' for='page_number'>{{t 'iqbrims.workflow_overall_state'}}</label>
+                            <div class='col-sm-10'>
+                                {{this.workflowOverallState}}
+                            </div>
+                        </div>
                         <div class='text-right' local-class='IQBRIMS__buttons'>
                             {{#if this.submitting}}
                                 <OsfButton @type='default'>

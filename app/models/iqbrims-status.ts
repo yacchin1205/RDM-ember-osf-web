@@ -17,6 +17,9 @@ export default class IQBRIMSStatusModel extends OsfModel {
     @attr('string') pageNumber?: string;
     @attr('fixstringarray') laboList?: string[];
     @attr('boolean') isDirectlySubmitData!: boolean;
+    @attr('boolean') hasPaper?: boolean;
+    @attr('boolean') hasRaw?: boolean;
+    @attr('boolean') hasChecklist?: boolean;
     @attr('string') workflowOverallState?: string;
     @attr('string') workflowPaperState?: string;
     @attr('string') workflowRawState?: string;

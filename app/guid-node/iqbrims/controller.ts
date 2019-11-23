@@ -128,8 +128,18 @@ export default class GuidNodeIQBRIMS extends Controller {
         if (!status.workflowOverallState) {
             status.set('workflowOverallState', 'processing');
         }
-        if (!status.workflowPaperPermissions) {
-            status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+        if (status.hasPaper === undefined || status.hasPaper) {
+            if (!status.workflowPaperPermissions) {
+                status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+            }
+        } else if (status.hasRaw === undefined || status.hasRaw) {
+            if (!status.workflowRawPermissions) {
+                status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+            }
+        } else if (status.hasChecklist === undefined || status.hasChecklist) {
+            if (!status.workflowChecklistPermissions) {
+                status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+            }
         }
         this.submit(status);
     }
@@ -150,8 +160,14 @@ export default class GuidNodeIQBRIMS extends Controller {
                 if (!status.workflowPaperState) {
                     status.set('workflowPaperState', 'processing');
                 }
-                if (!status.workflowRawPermissions) {
-                    status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+                if (status.hasRaw === undefined || status.hasRaw) {
+                    if (!status.workflowRawPermissions) {
+                        status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+                    }
+                } else if (status.hasChecklist === undefined || status.hasChecklist) {
+                    if (!status.workflowChecklistPermissions) {
+                        status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+                    }
                 }
                 this.submit(status);
             }).catch(() => {
@@ -175,8 +191,10 @@ export default class GuidNodeIQBRIMS extends Controller {
                 if (!status.workflowRawState) {
                     status.set('workflowRawState', 'processing');
                 }
-                if (!status.workflowChecklistPermissions) {
-                    status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+                if (status.hasChecklist === undefined || status.hasChecklist) {
+                    if (!status.workflowChecklistPermissions) {
+                        status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+                    }
                 }
                 this.submit(status);
             }).catch(() => {
@@ -443,6 +461,69 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('isDirectlySubmitData', v);
+        this.statusUpdated();
+    }
+
+    @computed('status.hasPaper')
+    get hasPaper() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return false;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (status.hasPaper === undefined) {
+            return true;
+        }
+        return status.hasPaper;
+    }
+
+    set hasPaper(v: boolean) {
+        if (!this.status) {
+            throw new EmberError('Illegal status');
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.set('hasPaper', v);
+        this.statusUpdated();
+    }
+
+    @computed('status.hasRaw')
+    get hasRaw() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return false;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (status.hasRaw === undefined) {
+            return true;
+        }
+        return status.hasRaw;
+    }
+
+    set hasRaw(v: boolean) {
+        if (!this.status) {
+            throw new EmberError('Illegal status');
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.set('hasRaw', v);
+        this.statusUpdated();
+    }
+
+    @computed('status.hasChecklist')
+    get hasChecklist() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return false;
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (status.hasChecklist === undefined) {
+            return true;
+        }
+        return status.hasChecklist;
+    }
+
+    set hasChecklist(v: boolean) {
+        if (!this.status) {
+            throw new EmberError('Illegal status');
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.set('hasChecklist', v);
         this.statusUpdated();
     }
 
