@@ -956,6 +956,12 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
     }
 
+    @action
+    editContributors(this: GuidNodeIQBRIMS) {
+        window.open('./contributors', '_blank');
+        this.scheduleUpdatingContributors();
+    }
+
     scheduleUpdatingContributors() {
         later(() => {
             if (this.node && this.node.contributors !== undefined) {
