@@ -43,6 +43,9 @@ export default class GuidNodeIQBRIMSRoute extends Route.extend(ConfirmationMixin
         window.addEventListener('drop', preventDrop);
 
         this.analytics.trackPage(node ? node.public : undefined, 'nodes');
+
+        const controller = this.controller as GuidNodeIQBRIMS;
+        controller.scheduleUpdatingContributors();
     }
 
     // This tells ember-onbeforeunload's ConfirmationMixin whether or not to stop transitions

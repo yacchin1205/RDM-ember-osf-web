@@ -853,6 +853,15 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
     }
 
+    scheduleUpdatingContributors() {
+        later(() => {
+            if (this.node && this.node.contributors !== undefined) {
+                this.node.contributors.reload();
+            }
+            this.scheduleUpdatingContributors();
+        }, 30000);
+    }
+
     @action
     closeDialogs() {
         this.set('showPaperConfirmDialog', false);
