@@ -26,13 +26,20 @@ export default class IQBRIMSFileBrowser extends EmberObject {
     acceptExtensions: string[] | null = null;
     rejectExtensions: string[] | null = null;
 
+    dropzoneOptions = {
+        createImageThumbnails: false,
+        method: 'PUT',
+        withCredentials: true,
+        preventMultipleFiles: false,
+        acceptDirectories: false,
+    };
+
     @computed('allFiles.[]')
     get loading(): boolean {
         if (!this.get('allFiles')) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     updateFilter = task(function *(this: IQBRIMSFileBrowser, filter: string) {
@@ -103,12 +110,9 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             }
             allFiles.removeObject(file);
             this.notifyChange();
-            return true;
         } catch (ex) {
             this.owner.get('toast').error(this.owner.get('i18n').t('move_to_project.could_not_move_file'));
         }
-
-        return false;
     });
 
     renameFile = task(function *(
@@ -283,7 +287,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         const { name } = files[0];
         const dir = this.targetDirectory;
         if (!dir) {
-            return;
+            return undefined;
         }
         return `${dir.links.upload}?${$.param({ name })}`;
     }

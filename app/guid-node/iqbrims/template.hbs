@@ -258,6 +258,7 @@
                                 @renameFile={{perform this.manuscriptFiles.renameFile}}
                                 @addFile={{perform this.manuscriptFiles.addFile}}
                                 @buildUrl={{action this.buildManuscriptFileUrl}}
+                                @dropzoneOptions={{this.manuscriptFiles.dropzoneOptions}}
                             />
                             <div class='text-right' local-class='IQBRIMS__buttons'>
                                 <OsfButton data-test-submit-paper-button
@@ -360,6 +361,7 @@
                                     @renameFile={{perform this.dataFiles.renameFile}}
                                     @addFile={{perform this.dataFiles.addFile}}
                                     @buildUrl={{action this.buildDataFileUrl}}
+                                    @dropzoneOptions={{this.dataFiles.dropzoneOptions}}
                                 />
                                 <div class='text-right' local-class='IQBRIMS__buttons'>
                                     <OsfButton data-test-submit-raw-button
@@ -433,6 +435,7 @@
                                     @renameFile={{perform this.checklistFiles.renameFile}}
                                     @addFile={{perform this.checklistFiles.addFile}}
                                     @buildUrl={{action this.buildChecklistFileUrl}}
+                                    @dropzoneOptions={{this.checklistFiles.dropzoneOptions}}
                                 />
                                 <div class='text-right' local-class='IQBRIMS__buttons'>
                                     <OsfButton data-test-submit-checklist-button
