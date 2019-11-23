@@ -244,6 +244,7 @@
                             <FileBrowser
                                 data-test-paper-uploader
                                 @dzUploadButtonClass='dz-manuscript-upload-button'
+                                @dzFileBrowserListClass='dz-manuscript-file-browser-list'
                                 @user={{this.user}}
                                 @items={{this.manuscriptFiles.files}}
                                 @filter={{this.manuscriptFiles.filter}}
@@ -347,6 +348,7 @@
                                 <FileBrowser
                                     data-test-raw-uploader
                                     @dzUploadButtonClass='dz-data-upload-button'
+                                    @dzFileBrowserListClass='dz-data-file-browser-list'
                                     @user={{this.user}}
                                     @items={{this.dataFiles.files}}
                                     @filter={{this.dataFiles.filter}}
@@ -421,6 +423,7 @@
                                 <FileBrowser
                                     data-test-checklist-uploader
                                     @dzUploadButtonClass='dz-checklist-upload-button'
+                                    @dzFileBrowserListClass='dz-checklist-file-browser-list'
                                     @user={{this.user}}
                                     @items={{this.checklistFiles.files}}
                                     @filter={{this.checklistFiles.filter}}
