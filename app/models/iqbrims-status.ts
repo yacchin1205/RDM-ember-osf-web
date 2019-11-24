@@ -21,6 +21,9 @@ export default class IQBRIMSStatusModel extends OsfModel {
     @attr('boolean') hasPaper?: boolean;
     @attr('boolean') hasRaw?: boolean;
     @attr('boolean') hasChecklist?: boolean;
+    @attr('string') paperComment?: string;
+    @attr('string') rawComment?: string;
+    @attr('string') checklistComment?: string;
     @attr('string') workflowOverallState?: string;
     @attr('string') workflowPaperState?: string;
     @attr('string') workflowRawState?: string;

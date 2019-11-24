@@ -549,6 +549,72 @@ export default class GuidNodeIQBRIMS extends Controller {
         this.statusUpdated();
     }
 
+    @computed('status.paperComment')
+    get paperComment() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return '';
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (status.paperComment === undefined) {
+            return '';
+        }
+        return status.paperComment;
+    }
+
+    @action
+    paperCommentChanged(this: GuidNodeIQBRIMS, v: string) {
+        if (!this.status) {
+            throw new EmberError('Illegal status');
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.set('paperComment', v);
+        this.statusUpdated();
+    }
+
+    @computed('status.rawComment')
+    get rawComment() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return '';
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (status.rawComment === undefined) {
+            return '';
+        }
+        return status.rawComment;
+    }
+
+    @action
+    rawCommentChanged(this: GuidNodeIQBRIMS, v: string) {
+        if (!this.status) {
+            throw new EmberError('Illegal status');
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.set('rawComment', v);
+        this.statusUpdated();
+    }
+
+    @computed('status.checklistComment')
+    get checklistComment() {
+        if (!this.status || !this.status.get('isFulfilled')) {
+            return '';
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        if (status.checklistComment === undefined) {
+            return '';
+        }
+        return status.checklistComment;
+    }
+
+    @action
+    checklistCommentChanged(this: GuidNodeIQBRIMS, v: string) {
+        if (!this.status) {
+            throw new EmberError('Illegal status');
+        }
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.set('checklistComment', v);
+        this.statusUpdated();
+    }
+
     statusUpdated(force = false) {
         if (!this.status) {
             throw new EmberError('Illegal status');

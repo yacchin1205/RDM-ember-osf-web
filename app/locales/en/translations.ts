@@ -1783,7 +1783,8 @@ export default {
             publish_date: 'YYYY/MM/DD',
             volume: 'N',
             page_number: 'N',
-            files_comment: '提出するファイルに関するコメント',
+            files_comment: '提出するファイルに関するコメント(任意)',
+            uploader_comment: '提出するファイルに関するコメント(任意)',
         },
         submit_button: 'Submit',
         confirm_button: 'Confirm',
@@ -1801,5 +1802,6 @@ export default {
         has_raw: '生データ',
         has_checklist: 'チェックリスト',
         files_comment: 'コメント',
+        uploader_comment: 'コメント',
     },
 };
