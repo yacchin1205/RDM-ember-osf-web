@@ -1776,6 +1776,7 @@ export default {
         submitted_name: 'Submitted Name',
         submitted_modified: 'Submitted Modified Date',
         placeholders: {
+            paper_title: 'Research Paper Title',
             labo: 'Select affiliated laboratory',
             accepted_date: 'YYYY/MM/DD',
             journal_name: 'Journal Name',

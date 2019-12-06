@@ -47,6 +47,8 @@ export default class GuidNodeIQBRIMS extends Controller {
     showRawConfirmDialog = false;
     showChecklistConfirmDialog = false;
 
+    paperTitleUpdateCount = 0;
+
     @computed('manuscriptFiles.loading', 'dataFiles.loading', 'checklistFiles.loading')
     get loadingForDeposit(): boolean {
         return this.manuscriptFiles.get('loading') || this.dataFiles.get('loading')
@@ -310,6 +312,29 @@ export default class GuidNodeIQBRIMS extends Controller {
             return undefined;
         }
         return this.node.title;
+    }
+
+    set paperTitle(v: string | undefined) {
+        if (!this.status || !this.node) {
+            throw new EmberError('Illegal status');
+        }
+        if (v === undefined || v.length === 0) {
+            return;
+        }
+        this.node.set('title', v);
+        const status = this.status.content as IQBRIMSStatusModel;
+        status.set('isDirty', true);
+
+        // Update later(To prevent multiple continuous updates)
+        this.paperTitleUpdateCount++;
+        later(() => {
+            this.paperTitleUpdateCount--;
+            if (this.node && this.paperTitleUpdateCount <= 0) {
+                this.node.save().then(() => {
+                    this.statusUpdated();
+                });
+            }
+        }, 1000);
     }
 
     @computed('status.state')
