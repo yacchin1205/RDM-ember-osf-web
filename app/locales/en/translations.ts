@@ -1788,7 +1788,7 @@ export default {
             uploader_comment: '提出するファイルに関するコメント(任意)',
         },
         submit_button: 'Submit',
-        confirm_button: 'Confirm',
+        confirm_button: 'Update',
         processing_submit_button: 'Submitting...',
         discard_button: 'Discard Changes',
         failed_to_submit: 'Failed to submit',

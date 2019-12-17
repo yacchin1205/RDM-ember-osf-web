@@ -47,8 +47,6 @@ export default class GuidNodeIQBRIMS extends Controller {
     showRawConfirmDialog = false;
     showChecklistConfirmDialog = false;
 
-    paperTitleUpdateCount = 0;
-
     @computed('manuscriptFiles.loading', 'dataFiles.loading', 'checklistFiles.loading')
     get loadingForDeposit(): boolean {
         return this.manuscriptFiles.get('loading') || this.dataFiles.get('loading')
@@ -87,7 +85,6 @@ export default class GuidNodeIQBRIMS extends Controller {
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('laboId', laboId);
         this.notifyPropertyChange('isFilled');
-        status.save();
     }
 
     @computed('status.state')
@@ -227,16 +224,27 @@ export default class GuidNodeIQBRIMS extends Controller {
     }
 
     submit(status: IQBRIMSStatusModel) {
+        if (!this.node) {
+            throw new EmberError('Illegal status');
+        }
         this.set('submitting', true);
 
         status.set('inputOverview', this.toOverview());
 
-        status.save().then(() => {
-            this.set('submitted', true);
-            this.refresh();
-        }).catch(() => {
-            this.submitError(status);
-        });
+        this.node.save()
+            .then(() => {
+                status.save()
+                    .then(() => {
+                        this.set('submitted', true);
+                        this.refresh();
+                    })
+                    .catch(() => {
+                        this.submitError(status);
+                    });
+            })
+            .catch(() => {
+                this.submitError(status);
+            });
     }
 
     submitError(status: IQBRIMSStatusModel) {
@@ -327,17 +335,6 @@ export default class GuidNodeIQBRIMS extends Controller {
         this.node.set('title', v);
         const status = this.status.content as IQBRIMSStatusModel;
         status.set('isDirty', true);
-
-        // Update later(To prevent multiple continuous updates)
-        this.paperTitleUpdateCount++;
-        later(() => {
-            this.paperTitleUpdateCount--;
-            if (this.node && this.paperTitleUpdateCount <= 0) {
-                this.node.save().then(() => {
-                    this.statusUpdated();
-                });
-            }
-        }, 1000);
     }
 
     @computed('status.state')
@@ -649,9 +646,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         if (force || status.hasDirtyAttributes) {
-            status.save().then(() => {
-                this.notifyPropertyChange('hasDirty');
-            });
+            this.notifyPropertyChange('hasDirty');
         }
     }
 
