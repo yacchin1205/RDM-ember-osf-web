@@ -1097,12 +1097,10 @@ export default class GuidNodeIQBRIMS extends Controller {
                 header: this.i18n.t('iqbrims.accepted_date').toString(),
                 value: this.acceptedDate,
             });
-        }
-        overview.push({
-            header: this.i18n.t('iqbrims.journal_name').toString(),
-            value: this.journalName,
-        });
-        if (this.modeDeposit) {
+            overview.push({
+                header: this.i18n.t('iqbrims.journal_name').toString(),
+                value: this.journalName,
+            });
             overview.push({
                 header: this.i18n.t('iqbrims.doi').toString(),
                 value: this.doi || '',
@@ -1122,10 +1120,6 @@ export default class GuidNodeIQBRIMS extends Controller {
             overview.push({
                 header: this.i18n.t('iqbrims.has_paper').toString(),
                 value: this.hasPaper ? '提出する' : '提出しない',
-            });
-            overview.push({
-                header: this.i18n.t('iqbrims.has_raw').toString(),
-                value: this.hasRaw ? '提出する' : '提出しない',
             });
             overview.push({
                 header: this.i18n.t('iqbrims.has_raw').toString(),
