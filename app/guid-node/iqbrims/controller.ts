@@ -228,6 +228,9 @@ export default class GuidNodeIQBRIMS extends Controller {
 
     submit(status: IQBRIMSStatusModel) {
         this.set('submitting', true);
+
+        status.set('inputOverview', this.toOverview());
+
         status.save().then(() => {
             this.set('submitted', true);
             this.refresh();
@@ -1067,6 +1070,82 @@ export default class GuidNodeIQBRIMS extends Controller {
         this.set('showPaperConfirmDialog', false);
         this.set('showRawConfirmDialog', false);
         this.set('showChecklistConfirmDialog', false);
+    }
+
+    toOverview() {
+        const overview = [];
+        overview.push({
+            header: this.i18n.t('iqbrims.labo').toString(),
+            value: this.laboName,
+        });
+        overview.push({
+            header: this.i18n.t('iqbrims.paper_title').toString(),
+            value: this.paperTitle,
+        });
+        const contributors = [this.owner ? this.owner.fullName : ''];
+        if (this.otherContributors) {
+            this.otherContributors.forEach(u => {
+                contributors.push(u.fullName);
+            });
+        }
+        overview.push({
+            header: this.i18n.t('iqbrims.contributors').toString(),
+            value: contributors.join(','),
+        });
+        const emails = this.contributorEmails ? this.contributorEmails.join(',') : '';
+        overview.push({
+            header: this.i18n.t('iqbrims.email').toString(),
+            value: emails,
+        });
+        if (this.modeDeposit) {
+            overview.push({
+                header: this.i18n.t('iqbrims.accepted_date').toString(),
+                value: this.acceptedDate,
+            });
+        }
+        overview.push({
+            header: this.i18n.t('iqbrims.journal_name').toString(),
+            value: this.journalName,
+        });
+        if (this.modeDeposit) {
+            overview.push({
+                header: this.i18n.t('iqbrims.doi').toString(),
+                value: this.doi || '',
+            });
+            overview.push({
+                header: this.i18n.t('iqbrims.publish_date').toString(),
+                value: this.publishDate || '',
+            });
+            overview.push({
+                header: this.i18n.t('iqbrims.volume').toString(),
+                value: this.volume || '',
+            });
+            overview.push({
+                header: this.i18n.t('iqbrims.page_number').toString(),
+                value: this.pageNumber || '',
+            });
+            overview.push({
+                header: this.i18n.t('iqbrims.has_paper').toString(),
+                value: this.hasPaper ? '提出する' : '提出しない',
+            });
+            overview.push({
+                header: this.i18n.t('iqbrims.has_raw').toString(),
+                value: this.hasRaw ? '提出する' : '提出しない',
+            });
+            overview.push({
+                header: this.i18n.t('iqbrims.has_raw').toString(),
+                value: this.hasRaw ? '提出する' : '提出しない',
+            });
+            overview.push({
+                header: this.i18n.t('iqbrims.has_checklist').toString(),
+                value: this.hasChecklist ? '提出する' : '提出しない',
+            });
+        }
+        overview.push({
+            header: this.i18n.t('iqbrims.files_comment').toString(),
+            value: this.filesComment || '',
+        });
+        return JSON.stringify(overview);
     }
 }
 
