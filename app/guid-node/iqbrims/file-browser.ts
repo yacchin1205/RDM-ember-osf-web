@@ -33,6 +33,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         preventMultipleFiles: false,
         acceptDirectories: false,
         timeout: 1000 * 60 * 20,
+        maxFilesize: null,
     };
 
     @computed('allFiles.[]')
