@@ -35,6 +35,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         timeout: 1000 * 60 * 60,
         maxFilesize: null,
         parallelUploads: 100,
+        uploadMultiple: true,
     };
 
     @computed('allFiles.[]')
