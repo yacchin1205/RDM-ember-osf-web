@@ -25,6 +25,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
     rejectedFiles: string[] = [];
     acceptExtensions: string[] | null = null;
     rejectExtensions: string[] | null = null;
+    cachedFiles: File[] | undefined = undefined;
 
     dropzoneOptions = {
         createImageThumbnails: false,
@@ -194,10 +195,20 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         if (!this.targetDirectory) {
             return undefined;
         }
+        if (this.cachedFiles !== undefined) {
+            return this.cachedFiles;
+        }
         const dir = this.targetDirectory;
-        const files = dir.files.map(f => f);
-        this.notifyFilled(files);
-        return files;
+        later(async () => {
+            const files = await dir.queryHasMany(
+                'files',
+                { 'page[size]': 1000 },
+            );
+            this.notifyFilled(files);
+            this.cachedFiles = files;
+            this.notifyPropertyChange('allFiles');
+        }, 0);
+        return undefined;
     }
 
     @computed('owner.gdProvider')
