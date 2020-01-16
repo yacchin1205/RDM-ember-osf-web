@@ -17,6 +17,8 @@ import Analytics from 'ember-osf-web/services/analytics';
 import CurrentUser from 'ember-osf-web/services/current-user';
 import styles from './styles';
 import template from './template';
+import I18n from 'ember-i18n/services/i18n';
+import Toast from 'ember-toastr/services/toast';
 
 const {
     OSF: {
@@ -71,6 +73,7 @@ export default class NewProjectModal extends Component.extend({
         if (!title) {
             return;
         }
+        try {
         const node = this.store.createRecord('node', {
             category: 'project',
             description,
@@ -90,6 +93,10 @@ export default class NewProjectModal extends Component.extend({
         yield node.save();
 
         this.afterProjectCreated(node);
+        } catch (error) {
+            this.toast.error(this.i18n.t('new_project.create_failed_header'));
+            this.set('create_error', true);
+        };
     }).drop(),
 
 }) {
@@ -97,6 +104,8 @@ export default class NewProjectModal extends Component.extend({
     @service currentUser!: CurrentUser;
     @service store!: DS.Store;
     @service features!: Features;
+    @service i18n!: I18n;
+    @service toast!: Toast;
 
     // Required arguments
     @requiredAction afterProjectCreated!: (newNode: Node) => void;
@@ -112,6 +121,8 @@ export default class NewProjectModal extends Component.extend({
     selectedRegion?: Region;
     institutions: Institution[] = [];
     regions: Region[] = [];
+    running: boolean = false;
+    create_error: boolean = false;
 
     makeProjectAffiliate: boolean = projectAffiliate;
 
@@ -164,6 +175,7 @@ export default class NewProjectModal extends Component.extend({
 
     @action
     create(this: NewProjectModal) {
+        this.set('running', true);
         this.get('createNodeTask').perform(
             this.nodeTitle,
             this.description,
