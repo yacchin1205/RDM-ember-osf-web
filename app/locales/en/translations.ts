@@ -277,6 +277,9 @@ export default {
         stay_here: 'Keep working here',
         go_to_new: 'Go to new project',
         storage_region: 'Storage location',
+        creating: 'Saving your project...',
+        create_failed_header: 'Couldn\'t create your project',
+        create_failed_msg: 'There was an unknown error. Please try again later.',
     },
     banners: {
         prereg: {
