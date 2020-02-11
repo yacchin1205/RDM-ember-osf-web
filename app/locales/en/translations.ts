@@ -1798,6 +1798,7 @@ export default {
         uploader_rejected_checklist_files: 'Can upload only PDF:',
         file_confirm_dialog_title: 'ファイルの提出',
         file_confirm_dialog_body: 'ファイル提出後は変更・追加はできません。よろしいですか？',
+        file_confirm_dialog_notice: '処理完了にともない、通知メール <i>Your move has finished</i> が送られる場合があります。',
         submit_files: '提出予定ファイル',
         has_paper: '最終原稿・組図',
         has_raw: '生データ',
