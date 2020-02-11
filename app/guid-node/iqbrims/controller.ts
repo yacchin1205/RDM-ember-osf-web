@@ -150,7 +150,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         this.set('submitting', true);
-        this.moveFiles(this.manuscriptFiles)
+        this.moveFiles(this.manuscriptFiles, true)
             .then(() => {
                 status.set('isDirty', false);
                 status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE']);
@@ -179,7 +179,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         this.set('submitting', true);
-        this.moveFiles(this.dataFiles)
+        this.moveFiles(this.dataFiles, !status.isDirectlySubmitData)
             .then(() => {
                 status.set('isDirty', false);
                 status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE']);
@@ -204,7 +204,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         this.set('submitting', true);
-        this.moveFiles(this.checklistFiles)
+        this.moveFiles(this.checklistFiles, true)
             .then(() => {
                 status.set('isDirty', false);
                 if (!status.workflowChecklistState) {
@@ -248,10 +248,14 @@ export default class GuidNodeIQBRIMS extends Controller {
         this.set('submitting', false);
     }
 
-    async moveFiles(fileBrowser: IQBRIMSFileBrowser) {
+    async moveFiles(fileBrowser: IQBRIMSFileBrowser, createFileList: boolean) {
         const folder = fileBrowser.targetDirectory;
         if (!folder) {
             throw new EmberError('Illegal status');
+        }
+        if (!createFileList) {
+            await folder.moveOnCurrentProject('iqbrims', '/');
+            return;
         }
         const { files, indexFile } = fileBrowser;
         const filenames = files === null ? [] : files.map(f => f.name);
