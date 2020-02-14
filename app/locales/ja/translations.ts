@@ -50,8 +50,8 @@ export default {
         date: '日付',
         sha2: 'SHA2',
         title: 'タイトル',
-        contributors: '共同研究者',
-        modified: '最終更新日',
+        contributors: 'コントリビュータ',
+        modified: '最終更新日時',
         description: '説明',
         create: '作成',
         and: 'and',
@@ -84,7 +84,7 @@ export default {
         previous: '戻る',
         help: 'ヘルプ',
         api: 'API',
-        cos: 'National Institute of Informatics',
+        cos: '国立情報学研究所',
         home: 'ホーム',
         period: '.',
         settings: '設定',
@@ -92,6 +92,8 @@ export default {
         component: 'コンポーネント',
         hosted_on_the_osf: 'Hosted on GakuNin RDM',
         please_confirm: '確認してください。',
+        proj_admin: 'プロジェクト管理者',
+        quota_notice: '保存容量アラート(標準ストレージ)',
         required: '必須',
         options: 'オプション',
         optional: '任意',
@@ -214,7 +216,7 @@ export default {
         create_new_project_button: '新規プロジェクトを作成',
         quicksearch: {
             search: 'プロジェクトを検索',
-            other_links: 'あなたの仕事を整理したり、GakuNin RDMを<a href="/search/">検索</a>するには、<a href="/myprojects/">My Projects</a>へ行きます。',
+            other_links: 'あなたのプロジェクトを整理、<a href="/search/">検索</a>するには、<a href="/myprojects/">My Projects</a>を開きます',
             no_results: 'プロジェクトが見つかりません。',
             no_projects: {
                 line1: 'まだプロジェクトがありません。画面右上のボタンからプロジェクトを作成して下さい。',
@@ -246,15 +248,15 @@ export default {
     },
     new_project: {
         header: '新規プロジェクトの作成',
-        title_placeholder: 'プロジェクトタイトルの入力',
+        title_placeholder: 'プロジェクトのタイトル',
         more: '詳細',
         affiliation: '所属',
         remove_all: '全件削除',
         select_all: '全件選択',
         no_matches: '一致するものがありません。',
-        description_placeholder: 'プロジェクト説明の入力',
+        description_placeholder: 'プロジェクトの説明',
         template_title: 'テンプレート（オプション）',
-        template_search_help: 'プロジェクトを検索するタイピングの開始。テンプレートとしてプロジェクトを選択すると、そのプロジェクトの内容をインポートせずにその構造が新しいプロジェクトに複製されます。',
+        template_search_help: 'プルダウンから文字を入力しプロジェクトを検索。テンプレートとしてプロジェクトを選択すると、そのプロジェクトの内容をインポートせずにその構造が新しいプロジェクトに複製されます。',
         template_placeholder: 'テンプレートとして使用するプロジェクトを選択する',
         success_message: '新規プロジェクトが作成されました',
         stay_here: 'このページに留まる',
@@ -378,9 +380,9 @@ export default {
         donate: '寄付',
         socialize: 'ソーシャライズ',
         contact: 'コンタクト',
-        copyright: 'Copyright &copy; 2011-{{currentYear}}',
-        terms: '利&nbsp;用&nbsp;規&nbsp;約',
-        privacy: 'プライバシー&nbsp;ポリシー',
+        copyright: 'Copyright &copy; 2016-{{currentYear}}',
+        terms: '利用規約',
+        privacy: 'プライバシーポリシー',
         separator: ' | ',
     },
     home: {
@@ -388,7 +390,7 @@ export default {
         youtube_modal_title: 'GakuNin RDMを始める',
         alert_logged_out: 'ログアウトしました。',
         brand: 'GakuNin RDM',
-        tagline: '研究サイクル全体をつなぐ学術コモンズ',
+        tagline: '研究データ管理による研究推進と研究公正',
         youtube_label: 'GakuNin RDM YouTube ビデオ',
         osf_screenshot_alt: 'GakuNin RDMのスクリーンショット',
         signup_title: '無料でオープンソース。 今すぐ始めましょう。',
@@ -437,7 +439,7 @@ export default {
         global_label: '参加する。',
         non_profit_title: '私たちは、<strong>ミッションドリブンの非営利組織</strong>です',
         non_profit_paragraph1: 'GakuNin RDMは無料のオープンソースサービスです。',
-        non_profit_link: 'National Institute of Informatics',
+        non_profit_link: '国立情報学研究所',
         non_profit_paragraph2: '私たちは、研究の開放性、完全性、再現性を改善することにより、科学的実践と科学的価値を一致させています。',
         non_profit_label: '非営利',
         users_title: '<strong>教師、研究者、グローバルチームはGakuNin RDMに依存しています</ strong>',
@@ -592,9 +594,9 @@ export default {
         analytics: '分析',
         registrations: '登録',
         files: 'ファイル',
-        contributors: '共同研究者',
+        contributors: 'コントリビュータ',
         addons: 'アドオン',
-        settings: 'セッティング',
+        settings: '設定',
         comments: 'コメント',
     },
     // These keys come from the "osf_status" cookie set by Flask to expose status messages added to the session with push_status_message()
@@ -604,7 +606,7 @@ export default {
         remove_addon: '{{extra.category}} "{{extra.title}}" のGitHubアドオンは{{extra.user}},によって認証されたため、認証情報は削除されました。',
         project_deleted: 'プロジェクトは正常に削除されました。',
         component_deleted: 'コンポーネントは正常に削除されました。',
-        remove_self_contrib: 'このプロジェクトから共同研究者として自分自身を削除しました。',
+        remove_self_contrib: 'このプロジェクトからコントリビュータとして自分自身を削除しました。',
         registration_archiving: 'ファイルは新しく作成された登録にコピーされており、コピーが完了するとメール通知を受け取ります。',
         registration_submitted: 'あなたの提出物は受領されました。 2営業日以内に、提出ステータスについて通知されます。 ご質問がある場合は、prereg @ NII.ioまでご連絡ください。',
         redirected_to_registrations: "プロジェクトの登録ページにリダイレクトされました。 ここから、新しいドラフト登録を開始して、登録プロセスを完了できます。",
@@ -629,7 +631,7 @@ export default {
         fork: {
             private_tooltip: 'このフォークはプライベートです',
             timestamp_label: 'フォーク:',
-            manage_contributors: '共同研究者を管理する',
+            manage_contributors: 'コントリビュータを管理する',
         },
         registration: {
             private_tooltip: 'この登録は非公開です',
@@ -733,7 +735,7 @@ export default {
     },
     contributor_list: {
         x_more: '{{x}} 以上',
-        anonymous: '匿名の共同研究者',
+        anonymous: '匿名のコントリビュータ',
     },
     app_components: {
         branded_navbar: {
@@ -760,8 +762,8 @@ export default {
             add_item: '{{objectType}}に追加',
         },
         project_contributors: {
-            title: '共同研究者',
-            contributors_popover_title: '共同研究者情報',
+            title: 'コントリビュータ',
+            contributors_popover_title: 'コントリビュータ情報',
             contributors_popover: 'プロジェクトには、少なくとも1人の登録管理者と1人の著者が常に引用に表示されている必要があります。 登録管理者は、アカウントを確認し、管理者権限を持っているユーザーです。',
             instructions: '著者をドラッグアンドドロップして、著者の順序を変更します。',
             list: {
@@ -788,7 +790,7 @@ export default {
                         <dd>
                             <ul>
                                 <li>読取/書込権限</li>
-                                <li>共同研究者を管理する</li>
+                                <li>コントリビュータを管理する</li>
                                 <li>公開/非公開設定</li>
                             </ul>
                         </dd>
@@ -796,9 +798,9 @@ export default {
                 `,
                 citation: '引用',
                 citation_popover_title: '引用情報',
-                citation_popover: 'チェックされた共同研究者のみがプロジェクトの引用に含まれます。 引用に含まれていない共同研究者は、通常どおりプロジェクトを読んで変更できます。',
-                remove_contributor_success: 'プロジェクトの共同研究者が削除されました。',
-                remove_contributor_error: '共同研究者を削除できませんでした。 もう一度やり直してください。',
+                citation_popover: 'チェックされたコントリビュータのみがプロジェクトの引用に含まれます。 引用に含まれていないコントリビュータは、通常どおりプロジェクトを読んで変更できます。',
+                remove_contributor_success: 'プロジェクトのコントリビュータが削除されました。',
+                remove_contributor_error: 'コントリビュータを削除できませんでした。 もう一度やり直してください。',
                 item: {
                     img_alt: 'Gravatar',
                     in_citation_label: '引用中:',
@@ -811,7 +813,7 @@ export default {
                     remove: '除外',
                     remove_author: '著者を削除',
                 },
-                load_more_contributors: '共同研究者をさらに読み込む',
+                load_more_contributors: 'コントリビュータをさらに読み込む',
             },
             search: {
                 placeholder: '名前で検索',
@@ -826,15 +828,15 @@ export default {
                     paragraph: 'プロジェクトに追加されたことをユーザーに通知します。',
                     cancel: 'キャンセル',
                     add: '追加',
-                    add_success: '未登録の共同研究者が追加されました！',
-                    add_error: '未登録の共同研究者を追加できませんでした。 もう一度やり直してください。',
+                    add_success: '未登録のコントリビュータが追加されました！',
+                    add_error: '未登録のコントリビュータを追加できませんでした。 もう一度やり直してください。',
                 },
                 result: {
                     yourself: 'あなた自身',
                     add: '追加',
                 },
-                add_contributor_success: 'プロジェクト共同研究者が追加されました！',
-                add_contributor_error: '共同研究者を追加できませんでした。 もう一度やり直してください。',
+                add_contributor_success: 'プロジェクトコントリビュータが追加されました！',
+                add_contributor_error: 'コントリビュータを追加できませんでした。 もう一度やり直してください。',
             },
         },
         project_metadata: {
@@ -881,7 +883,7 @@ export default {
             excluding: '除く',
             fuzziness: 'あいまいさ',
             fuzzinessDesc1: '「あいまい」検索を示す単語の後に、類似しているが完全に同じではない一致を含めます。',
-            listContainsExactPhrase: '共同研究者名のリストには正確なフレーズが含まれています',
+            listContainsExactPhrase: 'コントリビュータ名のリストには正確なフレーズが含まれています',
             listOfIdentifiersContains: '識別子のリストには',
             match: '一致',
             matchWordStartsWith: '次で始まる単語に一致',
@@ -981,7 +983,7 @@ export default {
             project_metadata_description_label: '説明:',
             project_metadata_license_label: 'ライセンス:',
             project_metadata_tags_label: 'タグ:',
-            project_contributors_title: 'プロジェクトの共同研究者',
+            project_contributors_title: 'プロジェクトのコントリビュータ',
             project_contributors_description: 'このセクションを更新すると、プロジェクトが更新されます。',
             collection_metadata_title: 'コレクションのメタデータ',
             cancel: 'キャンセル',
@@ -1167,7 +1169,7 @@ export default {
             affiliated_institutions: '所属機関',
             category: 'カテゴリー',
             citation: '引用',
-            contributors: '共同研究者',
+            contributors: 'コントリビュータ',
             create_doi: 'DOIを作成する',
             date_created: '作成日',
             date_registered: '登録日',
@@ -1272,7 +1274,7 @@ export default {
             },
 
             contributors: {
-                title: '共同研究者',
+                title: 'コントリビュータ',
                 gravatar_alt: '{{name}}のGravatar',
             },
 
@@ -1305,7 +1307,7 @@ export default {
                 random_scientist_x: '下に<strong>{{x}}</strong> と入力し、続行することが確実な場合は「登録の取り消し」をクリックします。',
                 success: '出金リクエストが正常に送信されました',
                 error: 'この登録を取り消せません',
-                warning: '登録を取り消すと、GakuNin RDMからコンテンツが削除されますが、基本的なメタデータは残されます。 取り下げられた登録のタイトルとその共同研究者リストは、引き取りの正当化または説明と同様に、もしあなたがそれを提供したいなら、残ります。 取り下げられた登録には、「取り下げられた」タグが付けられます。 このアクションは元に戻せません。',
+                warning: '登録を取り消すと、GakuNin RDMからコンテンツが削除されますが、基本的なメタデータは残されます。 取り下げられた登録のタイトルとそのコントリビュータリストは、引き取りの正当化または説明と同様に、もしあなたがそれを提供したいなら、残ります。 取り下げられた登録には、「取り下げられた」タグが付けられます。 このアクションは元に戻せません。',
             },
 
             archiving: {
@@ -1592,7 +1594,7 @@ export default {
         'search-bar': {
             aria: '検索',
             heading: '公開研究を発見する',
-            subheading: 'あなた自身の研究に役立つかもしれないGakuNin RDMのプロジェクト、データ、資料、共同研究者を発見してください。',
+            subheading: 'あなた自身の研究に役立つかもしれないGakuNin RDMのプロジェクト、データ、資料、コントリビュータを発見してください。',
             placeholder: '検索分野、著者...',
             search: '検索',
         },
@@ -1612,7 +1614,7 @@ export default {
         },
         registries: {
             'read-only-contributors-list': {
-                editContributorsOnYourProject: 'プロジェクトの共同研究者を編集する',
+                editContributorsOnYourProject: 'プロジェクトのコントリビュータを編集する',
             },
         },
         'files-widget': {
@@ -1887,18 +1889,18 @@ export default {
     },
     iqbrims: {
         page_title: '{{nodeTitle}} IQB-RIMS',
-        header_overview: '論文概要',
+        header_overview: '書誌情報',
         header_manuscripts: '最終原稿・組図',
         header_data: '生データ',
         header_checklist: 'チェックリスト',
-        loading: '申請のためのフォルダを準備しています...',
+        loading: 'フォルダを準備しています...',
         deposit_button: '論文登録申請',
         check_button: '画像スキャン依頼',
         edit_button: '編集',
         management_project: '管理プロジェクト',
         flowable_task_service: 'Flowableタスクサービス',
-        deposit_help: '論文登録を行い承認を得るための申請手続きを実行',
-        check_help: '論文登録前に画像のみのスキャンサービスを実行',
+        deposit_help: '論文の受理を報告し、登録申請をする',
+        check_help: '論文登録前に画像のみのスキャンを依頼する',
         paper_title: '論文タイトル',
         contributors: '共著者/作業者',
         edit_contributors: '編集',
@@ -1927,8 +1929,11 @@ export default {
             publish_date: 'YYYY/MM/DD',
             volume: 'N',
             page_number: 'N',
+            files_comment: '提出するファイルに関するコメント(任意)',
+            uploader_comment: '提出するファイルに関するコメント(任意)',
         },
         submit_button: '提出',
+        confirm_button: '更新',
         processing_submit_button: '処理中...',
         discard_button: '変更を破棄',
         failed_to_submit: '提出に失敗しました。',
@@ -1936,5 +1941,13 @@ export default {
         uploader_rejected_manuscript_files: 'TIFF, PNG, JPEGファイルはアップロードできません。',
         uploader_rejected_data_files: 'ZIP, Excelファイルのみアップロードできます。',
         uploader_rejected_checklist_files: 'PDFファイルのみアップロードできます。',
+        file_confirm_dialog_title: 'ファイルの提出',
+        file_confirm_dialog_body: 'ファイル提出後は変更・追加はできません。よろしいですか？',
+        submit_files: '提出予定ファイル',
+        has_paper: '最終原稿・組図',
+        has_raw: '生データ',
+        has_checklist: 'チェックリスト',
+        files_comment: 'コメント',
+        uploader_comment: 'コメント',
     },
 };
