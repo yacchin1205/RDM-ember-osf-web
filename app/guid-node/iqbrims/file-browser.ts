@@ -134,7 +134,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             yield file.rename(name, conflict);
 
             // intentionally not yielded
-            flash.perform(file, 'Successfully renamed');
+            flash.perform(file, this.owner.get('i18n').t('file_browser.successfully_renamed'));
 
             if (conflictingFile) {
                 yield flash.perform(conflictingFile, this.owner.get('i18n').t('file_browser.file_replaced'), 'danger');
@@ -146,7 +146,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             }
             this.notifyChange();
         } catch (ex) {
-            flash.perform(file, 'Failed to rename item', 'danger');
+            yield this.get('flash').perform(file, this.owner.get('i18n').t('file_browser.rename_failed'), 'danger');
         }
     });
 

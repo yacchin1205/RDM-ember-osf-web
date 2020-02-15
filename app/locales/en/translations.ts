@@ -223,7 +223,9 @@ export default {
         file_replaced: 'This file has been replaced.',
         file_deleted: 'This file has been deleted.',
         delete_failed: 'Unable to delete file',
+        rename_failed: 'Unable to rename file',
         successfully_moved: 'This file has been successfully moved.',
+        successfully_renamed: 'This file has been successfully renamed.',
     },
     dashboard: {
         page_title: 'Home',
