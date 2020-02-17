@@ -216,7 +216,7 @@ export default {
         create_new_project_button: '新規プロジェクトを作成',
         quicksearch: {
             search: 'プロジェクトを検索',
-            other_links: 'あなたのプロジェクトを整理、<a href="/search/">検索</a>するには、<a href="/myprojects/">My Projects</a>を開きます',
+            other_links: 'あなたのプロジェクトを整理、<a href="/search/">検索</a>するには、<a href="/myprojects/">マイプロジェクト</a>を開きます',
             no_results: 'プロジェクトが見つかりません。',
             no_projects: {
                 line1: 'まだプロジェクトがありません。画面右上のボタンからプロジェクトを作成して下さい。',
