@@ -93,7 +93,7 @@ export default {
         hosted_on_the_osf: 'Hosted on GakuNin RDM',
         please_confirm: '確認してください。',
         proj_admin: 'プロジェクト管理者',
-        quota_notice: '保存容量アラート(標準ストレージ)',
+        quota_notice: 'クォータ警告',
         required: '必須',
         options: 'オプション',
         optional: '任意',
@@ -213,7 +213,7 @@ export default {
     dashboard: {
         page_title: 'ホーム',
         title: 'ダッシュボード',
-        create_new_project_button: '新規プロジェクトを作成',
+        create_new_project_button: '新規プロジェクト作成',
         quicksearch: {
             search: 'プロジェクトを検索',
             other_links: 'あなたのプロジェクトを整理、<a href="/search/">検索</a>するには、<a href="/myprojects/">マイプロジェクト</a>を開きます',
@@ -323,11 +323,11 @@ export default {
     },
     auth_dropdown: {
         log_out: 'ログアウト',
-        my_profile: 'マイプロフィール',
+        my_profile: 'プロフィール',
         osf_support: 'GakuNin RDM サポート',
         sign_up: '新規登録',
         sign_in: 'ログイン',
-        user_gravatar: 'ユーザ gravatar',
+        user_gravatar: 'ユーザグラベイタ',
         toggle_auth_dropdown: 'authドロップダウンの切替',
     },
     support: {
