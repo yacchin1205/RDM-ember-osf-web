@@ -34,12 +34,7 @@
     color: #f00;
 }
 
-.IQBRIMS__header_1 {
-    margin-bottom: 0.5em;
-}
-
-.IQBRIMS__header_2 {
-    margin-top: 1em;
+.IQBRIMS__header {
     margin-bottom: 0.5em;
 }
 
@@ -66,6 +61,17 @@
     display: none;
 }
 
+.IQBRIMS__editor [data-test-file-item-link] {
+    pointer-events: none;
+    cursor: default;
+}
+
+.IQBRIMS__editor [data-test-version-link] {
+    pointer-events: none;
+    cursor: default;
+    color: #333;
+}
+
 .IQBRIMS__editor [data-test-move-button] {
     display: none;
 }
@@ -78,9 +84,37 @@
     display: none;
 }
 
+.IQBRIMS__editor [data-test-download-zip-button] {
+    display: none;
+}
+
 .IQBRIMS__buttons {
     margin-top: 1em;
     margin-bottom: 2em;
+}
+
+.IQBRIMS__overview_disabled [href = '#overview'] {
+    pointer-events: none;
+    cursor: default;
+    color: #ccc;
+}
+
+.IQBRIMS__paper_disabled [href = '#paper'] {
+    pointer-events: none;
+    cursor: default;
+    color: #ccc;
+}
+
+.IQBRIMS__raw_disabled [href = '#raw'] {
+    pointer-events: none;
+    cursor: default;
+    color: #ccc;
+}
+
+.IQBRIMS__checklist_disabled [href = '#checklist'] {
+    pointer-events: none;
+    cursor: default;
+    color: #ccc;
 }
 
 .IQBRIMS .IQBRIMS__checkbox {
@@ -91,4 +125,12 @@
     label {
         font-weight: bold;
     }
+}
+
+.IQBRIMS__has_files label {
+    font-weight: normal;
+}
+
+.IQBRIMS__comment {
+    margin-top: 1em;
 }

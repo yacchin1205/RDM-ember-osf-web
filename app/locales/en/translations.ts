@@ -5,7 +5,7 @@ const {
     organization,
     OSF: {
         pageName,
-	longBrand,
+        longBrand,
     },
     signUpPolicy: {
         privacyPolicyLink,
@@ -1779,6 +1779,7 @@ export default {
         submitted_name: 'Submitted Name',
         submitted_modified: 'Submitted Modified Date',
         placeholders: {
+            paper_title: 'Research Paper Title',
             labo: 'Select affiliated laboratory',
             accepted_date: 'YYYY/MM/DD',
             journal_name: 'Journal Name',
@@ -1786,8 +1787,11 @@ export default {
             publish_date: 'YYYY/MM/DD',
             volume: 'N',
             page_number: 'N',
+            files_comment: '提出するファイルに関するコメント(任意)',
+            uploader_comment: '提出するファイルに関するコメント(任意)',
         },
         submit_button: 'Submit',
+        confirm_button: 'Update',
         processing_submit_button: 'Submitting...',
         discard_button: 'Discard Changes',
         failed_to_submit: 'Failed to submit',
@@ -1795,5 +1799,13 @@ export default {
         uploader_rejected_manuscript_files: 'Cannot upload TIFF, PNG, JPEG:',
         uploader_rejected_data_files: 'Can upload only ZIP, Excel:',
         uploader_rejected_checklist_files: 'Can upload only PDF:',
+        file_confirm_dialog_title: 'ファイルの提出',
+        file_confirm_dialog_body: 'ファイル提出後は変更・追加はできません。よろしいですか？',
+        submit_files: '提出予定ファイル',
+        has_paper: '最終原稿・組図',
+        has_raw: '生データ',
+        has_checklist: 'チェックリスト',
+        files_comment: 'コメント',
+        uploader_comment: 'コメント',
     },
 };
