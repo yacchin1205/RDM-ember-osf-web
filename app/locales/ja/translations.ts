@@ -658,7 +658,7 @@ export default {
         loading_new: '新しいフォークを作成しています',
         new_fork_info_title: 'フォークのステータス',
         new_fork_info: 'フォークを作成しています。 完了するとメールが届きます。',
-        create_fork_modal: 'このプロジェクトを分岐してもよろしいですか？',
+        create_fork_modal: 'このプロジェクトをフォークしてもよろしいですか？',
         unable_to_delete_fork: 'このコンポーネントを削除する前に、子コンポーネントを削除する必要があります。',
         page_title: '{{nodeTitle}} フォーク',
         no_forks: 'フォークは、元のプロジェクトに影響を与えずに変更できるプロジェクトのコピーです。',
