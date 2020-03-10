@@ -150,9 +150,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         this.set('submitting', true);
-        const mfiles = this.manuscriptFiles.files;
-        Promise.all((mfiles !== null ? mfiles : [])
-            .map(f => f.moveOnCurrentProject('iqbrims', '/最終原稿・組図/')))
+        this.moveFiles(this.manuscriptFiles, true)
             .then(() => {
                 status.set('isDirty', false);
                 status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE']);
@@ -181,9 +179,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         this.set('submitting', true);
-        const dfiles = this.dataFiles.files;
-        Promise.all((dfiles !== null ? dfiles : [])
-            .map(f => f.moveOnCurrentProject('iqbrims', '/生データ/')))
+        this.moveFiles(this.dataFiles, !status.isDirectlySubmitData)
             .then(() => {
                 status.set('isDirty', false);
                 status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE']);
@@ -208,9 +204,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         this.set('submitting', true);
-        const cfiles = this.checklistFiles.files;
-        Promise.all((cfiles !== null ? cfiles : [])
-            .map(f => f.moveOnCurrentProject('iqbrims', '/チェックリスト/')))
+        this.moveFiles(this.checklistFiles, true)
             .then(() => {
                 status.set('isDirty', false);
                 if (!status.workflowChecklistState) {
@@ -252,6 +246,30 @@ export default class GuidNodeIQBRIMS extends Controller {
         const message = this.i18n.t('iqbrims.failed_to_submit');
         this.toast.error(message);
         this.set('submitting', false);
+    }
+
+    async moveFiles(fileBrowser: IQBRIMSFileBrowser, createFileList: boolean) {
+        const folder = fileBrowser.targetDirectory;
+        if (!folder) {
+            throw new EmberError('Illegal status');
+        }
+        if (!createFileList) {
+            await folder.moveOnCurrentProject('iqbrims', '/');
+            return;
+        }
+        const { files, indexFile } = fileBrowser;
+        const filenames = files === null ? [] : files.map(f => f.name);
+        if (indexFile) {
+            await indexFile.updateContents(filenames.join('\n'));
+        } else {
+            await folder.createFile(IQBRIMSFileBrowser.FILES_TXT, filenames.join('\n'));
+            const indexFiles = (await folder.queryHasMany(
+                'files',
+                { 'page[size]': 1000 },
+            )).filter(f => f.name === IQBRIMSFileBrowser.FILES_TXT);
+            fileBrowser.set('indexFile', indexFiles.length > 0 ? indexFiles[0] : null);
+        }
+        await folder.moveOnCurrentProject('iqbrims', '/');
     }
 
     refresh() {

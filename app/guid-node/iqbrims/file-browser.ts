@@ -12,6 +12,8 @@ import Node from 'ember-osf-web/models/node';
 import GuidNodeIQBRIMS from './controller';
 
 export default class IQBRIMSFileBrowser extends EmberObject {
+    static readonly FILES_TXT = '.files.txt';
+
     folderName: string;
     owner: GuidNodeIQBRIMS;
 
@@ -26,6 +28,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
     acceptExtensions: string[] | null = null;
     rejectExtensions: string[] | null = null;
     cachedFiles: File[] | undefined = undefined;
+    indexFile: File | null = null;
 
     dropzoneOptions = {
         createImageThumbnails: false,
@@ -33,7 +36,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         withCredentials: true,
         preventMultipleFiles: false,
         acceptDirectories: false,
-        timeout: 1000 * 60 * 60,
+        timeout: 1000 * 60 * 60 * 48,
         maxFilesize: null,
     };
 
@@ -131,7 +134,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             yield file.rename(name, conflict);
 
             // intentionally not yielded
-            flash.perform(file, 'Successfully renamed');
+            flash.perform(file, this.owner.get('i18n').t('file_browser.successfully_renamed'));
 
             if (conflictingFile) {
                 yield flash.perform(conflictingFile, this.owner.get('i18n').t('file_browser.file_replaced'), 'danger');
@@ -143,7 +146,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             }
             this.notifyChange();
         } catch (ex) {
-            flash.perform(file, 'Failed to rename item', 'danger');
+            yield this.get('flash').perform(file, this.owner.get('i18n').t('file_browser.rename_failed'), 'danger');
         }
     });
 
@@ -200,10 +203,13 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         }
         const dir = this.targetDirectory;
         later(async () => {
-            const files = await dir.queryHasMany(
+            const fileList = await dir.queryHasMany(
                 'files',
                 { 'page[size]': 1000 },
             );
+            const files = fileList.filter(this.filterFiles);
+            const indexFiles = fileList.filter(f => !this.filterFiles(f));
+            this.set('indexFile', indexFiles.length > 0 ? indexFiles[0] : null);
             this.notifyFilled(files);
             this.cachedFiles = files;
             this.notifyPropertyChange('allFiles');
@@ -251,7 +257,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         }
         this.set('gdLoading', false);
         const dir = this.gdTargetDirectory;
-        const files = dir.files.map(f => f);
+        const files = dir.files.filter(this.filterFiles);
         this.set('gdEmpty', files.length === 0);
         return files;
     }
@@ -344,5 +350,9 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             return filename;
         }
         return filename.substring(pos).toLowerCase();
+    }
+
+    filterFiles(f: File) {
+        return f.name !== IQBRIMSFileBrowser.FILES_TXT;
     }
 }
