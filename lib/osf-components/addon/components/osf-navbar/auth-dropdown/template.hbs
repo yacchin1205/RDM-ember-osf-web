@@ -65,6 +65,16 @@
                     {{t 'auth_dropdown.my_profile'}}
                 </OsfLink>
             </ddm.item>
+            <ddm.item role='menuitem'>
+                <OsfLink
+                    data-test-ad-settings
+                    data-analytics-name='Settings'
+                    @href={{this.settingsURL}}
+                >
+                    <i class='fa fa-cog fa-lg p-r-xs'></i>
+                    {{t 'general.settings'}}
+                </OsfLink>
+            </ddm.item>
             {{#if (or useNavSupport useNavGlobalSupport)}}
             <ddm.item role='menuitem'>
                 {{#if replaceGlobalSupportUrl}}
@@ -84,16 +94,6 @@
                 {{/if}}
             </ddm.item>
             {{/if}}
-            <ddm.item role='menuitem'>
-                <OsfLink
-                    data-test-ad-settings
-                    data-analytics-name='Settings'
-                    @href={{this.settingsURL}}
-                >
-                    <i class='fa fa-cog fa-lg p-r-xs'></i>
-                    {{t 'general.settings'}}
-                </OsfLink>
-            </ddm.item>
             <ddm.item role='menuitem'>
                 <OsfButton
                     data-test-ad-logout
