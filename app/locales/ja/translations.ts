@@ -65,7 +65,7 @@ export default {
         date: '日付',
         sha2: 'SHA2',
         title: 'タイトル',
-        contributors: 'コントリビュータ',
+        contributors: 'メンバー',
         modified: '最終更新日時',
         description: '説明',
         create: '作成',
@@ -543,8 +543,8 @@ export default {
         },
     },
     tos_consent: {
-        paragraph: '<a href="{{link1}}">利用規約</a> and <a href="{{link2}}">プライバシーポリシー</a>を更新しました。注意深くお読みください。',
-        have_read_and_agree: '規約を読み、同意します',
+        paragraph: '<a href="{{link1}}">利用規約</a>と<a href="{{link2}}">プライバシーポリシー</a>を更新しました。注意深くお読みください。',
+        have_read_and_agree: 'これらの規約を読み、同意します',
         continue: '続ける',
     },
     validationErrors: {
@@ -609,7 +609,7 @@ export default {
         analytics: '分析',
         registrations: '登録',
         files: 'ファイル',
-        contributors: 'コントリビュータ',
+        contributors: 'メンバー',
         addons: 'アドオン',
         settings: '設定',
         comments: 'コメント',
@@ -621,7 +621,7 @@ export default {
         remove_addon: '{{extra.category}} "{{extra.title}}" のGitHubアドオンは{{extra.user}},によって認証されたため、認証情報は削除されました。',
         project_deleted: 'プロジェクトは正常に削除されました。',
         component_deleted: 'コンポーネントは正常に削除されました。',
-        remove_self_contrib: 'このプロジェクトからコントリビュータとして自分自身を削除しました。',
+        remove_self_contrib: 'このプロジェクトからメンバーとして自分自身を削除しました。',
         registration_archiving: 'ファイルは新しく作成された登録にコピーされており、コピーが完了するとメール通知を受け取ります。',
         registration_submitted: 'あなたの提出物は受領されました。 2営業日以内に、提出ステータスについて通知されます。 ご質問がある場合は、prereg @ NII.ioまでご連絡ください。',
         redirected_to_registrations: "プロジェクトの登録ページにリダイレクトされました。 ここから、新しいドラフト登録を開始して、登録プロセスを完了できます。",
@@ -646,7 +646,7 @@ export default {
         fork: {
             private_tooltip: 'このフォークはプライベートです',
             timestamp_label: 'フォーク:',
-            manage_contributors: 'コントリビュータを管理する',
+            manage_contributors: 'メンバーを管理する',
         },
         registration: {
             private_tooltip: 'この登録は非公開です',
@@ -750,7 +750,7 @@ export default {
     },
     contributor_list: {
         x_more: '{{x}} 以上',
-        anonymous: '匿名のコントリビュータ',
+        anonymous: '匿名のメンバー',
     },
     app_components: {
         branded_navbar: {
@@ -777,8 +777,8 @@ export default {
             add_item: '{{objectType}}に追加',
         },
         project_contributors: {
-            title: 'コントリビュータ',
-            contributors_popover_title: 'コントリビュータ情報',
+            title: 'メンバー',
+            contributors_popover_title: 'メンバー情報',
             contributors_popover: 'プロジェクトには、少なくとも1人の登録管理者と1人の著者が常に引用に表示されている必要があります。 登録管理者は、アカウントを確認し、管理者権限を持っているユーザーです。',
             instructions: '著者をドラッグアンドドロップして、著者の順序を変更します。',
             list: {
@@ -805,7 +805,7 @@ export default {
                         <dd>
                             <ul>
                                 <li>読取/書込権限</li>
-                                <li>コントリビュータを管理する</li>
+                                <li>メンバーを管理する</li>
                                 <li>公開/非公開設定</li>
                             </ul>
                         </dd>
@@ -813,9 +813,9 @@ export default {
                 `,
                 citation: '引用',
                 citation_popover_title: '引用情報',
-                citation_popover: 'チェックされたコントリビュータのみがプロジェクトの引用に含まれます。 引用に含まれていないコントリビュータは、通常どおりプロジェクトを読んで変更できます。',
-                remove_contributor_success: 'プロジェクトのコントリビュータが削除されました。',
-                remove_contributor_error: 'コントリビュータを削除できませんでした。 もう一度やり直してください。',
+                citation_popover: 'チェックされたメンバーのみがプロジェクトの引用に含まれます。 引用に含まれていないメンバーは、通常どおりプロジェクトを読んで変更できます。',
+                remove_contributor_success: 'プロジェクトのメンバーが削除されました。',
+                remove_contributor_error: 'メンバーを削除できませんでした。 もう一度やり直してください。',
                 item: {
                     img_alt: 'Gravatar',
                     in_citation_label: '引用中:',
@@ -828,7 +828,7 @@ export default {
                     remove: '除外',
                     remove_author: '著者を削除',
                 },
-                load_more_contributors: 'コントリビュータをさらに読み込む',
+                load_more_contributors: 'メンバーをさらに読み込む',
             },
             search: {
                 placeholder: '名前で検索',
@@ -843,15 +843,15 @@ export default {
                     paragraph: 'プロジェクトに追加されたことをユーザーに通知します。',
                     cancel: 'キャンセル',
                     add: '追加',
-                    add_success: '未登録のコントリビュータが追加されました！',
-                    add_error: '未登録のコントリビュータを追加できませんでした。 もう一度やり直してください。',
+                    add_success: '未登録のメンバーが追加されました！',
+                    add_error: '未登録のメンバーを追加できませんでした。 もう一度やり直してください。',
                 },
                 result: {
                     yourself: 'あなた自身',
                     add: '追加',
                 },
-                add_contributor_success: 'プロジェクトコントリビュータが追加されました！',
-                add_contributor_error: 'コントリビュータを追加できませんでした。 もう一度やり直してください。',
+                add_contributor_success: 'プロジェクトメンバーが追加されました！',
+                add_contributor_error: 'メンバーを追加できませんでした。 もう一度やり直してください。',
             },
         },
         project_metadata: {
@@ -898,7 +898,7 @@ export default {
             excluding: '除く',
             fuzziness: 'あいまいさ',
             fuzzinessDesc1: '「あいまい」検索を示す単語の後に、類似しているが完全に同じではない一致を含めます。',
-            listContainsExactPhrase: 'コントリビュータ名のリストには正確なフレーズが含まれています',
+            listContainsExactPhrase: 'メンバー名のリストには正確なフレーズが含まれています',
             listOfIdentifiersContains: '識別子のリストには',
             match: '一致',
             matchWordStartsWith: '次で始まる単語に一致',
@@ -998,7 +998,7 @@ export default {
             project_metadata_description_label: '説明:',
             project_metadata_license_label: 'ライセンス:',
             project_metadata_tags_label: 'タグ:',
-            project_contributors_title: 'プロジェクトのコントリビュータ',
+            project_contributors_title: 'プロジェクトのメンバー',
             project_contributors_description: 'このセクションを更新すると、プロジェクトが更新されます。',
             collection_metadata_title: 'コレクションのメタデータ',
             cancel: 'キャンセル',
@@ -1184,7 +1184,7 @@ export default {
             affiliated_institutions: '所属機関',
             category: 'カテゴリー',
             citation: '引用',
-            contributors: 'コントリビュータ',
+            contributors: 'メンバー',
             create_doi: 'DOIを作成する',
             date_created: '作成日',
             date_registered: '登録日',
@@ -1289,7 +1289,7 @@ export default {
             },
 
             contributors: {
-                title: 'コントリビュータ',
+                title: 'メンバー',
                 gravatar_alt: '{{name}}のGravatar',
             },
 
@@ -1322,7 +1322,7 @@ export default {
                 random_scientist_x: '下に<strong>{{x}}</strong> と入力し、続行することが確実な場合は「登録の取り消し」をクリックします。',
                 success: '出金リクエストが正常に送信されました',
                 error: 'この登録を取り消せません',
-                warning: '登録を取り消すと、GakuNin RDMからコンテンツが削除されますが、基本的なメタデータは残されます。 取り下げられた登録のタイトルとそのコントリビュータリストは、引き取りの正当化または説明と同様に、もしあなたがそれを提供したいなら、残ります。 取り下げられた登録には、「取り下げられた」タグが付けられます。 このアクションは元に戻せません。',
+                warning: '登録を取り消すと、GakuNin RDMからコンテンツが削除されますが、基本的なメタデータは残されます。 取り下げられた登録のタイトルとそのメンバーリストは、引き取りの正当化または説明と同様に、もしあなたがそれを提供したいなら、残ります。 取り下げられた登録には、「取り下げられた」タグが付けられます。 このアクションは元に戻せません。',
             },
 
             archiving: {
@@ -1609,7 +1609,7 @@ export default {
         'search-bar': {
             aria: '検索',
             heading: '公開研究を発見する',
-            subheading: 'あなた自身の研究に役立つかもしれないGakuNin RDMのプロジェクト、データ、資料、コントリビュータを発見してください。',
+            subheading: 'あなた自身の研究に役立つかもしれないGakuNin RDMのプロジェクト、データ、資料、メンバーを発見してください。',
             placeholder: '検索分野、著者...',
             search: '検索',
         },
@@ -1629,7 +1629,7 @@ export default {
         },
         registries: {
             'read-only-contributors-list': {
-                editContributorsOnYourProject: 'プロジェクトのコントリビュータを編集する',
+                editContributorsOnYourProject: 'プロジェクトのメンバーを編集する',
             },
         },
         'files-widget': {
