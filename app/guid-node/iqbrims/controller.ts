@@ -19,6 +19,8 @@ import CurrentUser from 'ember-osf-web/services/current-user';
 import StatusMessages from 'ember-osf-web/services/status-messages';
 import Toast from 'ember-toastr/services/toast';
 
+import moment from 'moment';
+
 import IQBRIMSFileBrowser from './file-browser';
 
 export default class GuidNodeIQBRIMS extends Controller {
@@ -373,7 +375,7 @@ export default class GuidNodeIQBRIMS extends Controller {
             throw new EmberError('Illegal status');
         }
         const status = this.status.content as IQBRIMSStatusModel;
-        status.set('acceptedDate', v === null ? '' : v.toISOString());
+        status.set('acceptedDate', v === null ? '' : moment(v).format('YYYY-MM-DD'));
         status.set('isDirty', true);
         this.notifyPropertyChange('isFilled');
         this.statusUpdated();
@@ -441,7 +443,7 @@ export default class GuidNodeIQBRIMS extends Controller {
             throw new EmberError('Illegal status');
         }
         const status = this.status.content as IQBRIMSStatusModel;
-        status.set('publishDate', v === null ? '' : v.toISOString());
+        status.set('publishDate', v === null ? '' : moment(v).format('YYYY-MM-DD'));
         status.set('isDirty', true);
         this.statusUpdated();
     }
