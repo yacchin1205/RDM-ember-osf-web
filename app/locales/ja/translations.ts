@@ -339,7 +339,7 @@ export default {
     auth_dropdown: {
         log_out: 'ログアウト',
         my_profile: 'プロフィール',
-        osf_support: 'GakuNin RDM サポート',
+        osf_support: 'RDM サポート',
         sign_up: '新規登録',
         sign_in: 'ログイン',
         user_gravatar: 'ユーザグラベイタ',
