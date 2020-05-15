@@ -69,8 +69,8 @@ export default {
         modified: '最終更新日時',
         description: '説明',
         create: '作成',
-        and: 'and',
-        or: 'or',
+        and: 'と',
+        or: 'か',
         bookmark: 'ブックマーク',
         more: '詳細',
         upload: 'アップロード',
@@ -128,7 +128,7 @@ export default {
         data: 'データ',
         hypothesis: '仮説',
         instrumentation: 'インストルメンテーション',
-        'methods and measures': '方法論',
+		'methods and measures': '方法と対策',
         procedure: '手順',
         project: 'プロジェクト',
         software: 'ソフトウェア',
@@ -339,7 +339,7 @@ export default {
     auth_dropdown: {
         log_out: 'ログアウト',
         my_profile: 'プロフィール',
-        osf_support: 'GakuNin RDM サポート',
+        osf_support: 'RDM サポート',
         sign_up: '新規登録',
         sign_in: 'ログイン',
         user_gravatar: 'ユーザグラベイタ',
@@ -740,16 +740,16 @@ export default {
     },
     list: {
         two_item: {
-            delimiter: ' and ',
+            delimiter: 'と',
         },
         many_item: {
             first_delimiter: ', ',
             each_delimiter: ', ',
-            last_delimiter: ', and ',
+            last_delimiter: ', 他',
         },
     },
     contributor_list: {
-        x_more: '{{x}} 以上',
+        x_more: '{{x}}人',
         anonymous: '匿名のメンバー',
     },
     app_components: {
