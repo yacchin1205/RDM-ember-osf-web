@@ -128,7 +128,7 @@ export default {
         data: 'データ',
         hypothesis: '仮説',
         instrumentation: 'インストルメンテーション',
-		'methods and measures': '方法と対策',
+        'methods and measures': '方法と対策',
         procedure: '手順',
         project: 'プロジェクト',
         software: 'ソフトウェア',
@@ -740,16 +740,16 @@ export default {
     },
     list: {
         two_item: {
-            delimiter: 'と',
+            delimiter: ', ',
         },
         many_item: {
             first_delimiter: ', ',
             each_delimiter: ', ',
-            last_delimiter: ', 他',
+            last_delimiter: ', ',
         },
     },
     contributor_list: {
-        x_more: '{{x}}人',
+        x_more: '他{{x}}名',
         anonymous: '匿名のメンバー',
     },
     app_components: {
