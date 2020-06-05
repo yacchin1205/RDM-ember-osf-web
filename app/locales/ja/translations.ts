@@ -277,6 +277,9 @@ export default {
         stay_here: 'このページに留まる',
         go_to_new: '作成したプロジェクトへ移動',
         storage_region: 'ストレージの場所',
+        creating: 'プロジェクトを保存中...',
+        create_failed_header: 'プロジェクトを作成できませんでした',
+        create_failed_msg: '不明なエラーが発生しました。 後でもう一度やり直してください。',
     },
     banners: {
         prereg: {
