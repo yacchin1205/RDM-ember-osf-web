@@ -277,6 +277,9 @@ export default {
         stay_here: 'このページに留まる',
         go_to_new: '作成したプロジェクトへ移動',
         storage_region: 'ストレージの場所',
+        creating: 'プロジェクトを保存中...',
+        create_failed_header: 'プロジェクトを作成できませんでした',
+        create_failed_msg: '不明なエラーが発生しました。 後でもう一度やり直してください。',
     },
     banners: {
         prereg: {
@@ -1517,8 +1520,8 @@ export default {
         `,
     },
     cookieBanner: {
-    cookieWarning: `このWebサイトは、ユーザー体験を向上させるためにCookieに依存しています。 [同意する]をクリックするか、サイトの使用を継続することで同意します。詳細については、<a href="${privacyPolicyLink}">プライバシーポリシー</a>、または<a href="${cookiesLink}">クッキーの使用</a>に関する情報をご覧ください。`,
-        accept: '同意',
+    cookieWarning: `国立情報学研究所では、NII Research Data Cloudサービスの運営およびユーザ体験の向上を目的にクッキーを利用しております。GakuNin RDMをご利用されるお客様には、<a href="${privacyPolicyLink}">プライバシーポリシー</a>、および<a href="${cookiesLink}">クッキー使用に関する情報</a>をご覧ください。「同意する」をクリックまたは当サイトの利用を継続されることで、弊所がクッキーを使用することにご同意いただいたものとさせていただきます。ご同意いただけない場合には、お客様のブラウザ設定でクッキーを無効化していただくか、または当サイトの利用を中止して下さい。クッキーを利用しないことで、当サイトの一部の機能がご利用いただけない可能性がございますがご了承ください。`,
+        accept: '同意する',
     },
     discover: {
         relevance: '関連性',

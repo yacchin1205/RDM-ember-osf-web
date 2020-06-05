@@ -1387,7 +1387,7 @@ export default {
         `,
     },
     cookieBanner: {
-        cookieWarning: `This website relies on cookies to help provide a better user experience. By clicking Accept or continuing to use the site, you agree. For more information, see our <a href="${privacyPolicyLink}">Privacy Policy</a> and information on <a href="${cookiesLink}">cookie use</a>.`,
+        cookieWarning: `The National Institute of Informatics (NII) uses cookies to operate the NII Research Data Cloud service and to improve your user experience. If you intend to use the GakuNin RDM, please read our <a href="${privacyPolicyLink}">Privacy Policy</a> and information on <a href="${cookiesLink}">NII use of cookies</a>. By clicking Accept or continuing to use our website, you consent to the cookies use on this site. If you do not agree with the cookies use, please change your browser settings to disable cookies or stop using our website. Please be aware that you may not be able to use some functions on our website when you have cookies disabled.`,
         accept: 'Accept',
     },
     discover: {
