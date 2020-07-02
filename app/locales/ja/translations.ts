@@ -20,7 +20,7 @@ export default {
         default: {
             plural: 'ドキュメント',
             pluralCapitalized: 'ドキュメント',
-            singular: 'document',
+            singular: 'ドキュメント',
             singularCapitalized: 'ドキュメント',
         },
         work: {
