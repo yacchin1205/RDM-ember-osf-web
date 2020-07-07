@@ -20,7 +20,7 @@ export default {
         default: {
             plural: 'ドキュメント',
             pluralCapitalized: 'ドキュメント',
-            singular: 'document',
+            singular: 'ドキュメント',
             singularCapitalized: 'ドキュメント',
         },
         work: {
@@ -141,7 +141,7 @@ export default {
         title: 'お知らせ：',
     },
     quickfiles: {
-        title: ' {{user-name}}\のQuick File',
+        title: ' {{user-name}}のQuick File',
         description: ' ここにアップロードされたファイルは<b>一般公開</b>されており、共有リンクを使用して他のユーザーと簡単に共有できます。',
         feedback_dialog_text: 'Quick Fileについてご意見をお聞かせください。',
         transition_auth: 'Quick Fileを表示するには、ログインしている必要があります。ログインページに遷移します。',
@@ -231,7 +231,7 @@ export default {
         create_new_project_button: '新規プロジェクト作成',
         quicksearch: {
             search: 'プロジェクトを検索',
-	    other_links: `あなたのプロジェクトを整理${useSearch ? '、<a href="/search/">検索</a>' : ''}するには、<a href="/myprojects/">マイプロジェクト</a>を開きます`,
+            other_links: `あなたのプロジェクトを整理${useSearch ? '、<a href="/search/">検索</a>' : ''}するには、<a href="/myprojects/">マイプロジェクト</a>を開きます`,
             no_results: 'プロジェクトが見つかりません。',
             no_projects: {
                 line1: 'まだプロジェクトがありません。画面右上のボタンからプロジェクトを作成して下さい。',
@@ -627,7 +627,7 @@ export default {
         remove_self_contrib: 'このプロジェクトからメンバーとして自分自身を削除しました。',
         registration_archiving: 'ファイルは新しく作成された登録にコピーされており、コピーが完了するとメール通知を受け取ります。',
         registration_submitted: 'あなたの提出物は受領されました。 2営業日以内に、提出ステータスについて通知されます。 ご質問がある場合は、prereg @ NII.ioまでご連絡ください。',
-        redirected_to_registrations: "プロジェクトの登録ページにリダイレクトされました。 ここから、新しいドラフト登録を開始して、登録プロセスを完了できます。",
+        redirected_to_registrations: 'プロジェクトの登録ページにリダイレクトされました。 ここから、新しいドラフト登録を開始して、登録プロセスを完了できます。',
     },
     dropzone_widget: {
         drop_files: 'ここにファイルをドロップしてアップロードします',
@@ -1520,7 +1520,7 @@ export default {
         `,
     },
     cookieBanner: {
-    cookieWarning: `国立情報学研究所では、NII Research Data Cloudサービスの運営およびユーザ体験の向上を目的にクッキーを利用しております。GakuNin RDMをご利用されるお客様には、<a href="${privacyPolicyLink}">プライバシーポリシー</a>、および<a href="${cookiesLink}">クッキー使用に関する情報</a>をご覧ください。「同意する」をクリックまたは当サイトの利用を継続されることで、弊所がクッキーを使用することにご同意いただいたものとさせていただきます。ご同意いただけない場合には、お客様のブラウザ設定でクッキーを無効化していただくか、または当サイトの利用を中止して下さい。クッキーを利用しないことで、当サイトの一部の機能がご利用いただけない可能性がございますがご了承ください。`,
+        cookieWarning: `国立情報学研究所では、NII Research Data Cloudサービスの運営およびユーザ体験の向上を目的にクッキーを利用しております。GakuNin RDMをご利用されるお客様には、<a href="${privacyPolicyLink}">プライバシーポリシー</a>、および<a href="${cookiesLink}">クッキー使用に関する情報</a>をご覧ください。「同意する」をクリックまたは当サイトの利用を継続されることで、弊所がクッキーを使用することにご同意いただいたものとさせていただきます。ご同意いただけない場合には、お客様のブラウザ設定でクッキーを無効化していただくか、または当サイトの利用を中止して下さい。クッキーを利用しないことで、当サイトの一部の機能がご利用いただけない可能性がございますがご了承ください。`,
         accept: '同意する',
     },
     discover: {
