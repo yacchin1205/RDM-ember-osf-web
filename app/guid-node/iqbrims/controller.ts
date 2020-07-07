@@ -19,6 +19,8 @@ import CurrentUser from 'ember-osf-web/services/current-user';
 import StatusMessages from 'ember-osf-web/services/status-messages';
 import Toast from 'ember-toastr/services/toast';
 
+import moment from 'moment';
+
 import IQBRIMSFileBrowser from './file-browser';
 
 export default class GuidNodeIQBRIMS extends Controller {
@@ -150,21 +152,21 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         this.set('submitting', true);
-        this.moveFiles(this.manuscriptFiles, true)
+        if (status.hasRaw === undefined || status.hasRaw) {
+            if (!status.workflowRawPermissions) {
+                status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+            }
+        } else if (status.hasChecklist === undefined || status.hasChecklist) {
+            if (!status.workflowChecklistPermissions) {
+                status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+            }
+        }
+        this.moveFiles(status, this.manuscriptFiles, true)
             .then(() => {
                 status.set('isDirty', false);
                 status.set('workflowPaperPermissions', ['VISIBLE', 'WRITABLE']);
                 if (!status.workflowPaperState) {
                     status.set('workflowPaperState', 'processing');
-                }
-                if (status.hasRaw === undefined || status.hasRaw) {
-                    if (!status.workflowRawPermissions) {
-                        status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
-                    }
-                } else if (status.hasChecklist === undefined || status.hasChecklist) {
-                    if (!status.workflowChecklistPermissions) {
-                        status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
-                    }
                 }
                 this.submit(status);
             }).catch(() => {
@@ -179,17 +181,17 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         this.set('submitting', true);
-        this.moveFiles(this.dataFiles, !status.isDirectlySubmitData)
+        if (status.hasChecklist === undefined || status.hasChecklist) {
+            if (!status.workflowChecklistPermissions) {
+                status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
+            }
+        }
+        this.moveFiles(status, this.dataFiles, !status.isDirectlySubmitData)
             .then(() => {
                 status.set('isDirty', false);
                 status.set('workflowRawPermissions', ['VISIBLE', 'WRITABLE']);
                 if (!status.workflowRawState) {
                     status.set('workflowRawState', 'processing');
-                }
-                if (status.hasChecklist === undefined || status.hasChecklist) {
-                    if (!status.workflowChecklistPermissions) {
-                        status.set('workflowChecklistPermissions', ['VISIBLE', 'WRITABLE', 'UPLOADABLE']);
-                    }
                 }
                 this.submit(status);
             }).catch(() => {
@@ -204,7 +206,7 @@ export default class GuidNodeIQBRIMS extends Controller {
         }
         const status = this.status.content as IQBRIMSStatusModel;
         this.set('submitting', true);
-        this.moveFiles(this.checklistFiles, true)
+        this.moveFiles(status, this.checklistFiles, true)
             .then(() => {
                 status.set('isDirty', false);
                 if (!status.workflowChecklistState) {
@@ -248,11 +250,12 @@ export default class GuidNodeIQBRIMS extends Controller {
         this.set('submitting', false);
     }
 
-    async moveFiles(fileBrowser: IQBRIMSFileBrowser, createFileList: boolean) {
+    async moveFiles(status: IQBRIMSStatusModel, fileBrowser: IQBRIMSFileBrowser, createFileList: boolean) {
         const folder = fileBrowser.targetDirectory;
         if (!folder) {
             throw new EmberError('Illegal status');
         }
+        await status.save();
         if (!createFileList) {
             await folder.moveOnCurrentProject('iqbrims', '/');
             return;
@@ -372,7 +375,7 @@ export default class GuidNodeIQBRIMS extends Controller {
             throw new EmberError('Illegal status');
         }
         const status = this.status.content as IQBRIMSStatusModel;
-        status.set('acceptedDate', v === null ? '' : v.toISOString());
+        status.set('acceptedDate', v === null ? '' : moment(v).format('YYYY-MM-DD'));
         status.set('isDirty', true);
         this.notifyPropertyChange('isFilled');
         this.statusUpdated();
@@ -440,7 +443,7 @@ export default class GuidNodeIQBRIMS extends Controller {
             throw new EmberError('Illegal status');
         }
         const status = this.status.content as IQBRIMSStatusModel;
-        status.set('publishDate', v === null ? '' : v.toISOString());
+        status.set('publishDate', v === null ? '' : moment(v).format('YYYY-MM-DD'));
         status.set('isDirty', true);
         this.statusUpdated();
     }
