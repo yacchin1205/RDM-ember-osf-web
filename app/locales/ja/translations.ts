@@ -406,7 +406,7 @@ export default {
     home: {
         title: 'ホーム',
         youtube_modal_title: 'GakuNin RDMを始める',
-        alert_logged_out: 'ログアウトしました',
+        alert_logged_out: 'ログアウトしました、',
         brand: longBrand,
         tagline: 'FIT2020デモ実演中',
         youtube_label: 'GakuNin RDM YouTube ビデオ',
