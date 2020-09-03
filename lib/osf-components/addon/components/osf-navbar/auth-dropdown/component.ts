@@ -1,12 +1,11 @@
+/* eslint-disable max-classes-per-file */
 import { tagName } from '@ember-decorators/component';
-import { action, computed } from '@ember-decorators/object';
-import { alias } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
-import { Registry as Services } from '@ember/service';
+import { action, computed } from '@ember/object';
+import { alias } from '@ember/object/computed';
+import { inject as service, Registry as Services } from '@ember/service';
 import Features from 'ember-feature-flags/services/features';
 import config from 'ember-get-config';
-import I18N from 'ember-i18n/services/i18n';
 import Session from 'ember-simple-auth/services/session';
 
 import { layout } from 'ember-osf-web/decorators/component';
@@ -15,8 +14,8 @@ import Analytics from 'ember-osf-web/services/analytics';
 import CurrentUser from 'ember-osf-web/services/current-user';
 import cleanURL from 'ember-osf-web/utils/clean-url';
 import defaultTo from 'ember-osf-web/utils/default-to';
-import param from 'ember-osf-web/utils/param';
 import pathJoin from 'ember-osf-web/utils/path-join';
+
 import styles from './styles';
 import template from './template';
 
@@ -37,7 +36,6 @@ const {
 export class AuthBase extends Component {
     @service analytics!: Analytics;
     @service currentUser!: CurrentUser;
-    @service i18n!: I18N;
     @service session!: Session;
     @service features!: Features;
     @service router!: Services['router'];
@@ -52,7 +50,7 @@ export class AuthBase extends Component {
     /**
      * The URL to redirect to after logout
      */
-    redirectUrl?: string;
+    redirectUrl: string = defaultTo(this.redirectUrl, '/goodbye');
 
     campaign?: string;
 
@@ -102,15 +100,13 @@ export class AuthBase extends Component {
     }
 
     @action
-    login(this: NavbarAuthDropdown) {
+    login() {
         this.currentUser.login();
     }
 
     @action
-    logout(this: NavbarAuthDropdown) {
-        // Assuming `redirectUrl` comes back to this app, the session will be invalidated then.
-        const query = this.redirectUrl ? `?${param({ next_url: this.redirectUrl })}` : '';
-        window.location.href = `${config.OSF.url}logout/${query}`;
+    logout() {
+        this.currentUser.logout(this.redirectUrl);
     }
 }
 
@@ -123,3 +119,4 @@ export class AuthBase extends Component {
 @tagName('')
 export default class NavbarAuthDropdown extends AuthBase {
 }
+/* eslint-enable max-classes-per-file */

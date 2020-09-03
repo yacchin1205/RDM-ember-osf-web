@@ -1,7 +1,7 @@
-import { action } from '@ember-decorators/object';
-import { or } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
+import { action } from '@ember/object';
+import { or } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
 import config from 'ember-get-config';
 import Session from 'ember-simple-auth/services/session';
 
@@ -13,6 +13,7 @@ import template from './template';
 
 const {
     OSF: {
+        pageName,
         localStorageKeys: {
             joinBannerDismissed: dismissedKey,
         },
@@ -27,6 +28,8 @@ export default class JoinOsfBanner extends Component {
     dismissed: boolean = false;
     storage = window.localStorage;
     previouslyDismissed = this.storage.getItem(dismissedKey) !== null;
+
+    title: string = pageName;
 
     @or('session.isAuthenticated', 'previouslyDismissed')
     hideBanner!: boolean;

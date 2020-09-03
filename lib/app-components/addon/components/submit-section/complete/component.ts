@@ -1,6 +1,6 @@
 import { tagName } from '@ember-decorators/component';
-import { action } from '@ember-decorators/object';
 import Component from '@ember/component';
+import { action } from '@ember/object';
 
 import { layout, requiredAction } from 'ember-osf-web/decorators/component';
 import styles from './styles';
@@ -17,8 +17,6 @@ export default class SubmitSectionComplete extends Component {
 
     @action
     edit() {
-        if (this.editable) {
-            this.editSection();
-        }
+        this.editSection();
     }
 }

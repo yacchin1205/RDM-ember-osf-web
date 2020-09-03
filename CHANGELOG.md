@@ -4,6 +4,724 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
+## [20.7.0] - 2020-07-01
+## Added
+- user metrics CSV export on the institutional dashboard
+
+## [20.6.1] - 2020-06-29
+## Fixed
+- broken UI due to `ember-responsive` ignoring our `app/breakpoints.ts`
+
+## [20.6.0] - 2020-06-26
+## Changed
+- Upgrade to Ember 3.16
+- Miscellaneous security and dependency upgrades
+
+## [20.5.0] - 2020-06-03
+## Changed
+- Components
+    - `institutions`
+        - `dashboard/departments-panel`
+        - `dashboard/institutional-users-list`
+        - `dashboard/panel`
+        - `dashboard/projects-panel`
+- Mirage
+    - Factories
+        - `institution-user`
+    - Serializers
+        - `institution-user`
+
+## [20.4.0] - 2020-05-26
+### Changed
+- link to institutions
+- wording of OSFInstitutions
+- config to use `isTruthy`
+- draft-registration card component to remove progress-bar
+
+### Added
+- newline to "Read more" link
+- logging API error messages
+- CI template linting
+- log API draft-registration submission error
+
+### Fixed
+- file links issue on overview page
+
+## [20.3.1] - 2020-03-26
+### Fixed
+- `active` schemas filter parameter.
+
+## [20.3.0] - 2020-03-23
+### Added
+- Ability to create/edit draft registration metadata to the Registries Submission workflow.
+- Metadata to review page
+
+## [20.2.1] - 2020-03-04
+### Changed
+- log registration submit errors to sentry
+
+## [20.2.0] - 2020-02-27
+### Changed
+- Upgrade to Ember 3.15
+- Miscellaneous bug fixes
+
+## [20.1.0] - 2020-01-21
+### Added
+- Components
+    - `registries/schema-block-renderer/read-only/multi-select`
+    - `registries/registration-form-navigation-dropdown`
+    - `registries/overview-form-renderer`
+
+### Fixed
+- Transforms
+    - registration-responses
+        - handle case where registration_responses is null
+- Componenets
+    - `registries/schema-block-renderer/read-only/mapper`
+        - use `registries/schema-block-renderer/read-only/multi-select`
+    - `registries/draft-registration-manager`
+        - use set to set registration responses
+    - `registries/schema-block-renderer/read-only/response`
+        - preserve whitespace formatting in read-only response
+    - `files/menu`
+        - use responsive-dropdown without trigger div
+        - prevent outside click from interrupting upload
+    - `files/upload-zone`
+        - do not show toast error for ongoing "canceled" uploads
+    - `registries/schema-block-renderer/label/label-content`
+        - add links to questions for review page
+- Engines
+    - `registries`
+        - Components
+            - `registries-metadata`
+                - make contributors a link only for users with read access
+
+### Changed
+- Models
+    - `registration`
+        - apply `registration-responses` transform to `registrationResponses`
+- Serializers
+    - `registration`
+        - normalize `registration_responses`
+- Components
+    - `registries/review-form-renderer`
+        - invoke `Registries::RegistrationFormNavigationDropdown`
+    - `registries/schema-block-renderer/label/label-content`
+        - only render link to question when `@draftManager` is provided
+    - `registries/schema-block-renderer/read-only/files`
+        - only attempt to show validation when `@changeset` is provided
+- Routes
+    - `developer-apps`
+        - Components
+            - `client-secret`
+                - PATCH to API when resetting client secret for developer app
+- Engines
+    - `registries`
+        - Routes
+            - `overview/index`
+                - invoke `Registries::OverviewFormRenderer` instead of `RegistrationFormView`
+- Tests
+    - add percy snapshots for osf-navbar and registries-navbar
+- DX
+    - use Node 10 and pin with Volta
+    - set EMBER_ENV=test when running tests
+
+## [19.11.0] - 2019-12-16
+### Added
+- Components
+    - `institutions`
+        - `dashboard/departments-panel`
+        - `dashboard/institutional-users-list`
+        - `dashboard/panel`
+        - `dashboard/projects-panel`
+    - `Registries::DraftRegistrationManager`
+    - `Registries::SchemaBlockRenderer::Editable::Files`
+    - `Registries::SchemaBlockRenderer::ReadOnly::Files`
+    - `OsfLayout::RegistriesSideNav`
+    - `OsfLayout::RegistriesSideNav::Icon`
+    - `OsfLayout::RegistriesSideNav::Label`
+    - `OsfLayout::RegistriesSideNav::XLink`
+    - `PageLink`
+    - `Debouncer`
+- Mirage
+    - Factories
+        - `institutional-user`
+    - Serializers
+        - `institutional-user`
+- Routes
+    - `institution`
+        - added `dashboard` nested route
+    - `guid-node`
+        - added `drafts` nested route
+    - `registries/drafts/draft`
+        - added `metadata` nested route
+- Engines
+    - Components
+        - `drafts/draft/-components/register`
+    - Routes
+        - `registries`
+            - `drafts.draft`, `draft/<draftId>`
+                - index route redirects to `draft/<draftId>/1`
+            - `drafts.draft.page`, `draft/<draftId>/<page>`
+- Utils
+    - `page-param`
+- Tests
+    - Integration
+        - `draft-registration-manager`
+        - `page-link`
+        - `registries-side-nav`
+    - Unit
+        - `page-param`
+    - Acceptance
+        - `draft form`
+- Environment
+    - Flags
+        - added `guid-node.drafts` route flag
+- Packages
+    - `ember-element-helper` v0.2.0
+
+### Changed
+- Components
+    - `paginated-list`
+        - added `isTable` attribute to use a `table` over an `ul`
+    - `sort-button`
+        - changed local `selected` classes to nested global classes
+    - `registries/schema-block-renderer/editable/**`
+    - `validated-input`
+        - Modified components to take in `onInput` callback.
+            - added `withStatSummary` trait
+    - `registries/partial-registration-modal`
+        - added `onContinue` hook
+    - `OsfLayout`
+        - renamed `left-nav` to `left-nav-old`
+        - created new `left-nav` that uses `registries-side-nav`
+- Mirage
+    - Factories
+        - `institution`
+            - added `withInstitutionalUsers` trait
+    - Scenarios
+        - `default`
+            - added `SchemaBlock` node with files and contributors
+- Models
+    - `base-file-item`
+        - added `createFolder`
+    - `draft-registration`
+        - added `registrationResponses`
+    - `file`
+        - added `toFileReference`
+    - `file-provider`
+        - use `rootFolder` instead of `files`
+        - added links
+    - `institution`
+        - added `currentUserIsAdmin` boolean
+        - added `statSummary` object
+    - `institutional-user`
+        - added `userGuid` string
+    - `registration`
+        - changed `draftRegistration` to be a relationship
+        - added `registrationResponses`
+        - added `includedNodeIds`
+        - added `createDoi`
+        - added `draftRegistrationId`
+        - removed `registrationChoice`
+        - removed `liftEmbargo`
+    - `registration-schema`
+        - added `schemaBlocks` inverse
+    - `schema-blocks`
+        - added `schema` relationship
+        - added `elementId` computed
+        - added `pageRouteParam` computed
+- Routes
+    - `institution`
+        - moved to `index` folder
+    - `registries.drafts.draft`
+        - added navigation
+    - `registries.overview`
+        - updated to use `leftNavOld`
+- Types
+    - Renamed `PageResponse` to `RegistrationResponse`
+- Tests
+    - `schema-block-renderer`
+        - added `files` block test
+
+- Packages
+    - Update `eslint-config-airbnb-base` to 14.0.0
+
+### Removed
+- Tests
+    - unit, component tests using `FactoryGuy`
+    - `FactoryGuy` factories
+- Packages
+    - `ember-data-factory-guy`
+    - `ember-element-helper` (`fix-engines` branch)
+- Types
+    - `FactoryGuy` types
+
+## [19.10.0] - 2019-10-02
+### Added
+- Models
+    - `institutional-user`
+- Helpers
+    - `random-text`
+        - generates random text
+    - `unique-id`
+        - generate a unique-enough string for use in a DOM element's `id`
+    - `has-validation-error`
+        - check if a list of validator results contains a validation error
+- Components
+    - `subjects/`
+        - `browse`
+        - `browse/animated-expand`
+        - `browse/browse-manager`
+        - `browse/item-list`
+        - `browse/item`
+        - `display`
+        - `manager`
+        - `manager/single`
+        - `search`
+        - `search/search-result`
+        - `widget`
+    - `editable-field/subject-field-manager`
+    - `files/`
+        - `browse`
+        - `item`
+        - `list`
+        - `manager`
+        - `selected-list`
+        - `upload-zone`
+        - `widget`
+    - `registries/review-form-renderer`
+    - `schema-block-renderer/`
+        - `editable`
+        - `read-only`
+- Validators
+    - `list` - apply a validator to a list
+- Tests
+    - Unit
+        - helpers
+            - `has-validation-error`
+        - validators
+            - `validateList`
+    - Integration
+        - `unique-id`
+        - `random-text`
+        - `Files::Widget`
+- Ember Optional Features
+    - `template-only-glimmer-components`
+- Mirage
+    - Factories
+        - `subject`
+        - `file-provider`
+    - Serializers
+        - `subject`
+        - `file-provider`
+    - Views
+        - `provider-subjects`
+        - `file`
+- Types
+    - `ember-animated`
+- Packages
+    - `ember-animated`
+    - `ember-element-helper` (`fix-engines` branch)
+- Handbook
+    - `Subjects::Widget` component to gallery
+    - `Files::Widget` component to gallery
+    - `validateList` validator
+    - `has-validation-error` helper
+
+### Changed
+- Models
+    - `taxonomy`
+        - renamed to `subject` and updated for new subjects-as-relationships architecture
+    - `node`
+        - changed `subjects` attribute into a hasMany relationship
+    - `preprint`
+        - changed `subjects` attribute into a hasMany relationship
+        - removed `uniqueSubjects` computed property
+    - `preprint-provider`
+        - changed `hasHighlightedSubjects` alias to use `highlighted_subjects` related link meta
+    - `provider`
+        - renamed `taxonomies` hasMany relationship to `subjects`
+        - renamed `highlightedTaxonomies` hasMany relationship to `highlightedSubjects`
+    - `file`
+        - rename `node` belongsTo relationship to `target`
+- Serializers
+    - `taxonomy`
+        - renamed to `subject`
+- Adapters
+    - `taxonomy`
+        - renamed to `subject`
+- Components
+    - `editable-field`
+        - use `osf-dialog` instead of `bs-modal`
+        - pass `@fixedWidth` through to `OsfDialog`
+        - use `@manager.isSaving` to disable submit & cancel buttons
+        - `category-manager`
+            - expose `isSaving` as alias for `save.isRunning`
+        - `description-manager`
+            - expose `isSaving` as alias for `save.isRunning`
+        - `institutions-manager`
+            - expose `isSaving` as alias for `save.isRunning`
+        - `license-manager`
+            - expose `isSaving` as alias for `save.isRunning`
+        - `publication-doi-manager`
+            - expose `isSaving` as alias for `save.isRunning`
+        - `tags-manager`
+            - expose `isSaving` as alias for `save.isRunning`
+    - `node-category-picker`
+        - remove `@renderInPlace={{true}}` from `PowerSelect` invocation
+    - `zoom-to-route`
+        - remove `@renderInPlace={{true}}` from `PowerSelect` invocation
+    - `registries/registries-license-picker`
+        - remove `@renderInPlace={{true}}` from `PowerSelect` invocation
+    - `registries/license-viewer`
+        - use `osf-dialog` instead of `bs-modal`
+    - `file-icon`
+        - folders should always use folder icon
+    - `sort-button`
+        - suppress box-shadow when active
+    - `osf-dialog`
+        - darken background overlay
+    - `registries/registries-metadata`
+        - use `Subjects::Widget` and `Subjects::Display` (and related managers) for subjects editable field
+    - `schema-block-group-renderer`
+        - take in renderStrategy as mapper
+        - take variable for `registrationResponses`
+    - `schema-block-renderer`
+        - broke components into `editable` and `read-only` structures
+- Tests
+    - renamed `taxonomy` to `subject` in `preprint-provider` FactoryGuy factory
+    - Unit
+        - `adapters/taxonomy-test` renamed to `adapters/subject-test`
+        - `models/taxonomy-test` renamed to `models/subject-test`
+        - `serializers/taxonomy-test` renamed to `serializers/subject-test`
+        - `models/preprint-test`
+            - removed test for `subject` attribute
+    - Integration
+        - `registries/schema-block-group-renderer` updated to include `renderStrategy`
+- Mirage
+    - Factories
+        - `node`
+            - removed `subjects` attribute
+            - added `withFiles` trait
+        - `registration`
+            - added `widthSubjects` trait
+        - `file`
+            - added `target` association
+            - addded `asFolder` trait
+    - Serializers
+        - `registration-provider`
+            - added subjects related link
+        - `registration`
+            - added subjects self and related links
+        - `file`
+            - s/`node`/`target`/
+            - added folder links
+        - `node`
+            - added files link
+    - Views
+        - `osf-resource`
+            - added self link patch handling
+    - Scenarios
+        - `registration`
+            - create some subjects
+        - `handbook`
+            - create a file tree for the handbook
+- Types
+    - `ember-changeset-validations`
+        - added `ValidatorFunction` and `ValidatorResult`
+- Config
+    - updated to use API version 2.16
+- Packages
+    - upgrade to `ember-animated@0.8.1`
+
+### Removed
+- Tests
+    - `taxonomy` FactoryGuy factory
+
+### Fixed
+- Components
+    - `home/support-section/support-item`
+        - s/this./@/ because this is template-only
+        - added splattributes because this is template-only
+    - `registries/registries-advisory-board`
+        - fixed template lint
+        - added splattributes because this is template-only
+    - `meetings/index/meetings-footer`
+        - added splattributes because this is template-only
+    - `registries/registries-advisory-board`
+        - added splattributes because this is template-only
+    - `registries/sharing-icons/popover`
+        - added splattributes because this is template-only
+- Handbook
+    - `osf-dialog` `demo-is-open` needs component file because it muts `isOpen`
+
+## [19.9.0] - 2019-09-06
+### Added
+- Components
+    - `schema-chunk` - yields different types of schema-chunk pieces
+    - `hierarchical-list`
+        - `hierarchical-list/item`
+        - `hieararchical-list/item-manager`
+    - `partial-registration-modal` which implements `hierarchical-list`
+        - `partial-registration-modal/manager`
+- Tests
+    - Integration
+        - `hierarchical-list`
+        - `partial-registration-modal`
+
+### Changed
+- Components
+    - `project-contributors`
+        - added `onAddContributor` hook
+    - `osf-dialog`
+        - add `@fixedWidth` param to prevent shrinking to fit contents
+- Engines
+    - `collections`
+        - Tests
+            - added/improved test selectors to templates related to submit
+            - added/improved test selectors to templates related to discover
+            - improved submit acceptance tests to perform assertions in addition to taking snapshots
+            - improved update acceptance tests to perform assertions in addition to taking snapshots
+            - improved discover acceptance tests to perform assertions in addition to taking snapshots
+- Tests
+    - added `ember-basic-dropdown-wormhole` div to test index.html
+- Mirage
+    - `osfNestedResource`
+        - added `onCreate` hook to perform additional operations after creating a child resource
+    - `searchCollections`
+        - added ability to filter by collection metadata
+        - added ability to sort collected items by dateModified
+    - `mirage/factories/node.ts`
+        - modified the factory to set `root` to self by default
+    - `mirage/views/utils/index.ts`
+        - modified filter funtion to filter by model id
+- Packages
+    - update to [ember-angle-bracket-invocation-polyfill@^2.0.2](https://github.com/rwjblue/ember-angle-bracket-invocation-polyfill/releases/tag/v2.0.2)
+
+### Fixed
+- Components
+    - `osf-dialog`
+        - fixed buggy behavior with `@isOpen` -- make it actually DDAU
+        - fixed styles so it displays the same both in and out of the handbook
+        - clean up global state on destroy
+- Engines
+    - `collections`
+        - fixed template lint and use angle brackets in submission templates
+        - fixed template lint and use angle brackets in discover templates
+        - `submit`
+            - reload bibliographicContributors when adding a contributor
+- Mirage
+    - `osfNestedResource`
+        - added custom `post` handler to fix `create` action
+    - `node/contributors` nested resource
+        - conditionally create bibliographic contributors when creating contributors
+    - Factories
+        - `collected-metadatum`
+            - allow manual setting of collection metadata
+    - Serializers
+        - `contributors` - serialize correct nested self link
+- Serializers
+    - `relatedCounts` were not populated for resources loaded via `store.pushPayload`,
+      which includes all embeds and results from `OsfModel.queryHasMany`
+
+### Removed
+- Helpers
+    - `range` - ember-composable-helpers already provides a `range` that is better
+
+## [19.8.0] - 2019-08-15
+### Added
+- Components
+    - `form-controls` - a form-input wrapper that takes a changeset
+    - `read-only-contributors-list` - a read only list of a node's contributors with a link to contributors page for editing
+- Models
+    - `schema-block` - for registration-schemas
+- Modifiers
+    - `capture-element` - easily store an element from the template
+
+### Changed
+- Models
+    - `collected-metadatum`
+        - removed `subjects` validation
+        - removed `subjects` attribute
+        - removed `displaySubjects` computed
+- Components
+    - `project-contributors/list`
+        - add ability to load more pages of contributors
+        - add loading indicator
+    - `osf-dialog`
+        - add `@isOpen` param for programmatic control
+        - add `@isModal` param (default `true`)
+- Engines
+    - `collections`
+        - Components
+            - `collections-submission` - removed subjects section
+            - `discover-page` - removed subject/taxonomy search filter
+            - `collection-search-result` - removed subjects display
+        - Routes
+            - `discover` - removed subject/taxonomy facet
+
+### Removed
+- Components
+    - `subject-picker`
+- Engines
+    - `collections`
+        - Components
+            - `collection-subjects-list`
+            - `discover-page/facets/taxonomy`
+            - `discover-page/active-filters/taxonomy`
+        - Helpers
+            - `custom-taxonomy-filter`
+
+## [19.7.1] - 2019-08-05
+### Changed
+- Services
+    - `analytics` - allow passing through of `nonIteraction` flag to Google Analytics
+- Modifiers
+    - `trackScroll` - set `nonInteraction` flag when calling `analytics.trackFromElement()`
+- Routes
+    - `home` - remove version and shorten analytics scope
+
+## [19.7.0] - 2019-07-31
+### Added
+- Components
+    - `osf-dialog` - for dialog boxes and modal popup things
+- Tests
+    - Acceptance
+        - collections
+            - discover page test that just takes snapshots
+            - submit test that just takes snapshot
+            - edit test that just takes snapshots
+
+### Changed
+- Components
+    - `osf-navbar` - use img tag with alt text for navbar OSF logo instead of background CSS image
+- Services
+    - `analytics` - added `isWithdrawn` custom dimension to `trackPage()`
+
+### Removed
+- Packages
+    - `ember-test-selectors`
+
+### Fixed
+- Components
+    - `sign-up-policy` - fixed links to terms of service and privacy policy
+
+## [19.6.1] - 2019-07-12
+### Fixed
+- Config:
+    - add waffle flag for `guid-user` route
+- Components:
+    - `home`
+        - `testimonials` - link to `guid-user` instead of `resolve-guid`
+
+## [19.6.0] - 2019-07-12
+### Added
+- Mirage:
+    - Factories:
+        - `collected-metadatum`
+        - `collection-provider`
+        - `taxonomy`
+    - Serializers:
+        - `collected-metadatum`
+        - `collection-provider`
+        - `taxonomy`
+    - Fixtures:
+        - `taxonomies`
+    - Scenarios:
+        - `collection`
+    - Views:
+        - `collection-provider-taxonomies`
+        - `collection-search`
+    - Endpoints:
+        - `/providers/collections`
+        - `/providers/collections/:parentID/licenses/`
+        - `/collections/:parentID/collected_metadata/`
+        - `/providers/collections/:parentID/taxonomies`
+        - `/search/collections/`
+
+### Changed
+- Models:
+    - `collected-metadatum` - changed `guid` relationship to be a `node` relationship
+    - `collection-provider` - removed `collections` relatioship
+    - `collection`
+        - removed `provider` relationship inverse (`collections`)
+        - added `collectedMetadata` relationship
+- Routes:
+    - `new-home`
+        - renamed to `home` (replacing existing `home` route)
+        - add scroll analytics and improve wording
+- Engines:
+    - `collections`
+        - updated `collection-item-picker` component to use `collectedMetadata` relationship
+        - updated `collections-submission` component to set the `guid` relationship to the node instead of the guid
+- Tests:
+    - Acceptance:
+        - `new-home` - renamed to `logged-out-homepage` (replacing existing `logged-out-homepage` test)
+- Mirage:
+    - Factories:
+        - `collection` - add choices fields
+    - Serializers:
+        - `collection` - add `provider` and `collectedMetadata` relationships
+    - Views:
+        - `osf-resource` - add pass through `process()` to `osfNestedResource` `show` action
+    - Utils:
+        - `filter` - add ability to filter by a list of ids.
+- Misc:
+    - add lang attribute to `html` element in `index.html`
+
+## [19.5.1] - 2019-06-24
+### Added
+- Tests:
+    - Integration:
+        - `meetings`
+            - `detail`
+                - `meeting-detail-header` - add tests for location and dates
+- Components:
+    - `new-home`
+        - `testimonials` - A section for the testimonials carousel
+        - `integrations versions A/B` - A list of all supported integrations
+    - `carousel`
+
+### Changed
+- Components:
+    - `meetings`
+        - `index`
+            - `meetings-list` - sort by submission count (descending) by default
+        - `detail`
+            - `meeting-submissions-list` - removed download count sorting
+- Tests:
+    - Acceptance:
+        - `new-home` - Added tests to support integrations section
+    - Integration:
+        - `meetings`
+            - `detail`
+                - `meeting-submissions-list` - removed checking of download count sorting
+    - Acceptance:
+        - `meetings`
+            - `detail` - add submission with long title
+            - `index` - add meeting with long name
+
+### Fixed
+- Models:
+    - `meeting-submission` - renamed `created` to `dateCreated` to match API
+- Components:
+    - `meetings`
+        - `detail`
+            - `meeting-submissions-list`
+                - renamed `created` to `dateCreated` to match API
+                - applied `table-layout: fixed` to force truncating of long submission titles
+            - `meeting-detail-header` - only attempt to display dates when defined
+        - `index`
+            - `meetings-list` - applied `table-layout: fixed` to force truncating of long meeting names
+- Tests:
+    - Integration:
+        - `meetings`
+            - `detail`
+                - `meeting-submissions-list` - renamed `created` to `dateCreated` to match API
+- Mirage:
+    - `meeting-submission` factory - renamed `created` to `dateCreated` to match API
+
 ## [19.5.0] - 2019-06-07
 ### Added
 - Models:
@@ -901,7 +1619,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ### Added
 - Quick Files
 
-[Unreleased]: https://github.com/CenterForOpenScience/ember-osf-web/compare/19.5.0...HEAD
+[Unreleased]: https://github.com/CenterForOpenScience/ember-osf-web/compare/20.7.0...develop
+[20.7.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/20.7.0
+[20.6.1]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/20.6.1
+[20.6.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/20.6.0
+[20.5.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/20.5.0
+[20.4.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/20.4.0
+[20.3.1]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/20.3.1
+[20.3.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/20.3.0
+[20.2.1]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/20.2.1
+[20.2.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/20.2.0
+[20.1.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/20.1.0
+[19.11.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.11.0
+[19.10.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.10.0
+[19.9.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.9.0
+[19.8.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.8.0
+[19.7.1]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.7.1
+[19.7.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.7.0
+[19.6.1]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.6.1
+[19.6.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.6.0
+[19.5.1]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.5.1
 [19.5.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.5.0
 [19.4.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.4.0
 [19.3.0]: https://github.com/CenterForOpenScience/ember-osf-web/releases/tag/19.3.0

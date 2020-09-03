@@ -1,7 +1,8 @@
+/* eslint-disable max-classes-per-file */
 import Service from '@ember/service';
 import { render } from '@ember/test-helpers';
+import { hbs } from 'ember-cli-htmlbars';
 import { TestContext } from 'ember-test-helpers';
-import hbs from 'htmlbars-inline-precompile';
 import { module, test } from 'qunit';
 
 import { setupEngineRenderingTest } from 'ember-osf-web/tests/helpers/engines';
@@ -20,8 +21,11 @@ class RouterStub extends Service {
     }
 }
 
-class CurrentUserStub extends Service {
-}
+class CurrentUserStub extends Service {}
+
+const headTagsStub = Service.extend({
+    collectHeadTags: () => { /* noop */ },
+});
 
 /* tslint:disable:only-arrow-functions */
 module('Registries | Integration | Component | side-nav', hooks => {
@@ -29,7 +33,9 @@ module('Registries | Integration | Component | side-nav', hooks => {
 
     hooks.beforeEach(function(this: TestContext) {
         this.owner.register('service:router', RouterStub);
+        this.owner.register('service:osf-router', RouterStub);
         this.owner.register('service:current-user', CurrentUserStub);
+        this.owner.register('service:head-tags', headTagsStub);
     });
 
     test('it renders', async assert => {
@@ -54,3 +60,4 @@ module('Registries | Integration | Component | side-nav', hooks => {
         assert.dom('nav a[data-for-a-test="bar"]').exists('The yieled element contains splattributes');
     });
 });
+/* eslint-enable max-classes-per-file */

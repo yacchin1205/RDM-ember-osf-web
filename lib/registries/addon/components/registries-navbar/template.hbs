@@ -17,6 +17,7 @@
             />
 
             <BsDropdown
+                data-test-service-list
                 data-analytics-scope='Services dropdown'
                 as |dropdown|
             >
@@ -25,14 +26,13 @@
                     data-analytics-name='Toggle'
                     @classNames={{local-class 'Service Dropdown'}}
                 >
-                    <span>{{t 'general.OSF'}}</span>
+                    <span>{{t 'general.OSF' title=this.title}}</span>
                     <strong>{{t 'general.services.registries'}}</strong>
                     {{nav.icon (if dropdown.isOpen 'caret-up' 'caret-down')}}
                 </dropdown.toggle>
 
                 <dropdown.menu
-                    data-test-service-list
-                    @classNames={{local-class 'ServiceDropdownMenu DropdownMenu'}}
+                    local-class='ServiceDropdownMenu DropdownMenu'
                     as |menu|
                 >
                     {{#each this.services as |service|}}
@@ -61,6 +61,7 @@
             >
                 <IconInput
                     data-analytics-name='Search box'
+                    @ariaLabel={{t 'navbar.search_bar'}}
                     @icon='search'
                     @dark={{true}}
                     @enter={{action '_onSearch'}}
@@ -71,18 +72,18 @@
                 data-test-help='1'
                 data-analytics-name='Help'
                 @href={{this.helpRoute}}
-                @classNames={{local-class 'HideOnMobile'}}
+                local-class='HideOnMobile'
             >
-                <h4>{{t 'general.help'}}</h4>
+                {{t 'general.help'}}
             </nav.links.secondary>
 
             <nav.links.primary
                 data-test-donate='1'
                 data-analytics-name='Donate'
                 @href={{this.donateRoute}}
-                @classNames={{local-class 'HideOnMobile'}}
+                local-class='HideOnMobile'
             >
-                <h4>{{t 'navbar.donate'}}</h4>
+                {{t 'navbar.donate'}}
             </nav.links.primary>
 
             {{#unless this.session.isAuthenticated}}
@@ -94,9 +95,9 @@
                     data-analytics-name='Sign up'
                     @route='register'
                     @queryParams={{this.signUpQueryParams}}
-                    @classNames={{local-class 'HideOnMobile'}}
+                    local-class='HideOnMobile'
                 >
-                    <h4>{{t 'navbar.join'}}</h4>
+                    {{t 'navbar.join'}}
                 </nav.links.secondary>
 
                 <nav.buttons.secondary
@@ -105,11 +106,12 @@
                     @onclick={{action 'login'}}
                     @classNames={{local-class 'HideOnMobile'}}
                 >
-                    <h4>{{t 'navbar.login'}}</h4>
+                    {{t 'navbar.login'}}
                 </nav.buttons.secondary>
             {{/unless}}
 
             <BsDropdown
+                data-test-auth-dropdown
                 data-analytics-scope='User dropdown'
                 local-class='AuthDropdown'
                 as |dropdown|
@@ -137,8 +139,7 @@
                 </dropdown.toggle>
 
                 <dropdown.menu
-                    data-test-auth-dropdown
-                    class='dropdown-menu-right'
+                    @align='right'
                     local-class='AuthDropdownMenu DropdownMenu'
                     as |menu|
                 >
@@ -238,14 +239,17 @@
     </nav.container>
 </Navbar>
 
-<Container
-    data-test-search-bar-mobile='1'
-    local-class='SearchDropdown {{if (media 'isMobile') '' 'Closed'}}'
->
-    <IconInput
-        data-analytics-name='Search box'
-        @icon='search'
-        @dark={{true}}
-        @enter={{action '_onSearch'}}
-    />
-</Container>
+{{#if (media 'isMobile')}}
+    <Container
+        data-test-search-bar-mobile='1'
+        local-class='SearchDropdown'
+    >
+        <IconInput
+            data-analytics-name='Search box'
+            @ariaLabel={{t 'navbar.search_bar'}}
+            @icon='search'
+            @dark={{true}}
+            @enter={{action '_onSearch'}}
+        />
+    </Container>
+{{/if}}

@@ -1,13 +1,15 @@
-import { layout, tagName } from '@ember-decorators/component';
-import { action, computed } from '@ember-decorators/object';
-import { service } from '@ember-decorators/service';
+import { tagName } from '@ember-decorators/component';
 import { isArray } from '@ember/array';
 import Component from '@ember/component';
 import { assert } from '@ember/debug';
+import { action, computed } from '@ember/object';
 import RouterService from '@ember/routing/router-service';
+import { inject as service } from '@ember/service';
 import config from 'ember-get-config';
 
+import { layout } from 'ember-osf-web/decorators/component';
 import CurrentUser from 'ember-osf-web/services/current-user';
+import OsfRouterService from 'ember-osf-web/services/osf-router';
 import defaultTo from 'ember-osf-web/utils/default-to';
 import { addQueryParam } from 'ember-osf-web/utils/url-parts';
 
@@ -26,6 +28,7 @@ type AnchorTarget = '_self' | '_blank' | '_parent' | '_top';
 @layout(template)
 export default class OsfLink extends Component {
     @service router!: RouterService;
+    @service osfRouter!: OsfRouterService;
     @service currentUser!: CurrentUser;
 
     route?: string;
@@ -44,8 +47,8 @@ export default class OsfLink extends Component {
         const {
             fragment,
             href,
-            models,
-            queryParams,
+            models = [],
+            queryParams = {},
             route,
         } = this;
         const { viewOnlyToken } = this.currentUser;
@@ -57,7 +60,7 @@ export default class OsfLink extends Component {
         } else {
             url = this.router.urlFor(
                 route,
-                ...(models || []),
+                ...models,
                 { queryParams },
             );
             if (fragment) {
@@ -74,9 +77,13 @@ export default class OsfLink extends Component {
 
     @computed('route', 'models.[]', 'queryParams', 'router.currentURL')
     get isActive() {
-        return Boolean(this.route && this.router.isActive(this.route, ...(this.models || []), {
-            queryParams: this.queryParams || {},
-        }));
+        const {
+            route,
+            models = [],
+            queryParams = {},
+            router,
+        } = this;
+        return Boolean(route && router.isActive(route, ...models, { queryParams }));
     }
 
     didReceiveAttrs() {
@@ -110,10 +117,18 @@ export default class OsfLink extends Component {
 
         e.preventDefault();
 
-        // TODO: add fragment
-        this.router.transitionTo(this.route, ...(this.models || []), {
-            queryParams: this.queryParams || {},
-        });
+        const {
+            route,
+            models = [],
+            queryParams = {},
+            fragment = null,
+        } = this;
+
+        this.osfRouter.transitionTo(
+            route,
+            ...models,
+            { queryParams, fragment },
+        );
 
         return false;
     }

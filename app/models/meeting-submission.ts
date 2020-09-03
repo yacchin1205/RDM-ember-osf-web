@@ -1,8 +1,9 @@
-import { attr, belongsTo } from '@ember-decorators/data';
 import DS from 'ember-data';
 
 import OsfModel from './osf-model';
 import UserModel from './user';
+
+const { attr, belongsTo } = DS;
 
 export interface MeetingSubmissionLinks {
     download?: string;
@@ -15,7 +16,7 @@ export default class MeetingSubmissionModel extends OsfModel {
     @attr('string') meetingCategory!: string;
     @attr('string') authorName!: string;
     @attr('number') downloadCount!: number;
-    @attr('date') created!: Date;
+    @attr('date') dateCreated!: Date;
     @attr() links!: MeetingSubmissionLinks;
 
     @belongsTo('user', { inverse: null })

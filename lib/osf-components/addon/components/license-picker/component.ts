@@ -1,10 +1,11 @@
-import { action } from '@ember-decorators/object';
-import { alias, sort } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
-import { task, timeout } from 'ember-concurrency';
+import { action } from '@ember/object';
+import { alias, sort } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { timeout } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
 import DS from 'ember-data';
-import I18N from 'ember-i18n/services/i18n';
+import Intl from 'ember-intl/services/intl';
 
 import { layout } from 'ember-osf-web/decorators/component';
 import License from 'ember-osf-web/models/license';
@@ -13,17 +14,33 @@ import { QueryHasManyResult } from 'ember-osf-web/models/osf-model';
 import Provider from 'ember-osf-web/models/provider';
 import Analytics from 'ember-osf-web/services/analytics';
 import Theme from 'ember-osf-web/services/theme';
+
+import ValidatedModelForm from 'osf-components/components/validated-model-form/component';
 import styles from './styles';
 import template from './template';
 
 @layout(template, styles)
-export default class LicensePicker extends Component.extend({
-    didReceiveAttrs(this: LicensePicker, ...args: any[]) {
-        this._super(...args);
-        this.get('queryLicenses').perform();
-    },
+export default class LicensePicker extends Component {
+    @service analytics!: Analytics;
+    @service store!: DS.Store;
+    @service theme!: Theme;
+    @service intl!: Intl;
 
-    queryLicenses: task(function *(this: LicensePicker, name?: string) {
+    form?: ValidatedModelForm<'node'>;
+    showText: boolean = false;
+    node: Node = this.node;
+    licensesAcceptable!: QueryHasManyResult<License>;
+    helpLink: string = 'https://openscience.zendesk.com/hc/en-us/articles/360019739014';
+    placeholder: string = this.intl.t('registries.registration_metadata.select_license');
+
+    @alias('theme.provider') provider!: Provider;
+    @alias('node.license') selected!: License;
+
+    @sort('selected.requiredFields', (a: string, b: string) => +(a > b))
+    requiredFields!: string[];
+
+    @task({ restartable: true })
+    queryLicenses = task(function *(this: LicensePicker, name?: string) {
         if (name) {
             yield timeout(500);
         }
@@ -41,35 +58,25 @@ export default class LicensePicker extends Component.extend({
         this.node.notifyPropertyChange('license');
 
         return licensesAcceptable;
-    }).restartable(),
-}) {
-    @service analytics!: Analytics;
-    @service i18n!: I18N;
-    @service store!: DS.Store;
-    @service theme!: Theme;
-
-    showText: boolean = false;
-    node: Node = this.node;
-    licensesAcceptable!: QueryHasManyResult<License>;
-    helpLink: string = 'https://openscience.zendesk.com/hc/en-us/articles/360019739014';
-
-    @alias('theme.provider') provider!: Provider;
-    @alias('node.license') selected!: License;
-
-    @sort('selected.requiredFields', (a: string, b: string) => +(a > b))
-    requiredFields!: string[];
+    });
 
     @action
-    changeLicense(this: LicensePicker, selected: License) {
+    changeLicense(selected: License) {
         this.node.setNodeLicenseDefaults(selected.requiredFields);
     }
 
-    /**
-     * Calling notifyPropertyChange doesn't trigger dirty attributes
-     */
     @action
-    notify(this: LicensePicker) {
-        // TODO: find a better way to set propertyDidChange
-        this.node.set('nodeLicense', { ...this.node.nodeLicense });
+    updateNodeLicense(key: string, event: Event) {
+        if (this.form) {
+            const target = event.target as HTMLInputElement;
+            const newNodeLicense = { ...this.form.changeset.get('nodeLicense') } as { [key: string]: string };
+            newNodeLicense[key] = target.value;
+            this.form.changeset.set('nodeLicense', newNodeLicense);
+        }
+    }
+
+    didReceiveAttrs() {
+        super.didReceiveAttrs();
+        this.queryLicenses.perform();
     }
 }

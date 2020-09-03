@@ -4,7 +4,7 @@ import File from 'ember-osf-web/models/file';
 
 import ApplicationSerializer, { SerializedRelationships } from './application';
 
-const { OSF: { apiUrl } } = config;
+const { OSF: { apiUrl, url } } = config;
 
 export default class FileSerializer extends ApplicationSerializer<File> {
     buildRelationships(model: ModelInstance<File>) {
@@ -18,6 +18,32 @@ export default class FileSerializer extends ApplicationSerializer<File> {
                 },
             },
         };
+
+        if (model.target && model.target.id && model.kind === 'folder') {
+            returnValue.files = {
+                links: {
+                    related: {
+                        href: `${apiUrl}/v2/nodes/${model.target.id}/files/${model.provider}/${model.id}`,
+                        meta: this.buildRelatedLinkMeta(model, 'files'),
+                    },
+                },
+            };
+        }
+
+        if (model.parentFolder !== null) {
+            returnValue.parentFolder = {
+                data: {
+                    type: 'files',
+                    id: model.parentFolder.id,
+                },
+                links: {
+                    related: {
+                        href: `${apiUrl}/v2/files/${model.parentFolder.id}`,
+                    },
+                },
+            };
+        }
+
         if (model.user !== null) {
             returnValue.user = {
                 data: {
@@ -32,16 +58,17 @@ export default class FileSerializer extends ApplicationSerializer<File> {
                 },
             };
         }
-        if (model.node !== null) {
-            returnValue.node = {
+
+        if (model.target !== null) {
+            returnValue.target = {
                 data: {
                     type: 'nodes',
-                    id: model.node.id,
+                    id: model.target.id,
                 },
                 links: {
                     related: {
-                        href: `${apiUrl}/v2/nodes/${model.node.id}/`,
-                        meta: this.buildRelatedLinkMeta(model, 'node'),
+                        href: `${apiUrl}/v2/nodes/${model.target.id}/`,
+                        meta: this.buildRelatedLinkMeta(model, 'target'),
                     },
                 },
             };
@@ -58,6 +85,7 @@ export default class FileSerializer extends ApplicationSerializer<File> {
             move: `${apiUrl}/wb/files/${id}/move/`,
             delete: `${apiUrl}/wb/files/${id}/delete/`,
             info: `${apiUrl}/v2/files/${id}/`,
+            html: `${url}files/osfstorage/${id}/`,
         };
     }
 }

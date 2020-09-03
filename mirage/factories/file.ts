@@ -1,9 +1,18 @@
-import { Factory, faker } from 'ember-cli-mirage';
+import { association, Factory, faker, trait, Trait } from 'ember-cli-mirage';
 import File from 'ember-osf-web/models/file';
+import { FileReference } from 'ember-osf-web/packages/registration-schema';
 
 import { guid, guidAfterCreate } from './utils';
 
-export default Factory.extend<File>({
+export interface FileTraits {
+    asFolder: Trait;
+}
+
+export interface MirageFile extends File {
+    fileReference: FileReference;
+}
+
+export default Factory.extend<MirageFile & FileTraits>({
     id: guid('file'),
     guid: guid('file'),
     afterCreate: guidAfterCreate,
@@ -18,8 +27,6 @@ export default Factory.extend<File>({
         },
         downloads: faker.random.number(1000),
     },
-    // kind: 'file',
-    // currentUserCanComment: true,
     lastTouched() {
         return faker.date.past(2, new Date(2018, 0, 0));
     },
@@ -46,7 +53,41 @@ export default Factory.extend<File>({
     size() {
         return faker.random.number(1000000000);
     },
+    target: association() as File['target'],
+
+    asFolder: trait<File>({
+        afterCreate(file) {
+            const name = file.name.split('.')[0];
+            const { parentFolder } = file;
+            const materializedPath = parentFolder ? `${parentFolder.materializedPath}${name}/` : `/${name}/`;
+
+            file.update({
+                name,
+                materializedPath,
+                kind: 'folder',
+            });
+        },
+    }),
+    fileReference() {
+        return {
+            file_id: this.id as string,
+            file_name: this.name as string,
+            file_urls: {
+                html: `fakedomain/${this.id}`,
+                download: `fakedomain/${this.id}/download`,
+            },
+            file_hashes: {
+                sha256: this.extra.hashes.sha256,
+            },
+        };
+    },
 });
+
+declare module 'ember-cli-mirage/types/registries/model' {
+    export default interface MirageModelRegistry {
+        file: MirageFile;
+    } // eslint-disable-line semi
+}
 
 declare module 'ember-cli-mirage/types/registries/schema' {
     export default interface MirageSchemaRegistry {

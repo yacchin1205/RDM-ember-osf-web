@@ -1,7 +1,5 @@
-import { attr, belongsTo, hasMany } from '@ember-decorators/data';
-import { computed } from '@ember-decorators/object';
-import { alias, bool, equal } from '@ember-decorators/object/computed';
-import { not } from '@ember/object/computed';
+import { computed } from '@ember/object';
+import { alias, bool, equal, not } from '@ember/object/computed';
 import { htmlSafe } from '@ember/string';
 import { buildValidations, validator } from 'ember-cp-validations';
 import DS from 'ember-data';
@@ -24,8 +22,11 @@ import { Permission } from './osf-model';
 import PreprintModel from './preprint';
 import RegionModel from './region';
 import RegistrationModel from './registration';
+import SubjectModel from './subject';
 import UserModel from './user';
 import WikiModel from './wiki';
+
+const { attr, belongsTo, hasMany } = DS;
 
 const Validations = buildValidations({
     title: [
@@ -68,6 +69,20 @@ export enum NodeType {
     Registration = 'registration',
 }
 
+export enum NodeCategory {
+    Data = 'data',
+    Other = 'other',
+    Project = 'project',
+    Software = 'software',
+    Analysis = 'analysis',
+    Procedure = 'procedure',
+    Hypothesis = 'hypothesis',
+    Uncategorized = 'uncategorized',
+    Communication = 'communication',
+    Instrumentation = 'instrumentation',
+    MethodsAndMeasures = 'methods and measures',
+}
+
 export interface NodeLicense {
     readonly copyrightHolders?: string;
     readonly year?: string;
@@ -76,7 +91,7 @@ export interface NodeLicense {
 export default class NodeModel extends BaseFileItem.extend(Validations, CollectableValidations) {
     @attr('fixstring') title!: string;
     @attr('fixstring') description!: string;
-    @attr('node-category') category!: string;
+    @attr('node-category') category!: NodeCategory;
     @attr('array') currentUserPermissions!: Permission[];
     @attr('boolean') currentUserIsContributor!: boolean;
     @attr('boolean') fork!: boolean;
@@ -92,7 +107,6 @@ export default class NodeModel extends BaseFileItem.extend(Validations, Collecta
     @attr('fixstring') templateFrom!: string;
     @attr('string') analyticsKey?: string;
     @attr('boolean') preprint!: boolean;
-    @attr('array') subjects!: string[];
     @attr('boolean') currentUserCanComment!: boolean;
     @attr('boolean') wikiEnabled!: boolean;
 
@@ -170,8 +184,11 @@ export default class NodeModel extends BaseFileItem.extend(Validations, Collecta
     @hasMany('log', { inverse: 'originalNode' })
     logs!: DS.PromiseManyArray<LogModel>;
 
-    @hasMany('identifier', { inverse: null })
+    @hasMany('identifier', { inverse: 'referent' })
     identifiers!: DS.PromiseManyArray<IdentifierModel>;
+
+    @hasMany('subject', { inverse: null, async: false })
+    subjects!: SubjectModel[];
 
     @hasMany('node-addon', { inverse: 'node' })
     addons!: DS.PromiseManyArray<NodeAddonModel>;

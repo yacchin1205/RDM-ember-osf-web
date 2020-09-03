@@ -1,12 +1,13 @@
-import { attr, belongsTo, hasMany } from '@ember-decorators/data';
-import { computed } from '@ember-decorators/object';
+import { computed } from '@ember/object';
 import DS from 'ember-data';
 
-import { choiceFields } from './collected-metadatum';
+import CollectedMetadatumModel, { choiceFields } from './collected-metadatum';
 import CollectionProviderModel from './collection-provider';
 import NodeModel from './node';
 import OsfModel from './osf-model';
 import RegistrationModel from './registration';
+
+const { attr, belongsTo, hasMany } = DS;
 
 export type ChoicesFields =
     'collectedTypeChoices' |
@@ -30,7 +31,7 @@ export default class CollectionModel extends OsfModel {
     @attr('array') statusChoices!: string[];
     @attr('array') volumeChoices!: string[];
 
-    @belongsTo('collection-provider', { inverse: 'collections' })
+    @belongsTo('collection-provider')
     provider!: DS.PromiseObject<CollectionProviderModel> & CollectionProviderModel;
 
     @hasMany('node', { inverse: null })
@@ -38,6 +39,9 @@ export default class CollectionModel extends OsfModel {
 
     @hasMany('registration', { inverse: null })
     linkedRegistrations!: DS.PromiseManyArray<RegistrationModel>;
+
+    @hasMany('collected-metadatum', { inverse: 'collection' })
+    collectedMetadata!: DS.PromiseManyArray<CollectedMetadatumModel>;
 
     @computed(`{${choicesFields.join()}}.length`)
     get displayChoicesFields() {

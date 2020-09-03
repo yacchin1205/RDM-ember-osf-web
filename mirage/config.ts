@@ -2,14 +2,27 @@ import { Server } from 'ember-cli-mirage';
 import config from 'ember-get-config';
 
 import { getCitation } from './views/citation';
+import { searchCollections } from './views/collection-search';
 import { reportDelete } from './views/comment';
-import { createDeveloperApp, resetClientSecret } from './views/developer-app';
+import { createBibliographicContributor } from './views/contributor';
+import { createDeveloperApp, updateDeveloperApp } from './views/developer-app';
+import { createDraftRegistration } from './views/draft-registration';
+import {
+    folderFilesList,
+    nodeFileProviderList,
+    nodeFilesListForProvider,
+    uploadToFolder,
+    uploadToRoot,
+} from './views/file';
 import { createFork, createRegistrationFork } from './views/fork';
 import { guidDetail } from './views/guid';
+import { identifierCreate } from './views/identifier';
+import { summaryMetrics } from './views/institution';
 import { iqbrimsStatus } from './views/iqbrims-status';
 import { createNode } from './views/node';
 import { osfNestedResource, osfResource, osfToManyRelationship } from './views/osf-resource';
-import { forkRegistration, registrationDetail } from './views/registration';
+import { getProviderSubjects } from './views/provider-subjects';
+import { createRegistration, forkRegistration, registrationDetail } from './views/registration';
 import { rootDetail } from './views/root';
 import { createToken } from './views/token';
 import { createEmails, updateEmails } from './views/update-email';
@@ -28,15 +41,29 @@ export default function(this: Server) {
 
     this.get('/', rootDetail);
 
-    osfResource(this, 'developer-app', { path: 'applications', except: ['create'] });
+    osfResource(this, 'developer-app', { path: 'applications', except: ['create', 'update'] });
     this.post('/applications', createDeveloperApp);
-    this.post('/applications/:id/reset', resetClientSecret);
+    this.patch('/applications/:id', updateDeveloperApp);
 
     osfResource(this, 'file', { only: ['show', 'update'] });
 
     this.get('/guids/:id', guidDetail);
 
-    osfResource(this, 'institution', { only: ['index'], defaultPageSize: 1000 });
+    osfResource(this, 'institution', { only: ['index', 'show'], defaultPageSize: 1000 });
+    osfNestedResource(this, 'institution', 'users', {
+        only: ['index'],
+        path: '/institutions/:parentID/users',
+    });
+    osfNestedResource(this, 'institution', 'userMetrics', {
+        only: ['index'],
+        path: '/institutions/:parentID/metrics/users',
+    });
+    osfNestedResource(this, 'institution', 'departmentMetrics', {
+        only: ['index'],
+        path: '/institutions/:parentID/metrics/departments',
+    });
+    this.get('/institutions/:id/metrics/summary', summaryMetrics);
+
     osfResource(this, 'license', { only: ['index', 'show'] });
     osfResource(this, 'citation-style', {
         only: ['index'],
@@ -45,8 +72,19 @@ export default function(this: Server) {
 
     osfResource(this, 'node', { except: ['create'] });
     this.post('/nodes/', createNode);
+    osfResource(this, 'subject', { only: ['show'] });
+    osfNestedResource(this, 'subject', 'children', { only: ['index'] });
     osfNestedResource(this, 'node', 'children');
-    osfNestedResource(this, 'node', 'contributors', { defaultSortKey: 'index' });
+    osfNestedResource(this, 'node', 'contributors', {
+        defaultSortKey: 'index',
+        onCreate: createBibliographicContributor,
+    });
+
+    this.get('/nodes/:parentID/files', nodeFileProviderList); // Node file providers list
+    this.get('/nodes/:parentID/files/:fileProviderId', nodeFilesListForProvider); // Node files list for file provider
+    this.get('/nodes/:parentID/files/:fileProviderId/:folderId', folderFilesList); // Node folder detail view
+    this.put('/nodes/:parentID/files/:fileProviderId/upload', uploadToRoot); // Upload to file provider
+
     osfNestedResource(this, 'node', 'bibliographicContributors', {
         only: ['index'],
         relatedModelName: 'contributor',
@@ -57,7 +95,9 @@ export default function(this: Server) {
     osfNestedResource(this, 'node', 'linkedNodes', { only: ['index'] });
     osfNestedResource(this, 'node', 'linkedRegistrations', { only: ['index'] });
     osfNestedResource(this, 'node', 'registrations', { only: ['index'] });
+    this.post('/nodes/:id/registrations', createRegistration);
     osfNestedResource(this, 'node', 'draftRegistrations', { only: ['index'] });
+    this.post('/nodes/:guid/draft_registrations', createDraftRegistration);
     osfNestedResource(this, 'node', 'identifiers', { only: ['index'] });
     osfToManyRelationship(this, 'node', 'affiliatedInstitutions', {
         only: ['related', 'add', 'remove'],
@@ -65,7 +105,25 @@ export default function(this: Server) {
     });
     osfNestedResource(this, 'node', 'addons', { only: ['index'] });
 
-    osfResource(this, 'registration', { except: ['show'] });
+    osfToManyRelationship(this, 'node', 'subjects', {
+        only: ['related', 'self'],
+    });
+
+    osfResource(this, 'draft-registration', {
+        only: ['index', 'show', 'update'],
+        path: '/draft_registrations',
+    });
+    osfToManyRelationship(this, 'draft-registration', 'subjects');
+    osfToManyRelationship(this, 'draft-registration', 'affiliatedInstitutions', {
+        only: ['related', 'update', 'add', 'remove'],
+        path: '/draft_registrations/:parentID/relationships/institutions',
+    });
+    osfNestedResource(this, 'draft-registration', 'contributors', {
+        defaultSortKey: 'index',
+    });
+
+    osfResource(this, 'registration', { except: ['show', 'create'] });
+    this.post('/registrations', createRegistration);
     this.get('/registrations/:id', registrationDetail);
     osfNestedResource(this, 'registration', 'children');
     osfNestedResource(this, 'registration', 'forks', { except: ['create'] });
@@ -82,12 +140,17 @@ export default function(this: Server) {
     osfNestedResource(this, 'registration', 'linkedNodes', { only: ['index'] });
     osfNestedResource(this, 'registration', 'linkedRegistrations', { only: ['index'] });
     osfToManyRelationship(this, 'registration', 'affiliatedInstitutions', {
-        only: ['related', 'add', 'remove'],
+        only: ['related', 'update', 'add', 'remove'],
         path: '/registrations/:parentID/relationships/institutions',
     });
     osfNestedResource(this, 'registration', 'identifiers', { only: ['index'] });
+    this.post('/registrations/:parentID/identifiers/', identifierCreate);
     osfNestedResource(this, 'registration', 'comments', { only: ['index'] });
     this.get('/registrations/:guid/citation/:citationStyleID', getCitation);
+    osfToManyRelationship(this, 'registration', 'subjects', {
+        only: ['related', 'self'],
+    });
+    osfResource(this, 'subject', { only: ['show'] });
 
     osfNestedResource(this, 'comment', 'reports', {
         except: ['delete'],
@@ -97,6 +160,11 @@ export default function(this: Server) {
     this.del('/comments/:id/reports/:reporter_id', reportDelete);
 
     osfResource(this, 'registration-schema', { path: '/schemas/registrations' });
+    osfNestedResource(this, 'registration-schema', 'schemaBlocks', {
+        path: '/schemas/registrations/:parentID/schema_blocks',
+        defaultSortKey: 'index',
+        defaultPageSize: 1000,
+    });
 
     osfResource(this, 'collection');
     osfToManyRelationship(this, 'collection', 'linkedRegistrations', {
@@ -131,14 +199,33 @@ export default function(this: Server) {
     });
 
     this.get('/users/:id/nodes', userNodeList);
+    this.get('/sparse/users/:id/nodes', userNodeList);
+
     osfNestedResource(this, 'user', 'quickfiles', { only: ['index', 'show'] });
 
     osfResource(this, 'preprint-provider', { path: '/providers/preprints' });
+    osfResource(this, 'registration-provider', { path: '/providers/registrations' });
+    osfNestedResource(this, 'registration-provider', 'licensesAcceptable', {
+        only: ['index'],
+        path: '/providers/registrations/:parentID/licenses/',
+        relatedModelName: 'license',
+    });
+    this.get('/providers/registrations/:parentID/subjects/', getProviderSubjects);
+
+    osfResource(this, 'collection-provider', { path: '/providers/collections' });
+    osfNestedResource(this, 'collection-provider', 'licensesAcceptable', {
+        path: 'providers/collections/:parentID/licenses/',
+    });
+    osfNestedResource(this, 'collection', 'collectedMetadata', {
+        path: 'collections/:parentID/collected_metadata/',
+    });
+    this.post('/search/collections/', searchCollections);
 
     // Waterbutler namespace
     this.namespace = '/wb';
     this.post('/files/:id/move', wb.moveFile);
     this.post('/files/:id/upload', wb.renameFile);
+    this.put('/files/:id/upload', uploadToFolder);
     this.del('/files/:id/delete', wb.deleteFile);
     this.get('/files/:id/download', wb.fileVersions);
 

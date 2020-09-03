@@ -8,7 +8,7 @@
     @options={{this.licensesAcceptable}}
     @onchange={{action this.changeLicense}}
     @noMatchesMessage={{t 'new_project.no_matches'}}
-    @placeholder='Required'
+    @placeholder={{this.placeholder}}
     as |license|
 >
     {{license.name}}
@@ -16,7 +16,7 @@
 <small>
     <a
         target='_blank'
-        rel='noopener'
+        rel='noopener noreferrer'
         href={{this.helpLink}}
     >
         {{t 'app_components.license_picker.faq'}}
@@ -34,18 +34,23 @@
             <br>
             <label for='nodeLicense-{{key}}'>{{t (concat 'app_components.license_picker.fields.' key)}}</label>
             <br>
-            {{input
-                class='form-control'
-                id=(concat 'nodeLicense-' key)
-                value=(mut (get this.node.nodeLicense key))
-                input=(action 'notify')
-                placeholder=(t 'general.required')
-            }}
+            <Input
+                @class='form-control'
+                @id={{concat 'nodeLicense-' key}}
+                @value={{readonly (get this.node.nodeLicense key)}}
+                @change={{fn this.updateNodeLicense key}}
+                @placeholder={{t 'general.required'}}
+            />
         {{/each}}
     </this.form.custom>
-    <a role='button' onclick={{action (mut this.showText) (not this.showText)}}>
+    <button
+        type='button'
+        local-class='button-link'
+        class='btn btn-link'
+        {{on 'click' (fn (mut this.showText) (not this.showText))}}
+    >
         {{t (concat 'app_components.license_picker.' (if this.showText 'hide' 'show'))}}
-    </a>
+    </button>
     {{#if this.showText}}
         <LicenseText @node={{this.node}} />
     {{/if}}

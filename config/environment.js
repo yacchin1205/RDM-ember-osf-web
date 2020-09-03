@@ -19,7 +19,6 @@ const {
     BACKEND: backend = 'local',
     CAS_URL: casUrl = 'http://192.168.168.167:8080',
     CLIENT_ID: clientId,
-    ENABLED_LOCALES = 'en, en-US',
     COLLECTIONS_ENABLED = false,
     REGISTRIES_ENABLED = true,
     HANDBOOK_ENABLED = false,
@@ -36,6 +35,7 @@ const {
         'dashboard',
         'settings',
         'meetings',
+        'registrations',
     ],
     OAUTH_SCOPES: scope,
     OSF_PAGE_NAME: pageName = 'OSF',
@@ -44,7 +44,7 @@ const {
     OSF_COOKIE_DOMAIN: cookieDomain = 'localhost',
     OSF_URL: url = 'http://localhost:5000/',
     OSF_API_URL: apiUrl = 'http://localhost:8000',
-    OSF_API_VERSION: apiVersion = '2.14',
+    OSF_API_VERSION: apiVersion = '2.20',
     OSF_RENDER_URL: renderUrl = 'http://localhost:7778/render',
     OSF_FILE_URL: waterbutlerUrl = 'http://localhost:7777/',
     OSF_HELP_URL: helpUrl = 'http://localhost:4200/help',
@@ -112,10 +112,6 @@ module.exports = function(environment) {
             // Here you can pass flags/options to your application instance
             // when it is created
         },
-        i18n: {
-            defaultLocale: 'en-US',
-            enabledLocales: ENABLED_LOCALES.split(/[, ]+/),
-        },
         moment: {
             includeTimezone: 'all',
             outputFormat: 'YYYY-MM-DD h:mm A z',
@@ -134,6 +130,8 @@ module.exports = function(environment) {
                     authenticated: 'dimension1',
                     resource: 'dimension2',
                     isPublic: 'dimension3',
+                    isWithdrawn: 'dimension4',
+                    version: 'dimension5',
                 },
             },
             {
@@ -173,7 +171,7 @@ module.exports = function(environment) {
             apiUrl,
             apiVersion,
             apiHeaders: {
-                ACCEPT: `application/vnd.api+json; version=${apiVersion}`,
+                Accept: `application/vnd.api+json; version=${apiVersion}`,
             },
             learnMoreUrl: 'https://cos.io/our-products/osf/',
             renderUrl,
@@ -246,6 +244,9 @@ module.exports = function(environment) {
             facebookUrl: 'https://www.facebook.com/CenterForOpenScience/',
             githubUrl: 'https://github.com/centerforopenscience',
         },
+        helpLinks: {
+            linkToAProject: 'https://help.osf.io/hc/en-us/articles/360019930313-Link-to-a-Project',
+        },
         dashboard: {
             popularNode,
             noteworthyNode,
@@ -253,6 +254,9 @@ module.exports = function(environment) {
         featureFlagNames: {
             routes: {
                 'guid-node.index': 'ember_project_detail_page',
+                'guid-node.drafts.index': 'ember_edit_draft_registration_page',
+                'guid-node.drafts.register': 'ember_edit_draft_registration_page',
+                'guid-user.index': 'ember_user_profile_page',
                 'guid-registration.index': 'ember_old_registration_detail_page',
                 settings: 'ember_user_settings_page',
                 'settings.profile': 'ember_user_settings_page',
@@ -276,6 +280,14 @@ module.exports = function(environment) {
                 'registries.overview.contributors': 'ember_registries_detail_page',
                 'registries.overview.children': 'ember_registries_detail_page',
                 'registries.overview.links': 'ember_registries_detail_page',
+                'registries.start': 'ember_registries_submission_start',
+                'registries.drafts': 'ember_registries_submission_drafts',
+                'registries.drafts.index': 'ember_registries_submission_drafts',
+                'registries.drafts.draft.metadata': 'ember_edit_draft_registration_page',
+                'registries.drafts.draft.page': 'ember_edit_draft_registration_page',
+                'registries.drafts.draft.review': 'ember_edit_draft_registration_page',
+                'registries.forms': 'ember_registries_submission_forms',
+                'registries.forms.help': 'ember_registries_submission_forms',
                 'meetings.index': 'ember_meetings_page',
                 'meetings.detail': 'ember_meeting_detail_page',
             },
@@ -286,7 +298,7 @@ module.exports = function(environment) {
             enableInactiveSchemas: 'enable_inactive_schemas',
             verifyEmailModals: 'ember_verify_email_modals',
             ABTesting: {
-                homePageVersionB: 'ab_testing_home_page_version_b',
+                homePageHeroTextVersionB: 'ab_testing_home_page_hero_text_version_b',
             },
         },
         gReCaptcha: {
@@ -325,7 +337,10 @@ module.exports = function(environment) {
             shouldIncludeStyleguide: false,
         },
         'ember-cli-mirage': {
-            enabled: Boolean(MIRAGE_ENABLED),
+            enabled: isTruthy(MIRAGE_ENABLED),
+        },
+        'changeset-validations': {
+            rawOutput: true,
         },
         mirageScenarios: MIRAGE_SCENARIOS,
 

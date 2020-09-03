@@ -1,6 +1,5 @@
-import { attr, belongsTo, hasMany } from '@ember-decorators/data';
-import { computed } from '@ember-decorators/object';
-import { alias } from '@ember-decorators/object/computed';
+import { computed } from '@ember/object';
+import { alias } from '@ember/object/computed';
 import DS from 'ember-data';
 
 import ContributorModel from './contributor';
@@ -10,12 +9,12 @@ import NodeModel from './node';
 import OsfModel from './osf-model';
 import PreprintProviderModel from './preprint-provider';
 import ReviewActionModel from './review-action';
-import { SubjectRef } from './taxonomy';
+import SubjectModel from './subject';
+
+const { attr, belongsTo, hasMany } = DS;
 
 export default class PreprintModel extends OsfModel {
     @attr('fixstring') title!: string;
-    // TODO!: May be a relationship in the future pending APIv2 changes
-    @attr('array') subjects!: SubjectRef[][];
     @attr('date') dateCreated!: Date;
     @attr('date') datePublished!: Date;
     @attr('date') originalPublicationDate!: Date | null;
@@ -46,19 +45,11 @@ export default class PreprintModel extends OsfModel {
     @hasMany('contributor')
     contributors!: DS.PromiseManyArray<ContributorModel>;
 
+    @hasMany('subject', { inverse: null, async: false })
+    subjects!: DS.PromiseManyArray<SubjectModel>;
+
     @alias('links.doi') articleDoiUrl!: string | null;
     @alias('links.preprint_doi') preprintDoiUrl!: string;
-
-    @computed('subjects')
-    get uniqueSubjects(): SubjectRef[] {
-        if (!this.subjects) {
-            return [];
-        }
-
-        return this.subjects
-            .reduce((acc, val) => acc.concat(val), [])
-            .uniqBy('id');
-    }
 
     @computed('license')
     get licenseText(): string {

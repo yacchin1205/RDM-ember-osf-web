@@ -1,9 +1,10 @@
-import { action } from '@ember-decorators/object';
-import { service } from '@ember-decorators/service';
+/* eslint-disable max-classes-per-file */
 import { assert, debug, runInDebug } from '@ember/debug';
+import { action } from '@ember/object';
 import RouterService from '@ember/routing/router-service';
-import Service from '@ember/service';
-import { task, waitForQueue } from 'ember-concurrency';
+import Service, { inject as service } from '@ember/service';
+import { waitForQueue } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
 import config from 'ember-get-config';
 import Metrics from 'ember-metrics/services/metrics';
 import Session from 'ember-simple-auth/services/session';
@@ -23,6 +24,7 @@ export interface TrackedData {
     action?: string;
     extra?: string;
     label: string;
+    nonInteraction?: boolean;
 }
 
 export interface InitialEventInfo {
@@ -30,6 +32,7 @@ export interface InitialEventInfo {
     category?: string;
     action?: string;
     extra?: string;
+    nonInteraction?: boolean;
 }
 
 function logEvent(analytics: Analytics, title: string, data: object) {
@@ -58,6 +61,7 @@ class EventInfo {
     category?: string;
     action?: string;
     extra?: string;
+    nonInteraction?: boolean;
 
     constructor(targetElement: Element, rootElement: Element, initialInfo?: InitialEventInfo) {
         if (initialInfo) {
@@ -84,6 +88,7 @@ class EventInfo {
             action: this.action,
             label: [...this.scopes.reverse(), this.name].join(' - '),
             extra: this.extra,
+            nonInteraction: this.nonInteraction,
         };
     }
 
@@ -152,10 +157,13 @@ export default class Analytics extends Service {
 
     rootElement?: Element;
 
+    @task({ restartable: true })
     trackPageTask = task(function *(
         this: Analytics,
         pagePublic: boolean | undefined,
         resourceType: string,
+        withdrawn: string,
+        versionType: string,
     ) {
         // Wait until everything has settled
         yield waitForQueue('destroy');
@@ -168,6 +176,8 @@ export default class Analytics extends Service {
         logEvent(this, 'Tracked page', {
             pagePublic,
             resourceType,
+            withdrawn,
+            versionType,
             ...eventParams,
         });
 
@@ -177,6 +187,8 @@ export default class Analytics extends Service {
                 authenticated,
                 isPublic,
                 resource,
+                isWithdrawn,
+                version,
             } = gaConfig.dimensions!;
 
             let isPublicValue = 'n/a';
@@ -196,6 +208,8 @@ export default class Analytics extends Service {
                 [authenticated]: this.session.isAuthenticated ? 'Logged in' : 'Logged out',
                 [isPublic]: isPublicValue,
                 [resource]: resourceType,
+                [isWithdrawn]: withdrawn,
+                [version]: versionType,
                 ...eventParams,
             });
         }
@@ -204,10 +218,10 @@ export default class Analytics extends Service {
             pagePublic,
             ...eventParams,
         });
-    }).restartable();
+    });
 
     @action
-    click(this: Analytics, category: string, label: string, extraInfo?: string | object) {
+    click(category: string, label: string, extraInfo?: string | object) {
         let extra = extraInfo;
         if (extra && typeof extra !== 'string') {
             // This is to remove the event object when used with onclick
@@ -223,7 +237,7 @@ export default class Analytics extends Service {
         return true;
     }
 
-    track(this: Analytics, category: string, actionName: string, label: string, extraInfo?: string) {
+    track(category: string, actionName: string, label: string, extraInfo?: string) {
         let extra = extraInfo;
         if (extra && typeof extra !== 'string') {
             extra = undefined;
@@ -243,8 +257,10 @@ export default class Analytics extends Service {
         this: Analytics,
         pagePublic?: boolean,
         resourceType: string = 'n/a',
+        withdrawn: string = 'n/a',
+        version: string = 'n/a',
     ) {
-        this.get('trackPageTask').perform(pagePublic, resourceType);
+        this.get('trackPageTask').perform(pagePublic, resourceType, withdrawn, version);
     }
 
     trackFromElement(target: Element, initialInfo: InitialEventInfo) {
@@ -287,3 +303,4 @@ declare module '@ember/service' {
         'analytics': Analytics;
     }
 }
+/* eslint-enable max-classes-per-file */

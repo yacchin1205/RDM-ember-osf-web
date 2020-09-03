@@ -1,14 +1,18 @@
-import { alias, match } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import Controller from '@ember/controller';
+import { alias, match } from '@ember/object/computed';
 import RouterService from '@ember/routing/router-service';
+import { inject as service } from '@ember/service';
 import { camelize } from '@ember/string';
 import Features from 'ember-feature-flags/services/features';
 import config from 'ember-get-config';
 
 import Theme from 'ember-osf-web/services/theme';
+import OsfModalState from 'osf-components/services/osf-modal-state';
 
 const {
+    OSF: {
+        pageName,
+    },
     featureFlagNames: {
         verifyEmailModals,
     },
@@ -18,6 +22,9 @@ export default class Application extends Controller {
     @service router!: RouterService;
     @service theme!: Theme;
     @service features!: Features;
+    @service osfModalState!: OsfModalState;
+
+    title: string = pageName;
 
     queryParams = [{
         viewOnlyToken: {

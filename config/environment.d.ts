@@ -40,10 +40,6 @@ declare const config: {
         };
     };
     APP: {};
-    i18n: {
-        defaultLocale: string;
-        enabledLocales: string[];
-    };
     moment: {
         includeTimezone: string;
         outputFormat: string;
@@ -56,6 +52,8 @@ declare const config: {
             authenticated: string;
             resource: string;
             isPublic: string;
+            isWithdrawn: string;
+            version: string;
         };
     }>;
     FB_APP_ID?: string;
@@ -151,6 +149,9 @@ declare const config: {
         facebookUrl: string;
         githubUrl: string;
     };
+    helpLinks: {
+        linkToAProject: string;
+    };
     dashboard: {
         popularNode: string;
         noteworthyNode: string;
@@ -163,7 +164,7 @@ declare const config: {
             institutions: string;
         };
         ABTesting: {
-            homePageVersionB: string;
+            homePageHeroTextVersionB: string;
         };
         storageI18n: string;
         enableInactiveSchemas: string;
@@ -198,6 +199,9 @@ declare const config: {
     };
     'ember-cli-mirage': {
         enabled: boolean;
+    };
+    'changeset-validations': {
+        rawOutput?: boolean,
     };
 
     mirageScenarios: string[];

@@ -1,14 +1,16 @@
-import { alias } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
-import { task, timeout } from 'ember-concurrency';
+import { alias } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { timeout } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
 import { DS } from 'ember-data';
-import I18N from 'ember-i18n/services/i18n';
+import Intl from 'ember-intl/services/intl';
 
 import { layout } from 'ember-osf-web/decorators/component';
 import Node from 'ember-osf-web/models/node';
 import User from 'ember-osf-web/models/user';
 import Analytics from 'ember-osf-web/services/analytics';
+import captureException, { getApiErrorMessage } from 'ember-osf-web/utils/capture-exception';
 import Toast from 'ember-toastr/services/toast';
 import styles from './styles';
 import template from './template';
@@ -23,7 +25,7 @@ const nameFields = [
 @layout(template, styles)
 export default class Search extends Component {
     @service analytics!: Analytics;
-    @service i18n!: I18N;
+    @service intl!: Intl;
     @service store!: DS.Store;
     @service toast!: Toast;
 
@@ -31,10 +33,12 @@ export default class Search extends Component {
     page: number = 1;
     showUnregisteredForm: boolean = false;
     node: Node = this.node;
+    onAddContributor?: () => void;
 
     @alias('search.lastSuccessful.value') results?: DS.AdapterPopulatedRecordArray<User>;
     @alias('results.meta.total_pages') totalPages?: number;
 
+    @task({ restartable: true })
     search = task(function *(this: Search, page?: number) {
         if (!this.query) {
             return undefined;
@@ -55,8 +59,9 @@ export default class Search extends Component {
         });
 
         return results;
-    }).restartable();
+    });
 
+    @task
     addContributor = task(function *(this: Search, user: User) {
         this.analytics.track('list', 'filter', 'Collections - Contributors - Add Contributor');
 
@@ -70,9 +75,14 @@ export default class Search extends Component {
 
         try {
             yield contributor.save();
-            this.toast.success(this.i18n.t('app_components.project_contributors.search.add_contributor_success'));
+            if (this.onAddContributor) {
+                this.onAddContributor();
+            }
+            this.toast.success(this.intl.t('app_components.project_contributors.search.add_contributor_success'));
         } catch (e) {
-            this.toast.error(this.i18n.t('app_components.project_contributors.search.add_contributor_error'));
+            const errorMessage = this.intl.t('app_components.project_contributors.search.add_contributor_error');
+            captureException(e, { errorMessage });
+            this.toast.error(getApiErrorMessage(e), errorMessage);
             throw e;
         }
     });

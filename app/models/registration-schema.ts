@@ -1,6 +1,9 @@
-import { attr } from '@ember-decorators/data';
+import DS from 'ember-data';
 
 import OsfModel from './osf-model';
+import SchemaBlock from './schema-block';
+
+const { attr, hasMany } = DS;
 
 export interface AbstractQuestion {
     type: 'string' | 'multiselect' | 'osf-author-import' | 'osf-upload' | 'choose' | 'object';
@@ -57,6 +60,9 @@ export default class RegistrationSchemaModel extends OsfModel {
     @attr('fixstring') name!: string;
     @attr('number') schemaVersion!: number;
     @attr('object') schema!: Schema;
+
+    @hasMany('schema-block', { inverse: 'schema', async: false })
+    schemaBlocks?: SchemaBlock[];
 }
 
 declare module 'ember-data/types/registries/model' {

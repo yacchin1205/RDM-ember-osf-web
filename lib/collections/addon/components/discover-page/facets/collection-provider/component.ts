@@ -1,8 +1,8 @@
-import { computed } from '@ember-decorators/object';
-import { service } from '@ember-decorators/service';
-import { setProperties } from '@ember/object';
+import { computed, setProperties } from '@ember/object';
+import { run } from '@ember/runloop';
+import { inject as service } from '@ember/service';
 import config from 'collections/config/environment';
-import { task } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
 import DS from 'ember-data';
 
 import { layout } from 'ember-osf-web/decorators/component';
@@ -25,41 +25,13 @@ interface ProviderHit {
 }
 
 @layout(template, styles)
-export default class SearchFacetProvider extends Base.extend({
-    didReceiveAttrs(this: SearchFacetProvider, ...args: any[]) {
-        this._super(...args);
+export default class SearchFacetProvider extends Base {
+    @service store!: DS.Store;
 
-        const { context, filterChanged, theme } = this;
+    allProviders!: ProviderHit[];
 
-        setProperties(context, {
-            lockedActiveFilter: [],
-            updateFilters(item?: string) {
-                const { activeFilter, defaultQueryFilters } = context;
-
-                if (item) {
-                    const method = activeFilter.includes(item) ? 'removeObject' : 'pushObject';
-                    activeFilter[method](item);
-                }
-
-                const queryParam = theme.isProvider ? '' : activeFilter.join('OR');
-
-                setProperties(context, {
-                    queryParam,
-                    currentQueryFilters: !activeFilter.length || theme.isProvider ?
-                        defaultQueryFilters :
-                        {
-                            provider: activeFilter.mapBy('id'),
-                        },
-                });
-
-                filterChanged();
-            },
-        });
-
-        this.initialize.perform();
-    },
-
-    initialize: task(function *(this: SearchFacetProvider): IterableIterator<any> {
+    @task
+    initialize = task(function *(this: SearchFacetProvider): IterableIterator<any> {
         if (this.theme.isProvider) {
             const { name: key, id } = this.theme.provider!;
 
@@ -72,7 +44,7 @@ export default class SearchFacetProvider extends Base.extend({
             this.set('allProviders', [provider]);
 
             this.context.lockedActiveFilter.pushObject(provider);
-            this.context.activeFilter.pushObject(provider);
+            run.schedule('actions', () => this.context.activeFilter.pushObject(provider));
         } else {
             const providers: Provider[] = yield this.store.findAll('collection-provider');
 
@@ -91,11 +63,7 @@ export default class SearchFacetProvider extends Base.extend({
         this.context.updateFilters();
 
         this.filterChanged();
-    }),
-}) {
-    @service store!: DS.Store;
-
-    allProviders!: ProviderHit[];
+    });
 
     @computed('osfUrl')
     get otherReposLink(): string {
@@ -111,5 +79,38 @@ export default class SearchFacetProvider extends Base.extend({
                 ...provider,
                 checked: activeFilter.includes(provider),
             }));
+    }
+
+    didReceiveAttrs() {
+        super.didReceiveAttrs();
+
+        const { context, filterChanged, theme } = this;
+
+        setProperties(context, {
+            lockedActiveFilter: [],
+            updateFilters(item?: string) {
+                const { activeFilter, defaultQueryFilters } = context;
+
+                if (item) {
+                    const method = activeFilter.includes(item) ? 'removeObject' : 'pushObject';
+                    activeFilter[method](item);
+                }
+
+                const queryParam = theme.isProvider ? '' : activeFilter.join('OR');
+
+                setProperties(context, {
+                    queryParam,
+                    currentQueryFilters: !activeFilter.length || theme.isProvider
+                        ? defaultQueryFilters
+                        : {
+                            provider: activeFilter.mapBy('id'),
+                        },
+                });
+
+                filterChanged();
+            },
+        });
+
+        this.initialize.perform();
     }
 }

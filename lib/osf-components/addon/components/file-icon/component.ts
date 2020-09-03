@@ -1,6 +1,6 @@
 import { tagName } from '@ember-decorators/component';
-import { computed } from '@ember-decorators/object';
 import Component from '@ember/component';
+import { computed } from '@ember/object';
 import { localClassNames } from 'ember-css-modules';
 
 import { layout } from 'ember-osf-web/decorators/component';
@@ -127,6 +127,10 @@ export default class FileIcon extends Component {
     get iconName(): string {
         // TODO: More icons!
 
+        if (this.item.isFolder) {
+            return 'folder';
+        }
+
         if (this.item.name) {
             return iconFromName(this.item.name);
         }
@@ -139,10 +143,6 @@ export default class FileIcon extends Component {
         if (this.item.isProvider) {
             // TODO provider-specific icons
             return 'hdd-o';
-        }
-
-        if (this.item.isFolder) {
-            return 'folder';
         }
 
         return iconFromName(defaultTo(this.item.itemName, ''));

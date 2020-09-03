@@ -1,9 +1,8 @@
-import { attr } from '@ember-decorators/data';
-import { alias } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import EmberArray, { A } from '@ember/array';
 import { assert } from '@ember/debug';
 import { set } from '@ember/object';
+import { alias } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
 import { dasherize, underscore } from '@ember/string';
 import { Validations } from 'ember-cp-validations';
 import DS, { RelationshipsFor } from 'ember-data';
@@ -31,7 +30,35 @@ import {
     ResourceCollectionDocument,
 } from 'osf-api';
 
-const { Model } = DS;
+import captureException from 'ember-osf-web/utils/capture-exception';
+
+const { attr, Model } = DS;
+
+function getRelatedCountFromResponse(response: ApiResponseDocument, apiRelationshipName: string, errorContext: string) {
+    if ('data' in response && !Array.isArray(response.data)) {
+        if (response.data.relationships && apiRelationshipName in response.data.relationships) {
+            const relationship = response.data.relationships[apiRelationshipName];
+            if ('links' in relationship) {
+                if (typeof relationship.links.related === 'object') {
+                    if (relationship.links.related.meta) {
+                        if (typeof relationship.links.related.meta.count === 'number') {
+                            return relationship.links.related.meta.count;
+                        }
+                        throw new Error(`Count not found in related link meta ${errorContext}`);
+                    }
+                    throw new Error(`Meta not found in related link ${errorContext}`);
+                }
+                throw new Error(`Related link not found in relationship links ${errorContext}`);
+            }
+            throw new Error(`Relationship links not found ${errorContext}`);
+        }
+        throw new Error(`Relationship not serialized ${errorContext}`);
+    } else if ('errors' in response) {
+        throw new Error(response.errors.map(error => error.detail).concat(errorContext).join('\n'));
+    } else {
+        throw new Error(`Unexpected response ${errorContext}`);
+    }
+}
 
 export enum Permission {
     Read = 'read',
@@ -91,10 +118,15 @@ export default class OsfModel extends Model {
         relationshipName: R,
     ): string {
         const reference = this.hasMany(relationshipName);
-
-        // HACK: ember-data discards/ignores the link if an object on the belongsTo side
-        // came first. In that case, grab the link where we expect it from OSF's API
-        const url = reference.link() || getRelatedHref(this.relationshipLinks[relationshipName as string]);
+        let url: string | undefined = reference.link();
+        if (!url) {
+            // HACK: ember-data discards/ignores the link if an object on the belongsTo side
+            // came first. In that case, grab the link where we expect it from OSF's API
+            const relationshipLinks = this.relationshipLinks[underscore(relationshipName as string)];
+            if (relationshipLinks) {
+                url = getRelatedHref(relationshipLinks);
+            }
+        }
         if (!url) {
             throw new Error(`Could not find a link for '${relationshipName}' relationship`);
         }
@@ -140,7 +172,8 @@ export default class OsfModel extends Model {
 
             const { meta, links } = response as ResourceCollectionDocument;
             return Object.assign(A(records), { meta, links });
-        } else if ('errors' in response) {
+        }
+        if ('errors' in response) {
             throw new Error(response.errors.map(error => error.detail).join('\n'));
         } else {
             throw new Error(`Unexpected response while loading relationship ${this.modelName}.${propertyName}`);
@@ -198,6 +231,36 @@ export default class OsfModel extends Model {
         relatedModel: OsfModel,
     ) {
         return this.modifyM2MRelationship('delete', relationshipName, relatedModel);
+    }
+
+    async updateM2MRelationship<T extends OsfModel>(
+        this: T,
+        relationshipName: RelationshipsFor<T> & string,
+        relatedModels: OsfModel[],
+    ) {
+        const apiRelationshipName = underscore(relationshipName);
+        const url = getSelfHref(this.relationshipLinks[apiRelationshipName]);
+
+        const data = JSON.stringify({
+            data: relatedModels.map(relatedModel => ({ id: relatedModel.id, type: relatedModel.apiType })),
+        });
+
+        if (!url) {
+            throw new Error(`Couldn't find self link for ${apiRelationshipName} relationship`);
+        }
+        assert('A list of related objects is required to perform a PUT on a relationship',
+            Boolean(relatedModels));
+
+        const options: JQuery.AjaxSettings = {
+            url,
+            type: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            data,
+        };
+
+        return this.currentUser.authenticatedAJAX(options);
     }
 
     async modifyM2MRelationship<T extends OsfModel>(
@@ -258,33 +321,12 @@ export default class OsfModel extends Model {
             },
         });
 
-        if ('data' in response && !Array.isArray(response.data)) {
-            if (response.data.relationships && apiRelationshipName in response.data.relationships) {
-                const relationship = response.data.relationships[apiRelationshipName];
-                if ('links' in relationship) {
-                    if (typeof relationship.links.related === 'object') {
-                        if (relationship.links.related.meta) {
-                            if (typeof relationship.links.related.meta.count === 'number') {
-                                set(this.relatedCounts, relationshipName, relationship.links.related.meta.count);
-                            } else {
-                                throw new Error(`Count not found in related link meta ${errorContext}`);
-                            }
-                        } else {
-                            throw new Error(`Meta not found in related link ${errorContext}`);
-                        }
-                    } else {
-                        throw new Error(`Related link not found in relationship links ${errorContext}`);
-                    }
-                } else {
-                    throw new Error(`Relationship links not found ${errorContext}`);
-                }
-            } else {
-                throw new Error(`Relationship not serialized ${errorContext}`);
-            }
-        } else if ('errors' in response) {
-            throw new Error(response.errors.map(error => error.detail).concat(errorContext).join('\n'));
-        } else {
-            throw new Error(`Unexpected response ${errorContext}`);
+        try {
+            const count = getRelatedCountFromResponse(response, apiRelationshipName, errorContext);
+            set(this.relatedCounts, relationshipName, count);
+        } catch (e) {
+            // Not throwing error
+            captureException(e);
         }
     }
 

@@ -1,12 +1,17 @@
-import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
+import { inject as service } from '@ember/service';
 import config from 'ember-get-config';
 
 import { serviceLinks } from 'ember-osf-web/const/service-links';
 import { layout } from 'ember-osf-web/decorators/component';
 import Analytics from 'ember-osf-web/services/analytics';
+
 import styles from './styles';
 import template from './template';
+
+const {
+    organization,
+} = config;
 
 @layout(template, styles)
 export default class OsfFooter extends Component {
@@ -15,6 +20,8 @@ export default class OsfFooter extends Component {
     serviceLinks = serviceLinks;
     supportEmail: string = config.support.supportEmail;
     currentYear: number = (new Date()).getUTCFullYear();
+
+    organization: string = organization;
 
     constructor(properties: object) {
         super(properties);

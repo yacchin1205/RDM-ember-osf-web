@@ -1,17 +1,14 @@
-import { action, computed } from '@ember-decorators/object';
-import { alias } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import Controller from '@ember/controller';
-import { task } from 'ember-concurrency';
+import { assert } from '@ember/debug';
+import { action, computed } from '@ember/object';
+import { alias } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { task } from 'ember-concurrency-decorators';
 import DS from 'ember-data';
-import config from 'ember-get-config';
 
 import Node from 'ember-osf-web/models/node';
 import RegistrationSchema from 'ember-osf-web/models/registration-schema';
 import Analytics from 'ember-osf-web/services/analytics';
-import pathJoin from 'ember-osf-web/utils/path-join';
-
-const { OSF: { url: baseURL } } = config;
 
 export default class GuidNodeRegistrations extends Controller {
     @service analytics!: Analytics;
@@ -38,14 +35,11 @@ export default class GuidNodeRegistrations extends Controller {
         terms: 'https://osf.io/4uxbj/',
     };
 
+    @task
     getRegistrationSchemas = task(function *(this: GuidNodeRegistrations) {
-        let schemas = yield this.store.findAll('registration-schema',
+        let schemas = yield this.store.query('registration-schema',
             {
-                adapterOptions: {
-                    query: {
-                        'filter[active]': true,
-                    },
-                },
+                'filter[active]': true,
             });
         schemas = schemas.toArray();
         schemas.sort((a: RegistrationSchema, b: RegistrationSchema) => a.name.length - b.name.length);
@@ -67,13 +61,13 @@ export default class GuidNodeRegistrations extends Controller {
     }
 
     @action
-    changeTab(this: GuidNodeRegistrations, activeId: string) {
+    changeTab(activeId: string) {
         this.set('tab', activeId === 'registrations' ? undefined : activeId);
         this.analytics.click('tab', `Registrations tab - Change tab to: ${activeId}`);
     }
 
     @action
-    closeNewModal(this: GuidNodeRegistrations) {
+    closeNewModal() {
         this.set('newModalOpen', false);
         this.set('selectedSchema', this.defaultSchema);
     }
@@ -87,19 +81,22 @@ export default class GuidNodeRegistrations extends Controller {
     }
 
     @action
-    closePreregModal(this: GuidNodeRegistrations) {
+    closePreregModal() {
         this.set('preregModalOpen', false);
         this.set('selectedSchema', this.defaultSchema);
     }
 
     @action
-    schemaChanged(this: GuidNodeRegistrations, schema: RegistrationSchema) {
+    schemaChanged(schema: RegistrationSchema) {
         this.set('selectedSchema', schema);
         this.analytics.click('radio', `Registrations tab - Select schema: ${schema.name}`);
     }
 
     @action
-    async createDraft(this: GuidNodeRegistrations) {
+    async createDraft() {
+        const branchedFrom = this.node!;
+        assert('Check that the node exists', Boolean(branchedFrom));
+
         if (this.selectedSchema.name === 'Prereg Challenge' && this.newModalOpen) {
             this.set('newModalOpen', false);
             this.set('preregConsented', false);
@@ -108,14 +105,17 @@ export default class GuidNodeRegistrations extends Controller {
         }
         const draftRegistration = this.store.createRecord('draft-registration', {
             registrationSupplement: this.selectedSchema.id,
-            branchedFrom: this.node,
+            branchedFrom,
             registrationSchema: this.selectedSchema,
         });
         await draftRegistration.save();
         this.set('newModalOpen', false);
         this.set('selectedSchema', this.defaultSchema);
-        window.location.assign(
-            pathJoin(baseURL, draftRegistration.branchedFrom.get('id'), 'drafts', draftRegistration.id),
+
+        this.transitionToRoute(
+            'guid-node.drafts',
+            branchedFrom.id,
+            draftRegistration.id,
         );
     }
 }

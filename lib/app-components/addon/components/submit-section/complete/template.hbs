@@ -1,13 +1,21 @@
-{{#if showReopen}}
-    {{! template-lint-disable invalid-interactive }}
-    <div
-        role="{{if this.editable 'button'}}"
-        {{action 'edit'}}
-    >
-        {{! template-lint-enable invalid-interactive }}
-        {{yield}}
-        <p class="text-smaller" local-class="edit-message" hidden={{not this.editable}}>
-            {{t 'app_components.submit_section.click_to_edit'}}
-        </p>
-    </div>
+{{#if @showReopen}}
+    {{#if this.editable}}
+        <div
+            data-test-submit-section-click-to-edit
+            role='button'
+            {{on 'click' this.edit}}
+        >
+            {{yield}}
+            <p
+                local-class='edit-message'
+                class='text-smaller'
+            >
+                {{t 'app_components.submit_section.click_to_edit'}}
+            </p>
+        </div>
+    {{else}}
+        <div data-test-submit-section-click-to-edit>
+            {{yield}}
+        </div>
+    {{/if}}
 {{/if}}

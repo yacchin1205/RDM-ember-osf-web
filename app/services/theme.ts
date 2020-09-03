@@ -1,7 +1,6 @@
-import { computed } from '@ember-decorators/object';
-import { service } from '@ember-decorators/service';
 import { assert } from '@ember/debug';
-import Service from '@ember/service';
+import { computed } from '@ember/object';
+import Service, { inject as service } from '@ember/service';
 import DS from 'ember-data';
 import config from 'ember-get-config';
 import Provider from 'ember-osf-web/models/provider';
@@ -9,12 +8,12 @@ import defaultTo from 'ember-osf-web/utils/default-to';
 
 const { defaultProvider, assetsPrefix } = config;
 
-type ProviderType = 'collection' | 'preprint' | 'registry';
+type ProviderType = 'collection' | 'preprint' | 'registration';
 
 interface Setting {
     assetPath: string;
     routePath: string;
-    model: 'collection-provider' | 'preprint-provider' | 'registry-provider';
+    model: 'collection-provider' | 'preprint-provider' | 'registration-provider';
 }
 
 const settings: { [P in ProviderType]: Setting } = {
@@ -28,10 +27,10 @@ const settings: { [P in ProviderType]: Setting } = {
         routePath: 'preprints',
         model: 'preprint-provider',
     },
-    registry: {
+    registration: {
         assetPath: 'registries-assets',
         routePath: 'registries',
-        model: 'registry-provider',
+        model: 'registration-provider',
     },
 };
 
@@ -114,7 +113,7 @@ export default class Theme extends Service {
         return assets && assets.style ? assets.style : `${this.assetsDir}/style.css`;
     }
 
-    reset(this: Theme) {
+    reset() {
         this.setProperties({
             id: defaultProvider,
             providerType: undefined,

@@ -1,22 +1,21 @@
-import { action, computed } from '@ember-decorators/object';
-import { not } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import Controller from '@ember/controller';
+import { action, computed } from '@ember/object';
+import { not } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
 import { underscore } from '@ember/string';
 import config from 'collections/config/environment';
 import DS from 'ember-data';
-import I18N from 'ember-i18n/services/i18n';
+import Intl from 'ember-intl/services/intl';
 import { choiceFields } from 'ember-osf-web/models/collected-metadatum';
 import Theme from 'ember-osf-web/services/theme';
 
 export default class Discover extends Controller {
     @service theme!: Theme;
-    @service i18n!: I18N;
+    @service intl!: Intl;
     @service store!: DS.Store;
 
     activeFilters = {
         providers: [],
-        subjects: [],
     };
 
     model!: Array<{
@@ -53,21 +52,20 @@ export default class Discover extends Controller {
         return this.model.filter(({ id }) => id !== this.theme.defaultProvider);
     }
 
-    @computed('i18n.locale', 'additionalProviders')
+    @computed('intl.locale', 'additionalProviders')
     get facets() { // List of facets available for preprints
         return (
-            this.additionalProviders ?
+            this.additionalProviders
                 // if additionalProviders exist, use subset of SHARE facets
-                [
+                ? [
                     ['sources', 'source'],
                     ['date', 'daterange'],
                     ['type', 'worktype'],
                     ['tags', 'typeahead'],
-                ] :
+                ]
                 // Regular preprints and branded preprints get provider and taxonomy facets
-                [
+                : [
                     ['sources', 'collection-provider', { hidden: true }],
-                    ['subjects', 'taxonomy'],
                     ['type', 'collected-type'],
                     ['issue', 'issue'],
                     ['program-area', 'program-area'],
@@ -76,7 +74,7 @@ export default class Discover extends Controller {
                 ]
         ).map(([key, component, options = {}]: [string, string, any]) => ({
             key,
-            title: this.i18n.t(`collections.discover.facet_titles.${underscore(component)}`),
+            title: this.intl.t(`collections.discover.facet_titles.${underscore(component)}`),
             component,
             options,
         }));
@@ -92,7 +90,6 @@ export default class Discover extends Controller {
 
     page = 1; // Page query param. Must be passed to component, so can be reflected in URL
     provider = ''; // Provider query param. Must be passed to component, so can be reflected in URL
-    subject = ''; // Subject query param.  Must be passed to component, so can be reflected in URL
     q = ''; // q query param.  Must be passed to component, so can be reflected in URL
 
     sources = ''; // Sources query param. Must be passed to component, so can be reflected in the URL
@@ -114,19 +111,18 @@ export default class Discover extends Controller {
         'type',
         'start',
         'end',
-        'subject',
         'provider',
         ...choiceFields,
     ];
 
     @computed('additionalProviders')
     get searchPlaceholder() { // Search bar placeholder
-        return this.additionalProviders ?
-            'discover.search.repository_placeholder' :
-            'collections.discover.search_placeholder';
+        return this.additionalProviders
+            ? 'discover.search.repository_placeholder'
+            : 'collections.discover.search_placeholder';
     }
 
-    @computed('i18n.locale')
+    @computed('intl.locale')
     get sortOptions() { // Sort options for preprints
         return [
             {
@@ -142,7 +138,7 @@ export default class Discover extends Controller {
                 sortBy: '-modified',
             },
         ].map(({ display, sortBy }) => ({
-            display: this.i18n.t(`discover.${display}`),
+            display: this.intl.t(`discover.${display}`),
             sortBy,
         }));
     }

@@ -8,6 +8,11 @@ import { createRegistrationMetadata, guid, guidAfterCreate } from './utils';
 export interface MirageRegistration extends Registration {
     index: number;
     affiliatedInstitutionIds: Array<string|number>;
+    draftRegistrationId: string;
+    registrationSchemaId: string|number;
+    registeredFromId: string|number;
+    identifierIds: Array<string|number>;
+    forkIds: Array<string|number>;
 }
 
 export interface RegistrationTraits {
@@ -16,10 +21,13 @@ export interface RegistrationTraits {
     isArchiving: Trait;
     isEmbargoed: Trait;
     isPendingEmbargoApproval: Trait;
+    isPendingEmbargoTerminationApproval: Trait;
     isPendingWithdrawal: Trait;
     isWithdrawn: Trait;
     withArbitraryState: Trait;
     withAffiliatedInstitutions: Trait;
+    isPublic: Trait;
+    withSubjects: Trait;
 }
 
 const stateAttrs = {
@@ -38,6 +46,13 @@ const stateAttrs = {
             return faker.date.future(1, new Date(2022, 0, 0));
         },
     },
+    pendingEmbargoTerminationApproval: {
+        pendingEmbargoTerminationApproval: true,
+        embargoed: true,
+        embargoEndDate() {
+            return faker.date.future(1, new Date(2022, 0, 0));
+        },
+    },
     pendingEmbargoApproval: {
         pendingEmbargoApproval: true,
         embargoed: false,
@@ -50,6 +65,7 @@ const stateAttrs = {
     withdrawn: {
         withdrawn: true,
         pendingWithdrawal: false,
+        currentUserPermissions: [],
         dateWithdrawn() {
             return faker.date.past(1, new Date(2019, 0, 0));
         },
@@ -69,7 +85,6 @@ export default NodeFactory.extend<MirageRegistration & RegistrationTraits>({
     id: guid('registration'),
     afterCreate(newReg, server) {
         guidAfterCreate(newReg, server);
-
         if (newReg.parent) {
             newReg.update({
                 dateRegistered: newReg.parent.dateRegistered,
@@ -88,12 +103,18 @@ export default NodeFactory.extend<MirageRegistration & RegistrationTraits>({
                 newReg.update({ root: newReg.parent.root || newReg.parent });
             }
         } else if (!newReg.registeredMeta) {
-            const registrationSchema = newReg.registrationSchema ||
-                faker.random.arrayElement(server.schema.registrationSchemas.all().models) ||
-                server.create('registration-schema');
+            const registrationSchema = newReg.registrationSchema
+                || faker.random.arrayElement(server.schema.registrationSchemas.all().models)
+                || server.create('registration-schema');
             newReg.update({
                 registrationSchema,
                 registeredMeta: createRegistrationMetadata(registrationSchema, true),
+            });
+        }
+
+        if (!newReg.provider) {
+            newReg.update({
+                provider: server.schema.registrationProviders.find('osf'),
             });
         }
     },
@@ -109,9 +130,9 @@ export default NodeFactory.extend<MirageRegistration & RegistrationTraits>({
     pendingEmbargoApproval: false,
     withdrawn: false,
     dateWithdrawn: null,
+    articleDoi: null,
     pendingWithdrawal: false,
     pendingEmbargoTerminationApproval: false,
-
     registeredFrom: association(),
 
     index(i) {
@@ -147,8 +168,14 @@ export default NodeFactory.extend<MirageRegistration & RegistrationTraits>({
     isPendingWithdrawal: trait<MirageRegistration>({
         ...stateAttrs.pendingWithdrawal,
     }),
+    isPendingEmbargoTerminationApproval: trait<MirageRegistration>({
+        ...stateAttrs.pendingEmbargoTerminationApproval,
+    }),
     isWithdrawn: trait<MirageRegistration>({
         ...stateAttrs.withdrawn,
+    }),
+    isPublic: trait<MirageRegistration>({
+        ...stateAttrs.normal,
     }),
     withAffiliatedInstitutions: trait<MirageRegistration>({
         afterCreate(registration, server) {
@@ -160,10 +187,20 @@ export default NodeFactory.extend<MirageRegistration & RegistrationTraits>({
     }),
     withArbitraryState: trait<MirageRegistration>({
         afterCreate(registration) {
-            const arbitraryState =
-                faker.list.cycle(...Object.keys(stateAttrs))(registration.index);
+            const arbitraryState = faker.list.cycle(...Object.keys(stateAttrs))(registration.index);
             const attrsToUse = stateAttrs[arbitraryState as keyof typeof stateAttrs];
             registration.update(attrsToUse);
+        },
+    }),
+    withSubjects: trait<MirageRegistration>({
+        afterCreate(registration) {
+            const providerSubjects = registration.provider.subjects.models;
+            const subjectCount = faker.random.number({ min: 1, max: 6 });
+            const subjects = [];
+            for (let i = 0; i < subjectCount; i++) {
+                subjects.push(faker.random.arrayElement(providerSubjects));
+            }
+            registration.update({ subjects });
         },
     }),
 });

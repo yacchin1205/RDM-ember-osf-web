@@ -1,7 +1,7 @@
-import { computed } from '@ember-decorators/object';
-import { service } from '@ember-decorators/service';
 import Controller from '@ember/controller';
-import { task } from 'ember-concurrency';
+import { computed } from '@ember/object';
+import { inject as service } from '@ember/service';
+import { task } from 'ember-concurrency-decorators';
 import config from 'ember-get-config';
 import QueryParams from 'ember-parachute';
 
@@ -10,6 +10,12 @@ import Analytics from 'ember-osf-web/services/analytics';
 import param from 'ember-osf-web/utils/param';
 
 const { OSF: { casUrl, url: baseUrl } } = config;
+
+const {
+    OSF: {
+        pageName,
+    },
+} = config;
 
 interface RegisterQueryParams {
     next: string;
@@ -25,14 +31,7 @@ export const registerQueryParams = new QueryParams<RegisterQueryParams>({
     },
 });
 
-export default class Register extends Controller.extend(registerQueryParams.Mixin, {
-    getProvider: task(function *(this: Register, preprintProviderId: string) {
-        const provider: PreprintProvider = yield this.store.findRecord('preprint-provider', preprintProviderId);
-        if (provider) {
-            this.set('provider', provider);
-        }
-    }),
-}) {
+export default class Register extends Controller.extend(registerQueryParams.Mixin) {
     @service analytics!: Analytics;
 
     signUpCampaign?: string;
@@ -42,6 +41,8 @@ export default class Register extends Controller.extend(registerQueryParams.Mixi
 
     isOsfPreprints: boolean = false;
     isOsfRegistries: boolean = false;
+
+    title: string = pageName;
 
     @computed('next')
     get orcidUrl() {
@@ -71,11 +72,19 @@ export default class Register extends Controller.extend(registerQueryParams.Mixi
         return '';
     }
 
+    @task
+    getProvider = task(function *(this: Register, preprintProviderId: string) {
+        const provider: PreprintProvider = yield this.store.findRecord('preprint-provider', preprintProviderId);
+        if (provider) {
+            this.set('provider', provider);
+        }
+    });
+
     setup({ queryParams }: { queryParams: RegisterQueryParams }) {
         if (queryParams.campaign) {
+            this.set('signUpCampaign', queryParams.campaign);
             const matches = queryParams.campaign.match(/^(.*)-(.*)$/);
-            if (matches && matches.length > 2) {
-                this.set('signUpCampaign', queryParams.campaign);
+            if (matches) {
                 const [, provider, type] = matches;
                 if (provider === 'osf') {
                     switch (type) {

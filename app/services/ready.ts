@@ -3,7 +3,8 @@ import { get, set } from '@ember/object';
 import Evented from '@ember/object/evented';
 import Service from '@ember/service';
 
-import { task, waitForQueue } from 'ember-concurrency';
+import { waitForQueue } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
 import RSVP from 'rsvp';
 
 export interface Blocker {
@@ -24,6 +25,7 @@ export default class Ready extends Service.extend(Evented) {
     lastId = 0;
     blockers = A();
 
+    @task({ restartable: true })
     tryReady = task(function *(this: Ready) {
         // Waiting until `destroy` makes sure that everyone in `render` and `afterRender`
         // (e.g. components, jQuery plugins, etc.) has a chance to call `getBlocker`, and that
@@ -33,9 +35,9 @@ export default class Ready extends Service.extend(Evented) {
             set(this, 'isReady', true);
             this.trigger(Events.IsReady);
         }
-    }).restartable();
+    });
 
-    getBlocker(this: Ready): Blocker {
+    getBlocker(): Blocker {
         if (get(this, 'isReady')) {
             return {
                 done: () => null,
@@ -52,7 +54,10 @@ export default class Ready extends Service.extend(Evented) {
         };
     }
 
-    ready(this: Ready) {
+    ready() {
+        if (this.isReady) {
+            return RSVP.resolve();
+        }
         return new RSVP.Promise((resolve, reject) => {
             this.on(Events.IsReady, resolve);
             this.on(Events.Reset, reject);
@@ -60,7 +65,7 @@ export default class Ready extends Service.extend(Evented) {
         });
     }
 
-    reset(this: Ready): void {
+    reset(): void {
         // Invalidate all prior blockers
         get(this, 'blockers').clear();
         set(this, 'isReady', false);
@@ -77,7 +82,7 @@ export default class Ready extends Service.extend(Evented) {
         };
     }
 
-    private errorCallback(this: Ready) {
+    private errorCallback() {
         return (e: any) => {
             this.trigger(Events.Error, e);
         };

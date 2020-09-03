@@ -1,11 +1,12 @@
-import { action, computed } from '@ember-decorators/object';
-import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
+import { action, computed } from '@ember/object';
+import { inject as service } from '@ember/service';
 import { localClassNames } from 'ember-css-modules';
 
 import { layout } from 'ember-osf-web/decorators/component';
 import Analytics from 'ember-osf-web/services/analytics';
 import { ShareRegistration } from 'registries/services/share-search';
+
 import template from './template';
 
 const OSF_GUID_REGEX = /^https?:\/\/.*osf\.io\/([^/]+)/;
@@ -13,10 +14,11 @@ const OSF_GUID_REGEX = /^https?:\/\/.*osf\.io\/([^/]+)/;
 @layout(template)
 @localClassNames('RegistriesSearchResult')
 export default class RegistriesSearchResult extends Component {
-    @service analytics!: Analytics;
-
+    // Required
     result!: ShareRegistration;
 
+    // Private
+    @service analytics!: Analytics;
     expanded = false;
 
     // For use later, when the registration overview page is implemented
@@ -42,12 +44,12 @@ export default class RegistriesSearchResult extends Component {
     }
 
     @computed('expanded')
-    get footerIcon(this: RegistriesSearchResult) {
+    get footerIcon() {
         return this.expanded ? 'caret-up' : 'caret-down';
     }
 
     @action
-    toggleExpanded(this: RegistriesSearchResult) {
+    toggleExpanded() {
         this.set('expanded', !this.expanded);
         this.analytics.track(
             'result',

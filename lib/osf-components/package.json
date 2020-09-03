@@ -4,13 +4,16 @@
     "ember-addon"
   ],
   "dependencies": {
+    "@glimmer/component": "*",
+    "@glimmer/tracking": "*",
     "ember-angle-bracket-invocation-polyfill": "*",
+    "ember-animated": "*",
+    "ember-basic-dropdown": "*",
     "ember-bootstrap": "*",
     "ember-bootstrap-datepicker": "*",
     "ember-cli-babel": "*",
     "ember-cli-clipboard": "*",
     "ember-cli-htmlbars": "*",
-    "ember-cli-htmlbars-inline-precompile": "*",
     "ember-cli-sass": "*",
     "ember-cli-template-lint": "*",
     "ember-cli-typescript": "*",
@@ -18,8 +21,9 @@
     "ember-cp-validations": "*",
     "ember-css-modules": "*",
     "ember-css-modules-sass": "*",
-    "ember-i18n": "*",
-    "ember-i18n-inject": "*",
-    "ember-test-selectors": "*"
+    "ember-element-helper": "*",
+    "ember-intl": "*",
+    "ember-radio-button": "*",
+    "ember-responsive": "*"
   }
 }

@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import MirageModelRegistry from 'ember-cli-mirage/types/registries/model';
 import MirageSchemaRegistry from 'ember-cli-mirage/types/registries/schema';
 import DS from 'ember-data';
@@ -7,6 +8,7 @@ import { Document } from 'osf-api';
 export { default as faker } from 'faker';
 
 declare global {
+    // eslint-disable-next-line no-redeclare
     const server: Server; // TODO: only in tests?
 }
 
@@ -16,17 +18,17 @@ interface AnyAttrs {
     [key: string]: any;
 }
 
-type Record < T > = T & { id: ID };
+type DatabaseRecord < T > = T & { id: ID };
 
 export interface DatabaseCollection<T = AnyAttrs> {
-    insert<S extends T | T[]>(data: S): S extends T ? Record<T> : Array<Record<T>>;
-    find<S extends ID | ID[]>(ids: S): S extends ID ? Record<T> : Array<Record<T>>;
-    findBy(query: T): Record<T>;
-    where(query: T | ((r: Record<T>) => boolean)): Array<Record<T>>;
-    update(attrs: T): Array<Record<T>>;
-    update(target: ID | T, attrs: T): Array<Record<T>>;
+    insert<S extends T | T[]>(data: S): S extends T ? DatabaseRecord<T> : Array<DatabaseRecord<T>>;
+    find<S extends ID | ID[]>(ids: S): S extends ID ? DatabaseRecord<T> : Array<DatabaseRecord<T>>;
+    findBy(query: T): DatabaseRecord<T>;
+    where(query: T | ((r: DatabaseRecord<T>) => boolean)): Array<DatabaseRecord<T>>;
+    update(attrs: T): Array<DatabaseRecord<T>>;
+    update(target: ID | T, attrs: T): Array<DatabaseRecord<T>>;
     remove(target?: ID | T): void;
-    firstOrCreate(query: T, attributesForCreate?: T): Record<T>;
+    firstOrCreate(query: T, attributesForCreate?: T): DatabaseRecord<T>;
 }
 
 export interface Database {
@@ -95,7 +97,7 @@ export type Schema = {
 };
 
 export declare class Response {
-    constructor(code: number, headers: Record<string, string>, body: any);
+    constructor(code: number, headers?: Record<string, string>, body?: {});
 }
 
 export interface Request {
@@ -276,3 +278,4 @@ export class JSONAPISerializer {
     serialize(object: ModelInstance, request: Request): SingleResourceDocument;
     normalize(json: any): any;
 }
+/* eslint-enable max-classes-per-file */

@@ -26,6 +26,7 @@ interface QueryParameters {
 // The key is the model and the list contains the relationships to embed.
 const alwaysEmbed: { [key: string]: string[] } = {
     contributors: ['users'],
+    'collected-metadata': ['guid'],
 };
 
 interface WithAttributes {
@@ -218,15 +219,36 @@ export function compareBooleans(
     }
 }
 
+export function compareIds(
+    actualValue: string | number,
+    comparisonValue: string | number,
+    operator: ComparisonOperators,
+): boolean {
+    const actualString = actualValue.toString();
+    const comparisonString = comparisonValue.toString();
+    switch (operator) {
+    case ComparisonOperators.Eq:
+        return comparisonString.split(',').includes(actualString);
+    case ComparisonOperators.Ne:
+        return !comparisonString.split(',').includes(actualString);
+    default:
+        throw new Error(`IDs can't be compared with "${operator}".`);
+    }
+}
+
 export function compare(
-    actualValue: string | boolean,
+    actualValue: string | boolean | string[],
     comparisonValue: string,
     operator: ComparisonOperators,
 ): boolean {
     if (typeof actualValue === 'string') {
         return compareStrings(actualValue, comparisonValue, operator);
-    } else if (typeof actualValue === 'boolean') {
+    }
+    if (typeof actualValue === 'boolean') {
         return compareBooleans(actualValue, queryParamIsTruthy(comparisonValue), operator);
+    }
+    if (actualValue instanceof Array) {
+        return actualValue.includes(comparisonValue);
     }
     throw new Error(`We haven't implemented comparisons with "${operator}" yet.`);
 }
@@ -234,7 +256,8 @@ export function compare(
 export function toOperator(operatorString: string): ComparisonOperators {
     if (!operatorString || operatorString === 'eq') {
         return ComparisonOperators.Eq;
-    } else if (Object.values(ComparisonOperators).includes(operatorString)) {
+    }
+    if (Object.values(ComparisonOperators).includes(operatorString)) {
         return operatorString as ComparisonOperators;
     }
     throw new Error(`The operator ${operatorString} is unknown.`);

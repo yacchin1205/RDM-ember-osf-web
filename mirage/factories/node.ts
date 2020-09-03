@@ -2,7 +2,7 @@ import { capitalize } from '@ember/string';
 import { Collection, Factory, faker, trait, Trait } from 'ember-cli-mirage';
 
 import Identifier from 'ember-osf-web/models/identifier';
-import Node from 'ember-osf-web/models/node';
+import Node, { NodeCategory } from 'ember-osf-web/models/node';
 import { Permission } from 'ember-osf-web/models/osf-model';
 
 import { guid, guidAfterCreate } from './utils';
@@ -24,30 +24,23 @@ export interface NodeTraits {
     withLicense: Trait;
     withAffiliatedInstitutions: Trait;
     withManyAffiliatedInstitutions: Trait;
+    withFiles: Trait;
 }
 
 export default Factory.extend<MirageNode & NodeTraits>({
     id: guid('node'),
     afterCreate(newNode, server) {
         guidAfterCreate(newNode, server);
-        if (!newNode.root && newNode.parent) {
-            newNode.update({ root: newNode.parent.root || newNode.parent });
+        if (!newNode.root) {
+            if (newNode.parent) {
+                newNode.update({ root: newNode.parent.root });
+            } else {
+                newNode.update({ root: newNode });
+            }
         }
     },
 
-    category: faker.list.cycle(
-        'project',
-        'analysis',
-        'communication',
-        'data',
-        'hypothesis',
-        'instrumentation',
-        'methods and measures',
-        'procedure',
-        'project',
-        'software',
-        'other',
-    ),
+    category: faker.random.arrayElement(Object.values(NodeCategory)),
     fork: false,
     currentUserIsContributor: false,
     preprint: false,
@@ -67,7 +60,6 @@ export default Factory.extend<MirageNode & NodeTraits>({
         ])());
     },
     collection: false,
-    subjects: [],
     registration: false,
     dateCreated() {
         return faker.date.past(1, new Date(2015, 0, 0));
@@ -106,8 +98,9 @@ export default Factory.extend<MirageNode & NodeTraits>({
                         server.schema.registrationSchemas.all().models,
                     ),
                 });
-                node.contributors.models.forEach(contributor =>
-                    server.create('contributor', { node: registration, users: contributor.users }));
+                node.contributors.models.forEach(
+                    contributor => server.create('contributor', { node: registration, users: contributor.users }),
+                );
             }
         },
     }),
@@ -127,7 +120,7 @@ export default Factory.extend<MirageNode & NodeTraits>({
 
     withDoi: trait<MirageNode>({
         afterCreate(node, server) {
-            const identifier = server.create('identifier');
+            const identifier = server.create('identifier', { referent: node });
             // eslint-disable-next-line no-param-reassign
             node.identifiers = [identifier] as unknown as Collection<Identifier>;
             node.save();
@@ -144,8 +137,7 @@ export default Factory.extend<MirageNode & NodeTraits>({
 
     withAffiliatedInstitutions: trait<MirageNode>({
         afterCreate(node, server) {
-            const affiliatedInstitutionCount = faker.random.number({ min: 4, max: 5 });
-            server.createList('institution', affiliatedInstitutionCount, {
+            server.createList('institution', 5, {
                 nodes: [node],
             });
         },
@@ -156,6 +148,16 @@ export default Factory.extend<MirageNode & NodeTraits>({
             server.createList('institution', 15, {
                 nodes: [node],
             });
+        },
+    }),
+
+    withFiles: trait<MirageNode>({
+        afterCreate(node, server) {
+            const count = faker.random.number({ min: 1, max: 5 });
+            const osfstorage = server.create('file-provider', { node });
+            const files = server.createList('file', count, { target: node });
+
+            osfstorage.rootFolder.update({ files });
         },
     }),
 

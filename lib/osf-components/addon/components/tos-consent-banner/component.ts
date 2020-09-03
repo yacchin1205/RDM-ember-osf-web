@@ -1,13 +1,16 @@
-import { action } from '@ember-decorators/object';
-import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
-import { task } from 'ember-concurrency';
+import { action } from '@ember/object';
+import { inject as service } from '@ember/service';
+import { task } from 'ember-concurrency-decorators';
 import { localClassNames } from 'ember-css-modules';
 import config from 'ember-get-config';
+import Intl from 'ember-intl/services/intl';
+import Toast from 'ember-toastr/services/toast';
 
 import { layout } from 'ember-osf-web/decorators/component';
 import Analytics from 'ember-osf-web/services/analytics';
 import CurrentUser from 'ember-osf-web/services/current-user';
+import captureException, { getApiErrorMessage } from 'ember-osf-web/utils/capture-exception';
 
 import styles from './styles';
 import template from './template';
@@ -17,12 +20,15 @@ import template from './template';
 export default class TosConsentBanner extends Component {
     @service analytics!: Analytics;
     @service currentUser!: CurrentUser;
+    @service intl!: Intl;
+    @service toast!: Toast;
 
     // Private properties
     show = false;
     didValidate = false;
     hasSubmitted = false;
 
+    @task({ drop: true })
     saveUser = task(function *(this: TosConsentBanner) {
         const user = yield this.currentUser.user;
         const { validations } = yield user.validate();
@@ -32,22 +38,29 @@ export default class TosConsentBanner extends Component {
             return;
         }
 
-        yield user.save();
+        try {
+            yield user.save();
+        } catch (e) {
+            const errorMessage = this.intl.t('tos_consent.failed_save');
+            captureException(e, { errorMessage });
+            this.toast.error(getApiErrorMessage(e), errorMessage);
+        }
+
         this.currentUser.set('showTosConsentBanner', false);
-    }).drop();
+    });
 
     constructor(properties: object) {
         super(properties);
         Object.assign(this, config.signUpPolicy);
     }
 
-    init(this: TosConsentBanner) {
+    init() {
         super.init();
         this.currentUser.checkShowTosConsentBanner();
     }
 
     @action
-    dismiss(this: TosConsentBanner) {
+    dismiss() {
         this.analytics.click('button', 'ToS Consent Banner - dismiss');
         this.set('didValidate', false);
         this.currentUser.set('showTosConsentBanner', false);

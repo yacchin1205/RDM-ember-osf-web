@@ -1,6 +1,6 @@
 import EmberObject from '@ember/object';
 
-import { action, computed } from '@ember-decorators/object';
+import { action, computed } from '@ember/object';
 import { A } from '@ember/array';
 import { later } from '@ember/runloop';
 import { all, task, timeout } from 'ember-concurrency';
@@ -80,15 +80,15 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             return;
         }
 
-        const i18n = this.owner.get('i18n');
-        this.owner.get('toast').success(i18n.t('file_browser.file_added_toast'));
-        this.get('flash').perform(file, i18n.t('file_browser.file_added'));
+        const intl = this.owner.get('intl');
+        this.owner.get('toast').success(intl.t('file_browser.file_added_toast'));
+        this.get('flash').perform(file, intl.t('file_browser.file_added'));
     });
 
     deleteFile = task(function *(this: IQBRIMSFileBrowser, file: File) {
         try {
             yield file.destroyRecord();
-            yield this.get('flash').perform(file, this.owner.get('i18n').t('file_browser.file_deleted'), 'danger');
+            yield this.get('flash').perform(file, this.owner.get('intl').t('file_browser.file_deleted'), 'danger');
             const allFiles = this.get('allFiles');
             if (!allFiles) {
                 return;
@@ -96,7 +96,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             allFiles.removeObject(file);
             this.notifyChange();
         } catch (e) {
-            yield this.get('flash').perform(file, this.owner.get('i18n').t('file_browser.delete_failed'), 'danger');
+            yield this.get('flash').perform(file, this.owner.get('intl').t('file_browser.delete_failed'), 'danger');
         }
     });
 
@@ -109,7 +109,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
     moveFile = task(function *(this: IQBRIMSFileBrowser, file: File, node: Node): IterableIterator<any> {
         try {
             yield file.move(node);
-            yield this.get('flash').perform(file, this.owner.get('i18n').t('file_browser.successfully_moved'));
+            yield this.get('flash').perform(file, this.owner.get('intl').t('file_browser.successfully_moved'));
             const allFiles = this.get('allFiles');
             if (!allFiles) {
                 return;
@@ -117,7 +117,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             allFiles.removeObject(file);
             this.notifyChange();
         } catch (ex) {
-            this.owner.get('toast').error(this.owner.get('i18n').t('move_to_project.could_not_move_file'));
+            this.owner.get('toast').error(this.owner.get('intl').t('move_to_project.could_not_move_file'));
         }
     });
 
@@ -134,10 +134,10 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             yield file.rename(name, conflict);
 
             // intentionally not yielded
-            flash.perform(file, this.owner.get('i18n').t('file_browser.successfully_renamed'));
+            flash.perform(file, this.owner.get('intl').t('file_browser.successfully_renamed'));
 
             if (conflictingFile) {
-                yield flash.perform(conflictingFile, this.owner.get('i18n').t('file_browser.file_replaced'), 'danger');
+                yield flash.perform(conflictingFile, this.owner.get('intl').t('file_browser.file_replaced'), 'danger');
                 const allFiles = this.get('allFiles');
                 if (!allFiles) {
                     return;
@@ -146,7 +146,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
             }
             this.notifyChange();
         } catch (ex) {
-            yield this.get('flash').perform(file, this.owner.get('i18n').t('file_browser.rename_failed'), 'danger');
+            yield this.get('flash').perform(file, this.owner.get('intl').t('file_browser.rename_failed'), 'danger');
         }
     });
 
@@ -230,14 +230,14 @@ export default class IQBRIMSFileBrowser extends EmberObject {
     }
 
     findGDTargetDirectory(defaultStorage: FileProviderModel) {
-        if (!defaultStorage.files.isFulfilled && !defaultStorage.files.isRejected) {
+        if (!defaultStorage.rootFolder.isFulfilled && !defaultStorage.rootFolder.isRejected) {
             later(() => {
                 this.findGDTargetDirectory(defaultStorage);
                 this.notifyPropertyChange('gdTargetDirectory');
             }, 500);
             return undefined;
         }
-        const files = defaultStorage.files.filter(f => f.name === this.folderName);
+        const files = defaultStorage.rootFolder.filter(f => f.name === this.folderName);
         if (files.length === 0) {
             return undefined;
         }

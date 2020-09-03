@@ -1,7 +1,7 @@
 import { render, waitFor } from '@ember/test-helpers';
+import { hbs } from 'ember-cli-htmlbars';
 import { setupEngineRenderingTest } from 'ember-osf-web/tests/helpers/engines';
 import { TestContext } from 'ember-test-helpers';
-import hbs from 'htmlbars-inline-precompile';
 import { module, test } from 'qunit';
 
 /* tslint:disable:only-arrow-functions */
@@ -28,7 +28,7 @@ module('Registries | Integration | Component | x-dummy', hooks => {
 
     test('it yields yieldValue', async assert => {
         await render(hbs`
-            {{#x-dummy data-test-dummy='1' yieldValue='It works!' as |val|}}
+            {{#x-dummy (html-attributes data-test-dummy='1') yieldValue='It works!' as |val|}}
                 <p>{{val}}</p>
             {{/x-dummy}}
         `);

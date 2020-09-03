@@ -17,13 +17,18 @@
         height: 29px;
         padding: 0.4em 0 0 0.2em;
     }
-}
 
-.selected {
-    color: $color-text-blue-dark !important;
-}
+    :global(.btn) {
+        &:active {
+            box-shadow: none;
+        }
+    }
 
-.not-selected {
-    color: $color-text-gray-dark !important;
-}
+    :global(.selected) {
+        color: $color-text-blue-dark !important;
+    }
 
+    :global(.not-selected) {
+        color: $color-text-gray-dark !important;
+    }
+}

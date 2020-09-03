@@ -1,8 +1,9 @@
-import { attr, belongsTo } from '@ember-decorators/data';
 import OsfModel from './osf-model';
 import DS from 'ember-data';
 
 import NodeModel from './node';
+
+const { attr, belongsTo } = DS;
 
 export default class NodeAddonModel extends OsfModel {
     @belongsTo('node', { inverse: 'addons', polymorphic: true })

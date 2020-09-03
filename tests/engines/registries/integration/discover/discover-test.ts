@@ -358,7 +358,7 @@ module('Registries | Integration | discover', hooks => {
 
         const engine = await loadEngine('registries', 'registries');
 
-        const shareSearch = new ShareSearch();
+        const shareSearch = ShareSearch.create();
 
         engine.register('service:share-search', shareSearch, { instantiate: false });
         this.owner.register('service:share-search', shareSearch, { instantiate: false });
@@ -453,7 +453,7 @@ module('Registries | Integration | discover', hooks => {
             await testCase.action(stub);
 
             sinon.assert.calledOnce(stub);
-            sinon.assert.calledWith(stub, Object.assign({ extra: undefined }, testCase.expected));
+            sinon.assert.calledWith(stub, { extra: undefined, ...testCase.expected });
         }
     });
 

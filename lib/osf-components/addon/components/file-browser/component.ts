@@ -1,14 +1,13 @@
-import { action, computed } from '@ember-decorators/object';
-import { alias, filterBy, not, notEmpty, or } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import { A } from '@ember/array';
 import MutableArray from '@ember/array/mutable';
 import Component from '@ember/component';
+import { action, computed } from '@ember/object';
+import { alias, filterBy, not, notEmpty, or } from '@ember/object/computed';
 import { next } from '@ember/runloop';
-import { task } from 'ember-concurrency';
+import { inject as service } from '@ember/service';
+import { task } from 'ember-concurrency-decorators';
 import { localClassNames } from 'ember-css-modules';
 import DS from 'ember-data';
-import I18N from 'ember-i18n/services/i18n';
 import Toast from 'ember-toastr/services/toast';
 import $ from 'jquery';
 
@@ -22,6 +21,7 @@ import defaultTo from 'ember-osf-web/utils/default-to';
 import getHref from 'ember-osf-web/utils/get-href';
 import pathJoin from 'ember-osf-web/utils/path-join';
 import { ProjectSelectState } from 'osf-components/components/project-selector/component';
+
 import styles from './styles';
 import template from './template';
 
@@ -52,7 +52,6 @@ enum modals {
 export default class FileBrowser extends Component {
     @service analytics!: Analytics;
     @service currentUser!: CurrentUser;
-    @service i18n!: I18N;
     @service ready!: Ready;
     @service store!: DS.Store;
     @service toast!: Toast;
@@ -107,6 +106,7 @@ export default class FileBrowser extends Component {
         acceptDirectories: false,
     };
 
+    @task
     moveToProject = task(function *(this: FileBrowser) {
         if (!this.node) {
             return;
@@ -154,6 +154,12 @@ export default class FileBrowser extends Component {
     @or('showFilterClicked', 'showFilterInput') showFilter!: boolean;
     @or('items.length', 'filter', 'isUploading') showItems!: boolean;
 
+    @computed()
+    get renderInPlace() {
+        const wormholeElement = document.querySelector('#ember-bootstrap-wormhole');
+        return !wormholeElement;
+    }
+
     @computed('selectedItems.firstObject.guid')
     get link(): string | undefined {
         const { guid } = this.selectedItems.firstObject as unknown as File;
@@ -184,7 +190,7 @@ export default class FileBrowser extends Component {
         }
     }
 
-    didInsertElement(this: FileBrowser) {
+    didInsertElement() {
         super.didInsertElement();
 
         const dismissPop = () => !this.isDestroyed && this.setProperties({ popupOpen: false });
@@ -219,7 +225,7 @@ export default class FileBrowser extends Component {
     }
 
     @action
-    closeRename(this: FileBrowser) {
+    closeRename() {
         this.setProperties({
             renameValue: '',
             showRename: false,
@@ -227,7 +233,7 @@ export default class FileBrowser extends Component {
     }
 
     @action
-    closeFilter(this: FileBrowser) {
+    closeFilter() {
         this.setProperties({
             showFilterClicked: false,
             filter: '',
@@ -284,7 +290,7 @@ export default class FileBrowser extends Component {
     }
 
     @action
-    selectItem(this: FileBrowser, currentItem: File) {
+    selectItem(currentItem: File) {
         this.analytics.track('file', 'select', 'Quick Files - Select file');
 
         if (this.openOnSelect) {
@@ -318,7 +324,7 @@ export default class FileBrowser extends Component {
     }
 
     @action
-    selectMultiple(this: FileBrowser, currentItem: File, toggle: boolean) {
+    selectMultiple(currentItem: File, toggle: boolean) {
         if (!this.multiple || !this.items) {
             return;
         }
@@ -380,14 +386,14 @@ export default class FileBrowser extends Component {
     }
 
     @action
-    deleteItems(this: FileBrowser, multiple: boolean = false) {
+    deleteItems(multiple: boolean = false) {
         this.analytics.track('file', 'delete', 'Quick Files - Delete files');
         this.deleteFiles(multiple ? this.selectedItems.slice() : this.selectedItems.slice(0, 1));
         this.set('currentModal', modals.None);
     }
 
     @action
-    renameConflict(this: FileBrowser, conflict: string): void {
+    renameConflict(conflict: string): void {
         const { renameValue, conflictingItem } = this;
         const selectedItem = this.selectedItems.firstObject as unknown as File;
 
@@ -408,7 +414,7 @@ export default class FileBrowser extends Component {
     }
 
     @action
-    rename(this: FileBrowser): void {
+    rename(): void {
         this.analytics.track('file', 'rename', 'Quick Files - Rename file');
 
         const { renameValue } = this;
@@ -444,8 +450,8 @@ export default class FileBrowser extends Component {
     }
 
     @action
-    openSharePopup(this: FileBrowser) {
-        this.set('popupOpen', true);
+    toggleSharePopup() {
+        this.toggleProperty('popupOpen');
 
         if (this.link) {
             return;
@@ -455,7 +461,7 @@ export default class FileBrowser extends Component {
     }
 
     @action
-    closeMoveToProjectModal(this: FileBrowser) {
+    closeMoveToProjectModal() {
         this.setProperties({
             projectSelectState: ProjectSelectState.main,
             currentModal: modals.None,
@@ -464,17 +470,17 @@ export default class FileBrowser extends Component {
     }
 
     @action
-    projectSelected(this: FileBrowser, node: Node) {
+    projectSelected(node: Node) {
         this.set('node', node);
     }
 
     @action
-    moveToNewProject(this: FileBrowser) {
+    moveToNewProject() {
         this.set('currentModal', modals.MoveToNew);
     }
 
     @action
-    afterStay(this: FileBrowser) {
+    afterStay() {
         this.set('currentModal', modals.None);
     }
 

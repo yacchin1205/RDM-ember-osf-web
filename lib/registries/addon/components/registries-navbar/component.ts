@@ -1,17 +1,25 @@
-import { layout, tagName } from '@ember-decorators/component';
-import { action } from '@ember-decorators/object';
-import { and } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
+import { tagName } from '@ember-decorators/component';
+import { action } from '@ember/object';
+import { and } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
 import Media from 'ember-responsive';
 
-import { requiredAction } from 'ember-osf-web/decorators/component';
+import { layout, requiredAction } from 'ember-osf-web/decorators/component';
 import defaultTo from 'ember-osf-web/utils/default-to';
 import { AuthBase } from 'osf-components/components/osf-navbar/auth-dropdown/component';
 import { OSF_SERVICES } from 'osf-components/components/osf-navbar/component';
 import config from 'registries/config/environment';
+import emberConfig from 'ember-get-config';
+
 import template from './template';
 
 const { externalLinks } = config;
+
+const {
+    OSF: {
+        pageName,
+    },
+} = emberConfig;
 
 @tagName('')
 @layout(template)
@@ -27,8 +35,10 @@ export default class RegistriesNavbar extends AuthBase {
 
     searchDropdownOpen: boolean = false;
 
+    title: string = pageName;
+
     @action
-    _onSearch(this: RegistriesNavbar, query: string) {
+    _onSearch(query: string) {
         this.onSearch(query);
         this.set('searchDropdownOpen', false);
     }

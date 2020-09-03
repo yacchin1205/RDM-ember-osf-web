@@ -1,6 +1,6 @@
-import { computed } from '@ember-decorators/object';
-import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
+import { computed } from '@ember/object';
+import { inject as service } from '@ember/service';
 
 import { layout } from 'ember-osf-web/decorators/component';
 import Analytics from 'ember-osf-web/services/analytics';
@@ -9,13 +9,23 @@ import defaultTo from 'ember-osf-web/utils/default-to';
 import styles from './styles';
 import template from './template';
 
+import config from 'ember-get-config';
+
+const {
+    OSF: {
+        pageName,
+    },
+} = config;
+
 @layout(template, styles)
 export default class ErrorPage extends Component {
     @service analytics!: Analytics;
     @service theme!: Theme;
 
     label: string = defaultTo(this.label, '');
-    translationKey: string = defaultTo(this.translationKey, '');
+    translateKey: string = defaultTo(this.translateKey, '');
+
+    title: string = pageName;
 
     @computed('theme.{isProvider,provider}')
     get supportEmail(): string {

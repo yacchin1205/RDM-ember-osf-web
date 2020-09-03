@@ -1,5 +1,6 @@
 import {
     click as untrackedClick,
+    currentRouteName,
     currentURL,
     fillIn,
     settled,
@@ -67,27 +68,27 @@ module('Acceptance | guid file', hooks => {
             assert.dom('[data-test-filter-input]').exists('after clicking filter');
             percySnapshot(assert);
 
-            fillIn('[data-test-filter-input]', 'a');
+            await fillIn('[data-test-filter-input]', 'a');
             triggerKeyEvent('[data-test-filter-input]', 'keyup', 'Shift');
             await settled();
             assert.dom('[data-test-file-item-link]').exists({ count: 3 }, 'filter for a');
 
-            fillIn('[data-test-filter-input]', 'z');
+            await fillIn('[data-test-filter-input]', 'z');
             triggerKeyEvent('[data-test-filter-input]', 'keyup', 'Shift');
             await settled();
             assert.dom('[data-test-file-item-link]').exists({ count: 3 }, 'filter for z');
 
-            fillIn('[data-test-filter-input]', 'az');
+            await fillIn('[data-test-filter-input]', 'az');
             triggerKeyEvent('[data-test-filter-input]', 'keyup', 'Shift');
             await settled();
             assert.dom('[data-test-file-item-link]').exists({ count: 1 }, 'filter for az');
 
-            fillIn('[data-test-filter-input]', 'aa');
+            await fillIn('[data-test-filter-input]', 'aa');
             triggerKeyEvent('[data-test-filter-input]', 'keyup', 'Shift');
             await settled();
             assert.dom('[data-test-file-item-link]').exists({ count: 1 }, 'filter for aa');
 
-            fillIn('[data-test-filter-input]', 'zz');
+            await fillIn('[data-test-filter-input]', 'zz');
             triggerKeyEvent('[data-test-filter-input]', 'keyup', 'Shift');
             await settled();
             assert.dom('[data-test-file-item-link]').exists({ count: 1 }, 'filter for zz');
@@ -114,11 +115,13 @@ module('Acceptance | guid file', hooks => {
                 },
             );
             await visit(`/--file/${fileOne.id}`);
-            assert.equal(currentURL(), `/--file/${fileOne.guid}`);
+            assert.equal(currentRouteName(), 'guid-file', 'current route is guid-file');
+            assert.ok(currentURL().includes(`${fileOne.guid}`), 'current URL includes fileOne guid');
             assert.dom('[data-test-file-title-header]').containsText(fileOne.name);
             assert.dom(`[data-test-file-item-link="${fileTwo.name}"]`).exists();
             await click(`[data-test-file-item-link="${fileTwo.name}"]`);
-            assert.equal(currentURL(), `/--file/${fileTwo.guid}`);
+            assert.equal(currentRouteName(), 'guid-file', 'current route is guid-file');
+            assert.ok(currentURL().includes(`${fileTwo.guid}`), 'current URL includes fileTwo guid');
             assert.dom('[data-test-file-title-header]').containsText(fileTwo.name);
         });
 
@@ -262,27 +265,27 @@ module('Acceptance | guid file', hooks => {
             assert.dom('[data-test-filter-input]').exists('after clicking filter');
             percySnapshot(assert);
 
-            fillIn('[data-test-filter-input]', 'a');
+            await fillIn('[data-test-filter-input]', 'a');
             triggerKeyEvent('[data-test-filter-input]', 'keyup', 'Shift');
             await settled();
             assert.dom('[data-test-file-item-link]').exists({ count: 3 }, 'filter for a');
 
-            fillIn('[data-test-filter-input]', 'z');
+            await fillIn('[data-test-filter-input]', 'z');
             triggerKeyEvent('[data-test-filter-input]', 'keyup', 'Shift');
             await settled();
             assert.dom('[data-test-file-item-link]').exists({ count: 3 }, 'filter for z');
 
-            fillIn('[data-test-filter-input]', 'az');
+            await fillIn('[data-test-filter-input]', 'az');
             triggerKeyEvent('[data-test-filter-input]', 'keyup', 'Shift');
             await settled();
             assert.dom('[data-test-file-item-link]').exists({ count: 1 }, 'filter for az');
 
-            fillIn('[data-test-filter-input]', 'aa');
+            await fillIn('[data-test-filter-input]', 'aa');
             triggerKeyEvent('[data-test-filter-input]', 'keyup', 'Shift');
             await settled();
             assert.dom('[data-test-file-item-link]').exists({ count: 1 }, 'filter for aa');
 
-            fillIn('[data-test-filter-input]', 'zz');
+            await fillIn('[data-test-filter-input]', 'zz');
             triggerKeyEvent('[data-test-filter-input]', 'keyup', 'Shift');
             await settled();
             assert.dom('[data-test-file-item-link]').exists({ count: 1 }, 'filter for zz');
@@ -310,11 +313,13 @@ module('Acceptance | guid file', hooks => {
                 },
             );
             await visit(`/--file/${fileOne.id}`);
-            assert.equal(currentURL(), `/--file/${fileOne.guid}`);
+            assert.equal(currentRouteName(), 'guid-file', 'current route is guid-file');
+            assert.ok(currentURL().includes(`${fileOne.guid}`), 'current URL includes fileOne guid');
             assert.dom('[data-test-file-title-header]').containsText(fileOne.name);
             assert.dom(`[data-test-file-item-link="${fileTwo.name}"]`).exists();
             await click(`[data-test-file-item-link="${fileTwo.name}"]`);
-            assert.equal(currentURL(), `/--file/${fileTwo.guid}`);
+            assert.equal(currentRouteName(), 'guid-file', 'current route is guid-file');
+            assert.ok(currentURL().includes(`${fileTwo.guid}`), 'current URL includes fileTwo guid');
             assert.dom('[data-test-file-title-header]').containsText(fileTwo.name);
         });
 
@@ -348,6 +353,7 @@ module('Acceptance | guid file', hooks => {
                 'file',
                 {
                     user: currentUser,
+                    currentVersion: 3,
                 },
             );
             await visit(`--file/${file.guid}`);

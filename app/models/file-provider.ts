@@ -1,11 +1,10 @@
-import { attr, belongsTo, hasMany } from '@ember-decorators/data';
 import DS from 'ember-data';
+import { Link } from 'jsonapi-typescript';
 
-import BaseFileItem from './base-file-item';
+import BaseFileItem, { BaseFileLinks } from './base-file-item';
 import FileModel from './file';
 import NodeModel from './node';
 
-import { Link } from 'jsonapi-typescript';
 import { OsfLinks } from './osf-model';
 
 export interface FileProviderLinks extends OsfLinks {
@@ -17,14 +16,20 @@ export interface FileProviderLinks extends OsfLinks {
     new_folder?: Link; // eslint-disable-line camelcase
 }
 
+export interface FileProviderLinks extends BaseFileLinks {
+    storage_addons: Link; // eslint-disable-line camelcase
+}
+
+const { attr, belongsTo } = DS;
+
 export default class FileProviderModel extends BaseFileItem {
     @attr() links!: FileProviderLinks;
     @attr('fixstring') name!: string;
     @attr('string') path!: string;
     @attr('fixstring') provider!: string;
 
-    @hasMany('file')
-    files!: DS.PromiseManyArray<FileModel>;
+    @belongsTo('file')
+    rootFolder!: DS.PromiseObject<FileModel> & FileModel;
 
     @belongsTo('node')
     node!: DS.PromiseObject<NodeModel> & NodeModel;

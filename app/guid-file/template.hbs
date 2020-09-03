@@ -35,7 +35,7 @@
                     {{/if}}
                     <div class='btn-group m-l-xs m-t-xs'>
                         <OsfButton
-                            data-analytics-name={{if (not this.canEdit) 'Download'}}
+                            data-analytics-name={{unless this.canEdit 'Download'}}
                             data-test-download-button
                             @bubble={{true}}
                             @type='primary'
@@ -125,7 +125,7 @@
             <h4 class='modal-title'>{{t 'file_detail.delete_file.question'}}</h4>
         </modal.header>
         <modal.body>
-            <p>{{t 'file_detail.delete_file.confirm' file-name=this.model.file.name}}</p>
+            <p>{{t 'file_detail.delete_file.confirm' file-name=this.model.file.name htmlSafe=true}}</p>
         </modal.body>
         <modal.footer data-analytics-scope='File detail - Delete file modal'>
             <OsfButton

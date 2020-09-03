@@ -1,6 +1,7 @@
 import { faker, ModelInstance, Server } from 'ember-cli-mirage';
 import config from 'ember-get-config';
 
+import FileProvider from 'ember-osf-web/models/file-provider';
 import { Permission } from 'ember-osf-web/models/osf-model';
 import User from 'ember-osf-web/models/user';
 
@@ -19,7 +20,10 @@ const {
     },
 } = config;
 
-function registrationScenario(server: Server, currentUser: ModelInstance<User>) {
+function registrationScenario(
+    server: Server,
+    currentUser: ModelInstance<User>,
+) {
     server.loadFixtures('citation-styles');
 
     const registrationNode = server.create(
@@ -47,13 +51,60 @@ function registrationScenario(server: Server, currentUser: ModelInstance<User>) 
 
     server.create('registration', { id: 'beefs' });
 
+    const registrationResponses = {
+        'page-one_long-text': '',
+        'page-one_multi-select': ['Crocs'],
+        'page-one_multi-select-other': '',
+        'page-one_short-text': 'Ravioli',
+        'page-one_single-select-two': 'Remember who was in NSync and who was in Backstreet Boys',
+    };
+
+    const rootNode = server.create('node');
+    const childNodeA = server.create('node', { parent: rootNode });
+    server.create('node', { parent: childNodeA });
+    server.create('node', { parent: childNodeA });
+    const licenseReqFields = server.schema.licenses.findBy({ name: 'MIT License' });
+
+    server.create('draft-registration', {
+        id: 'dcaf',
+        registrationSchema: server.schema.registrationSchemas.find('testSchema'),
+        initiator: currentUser,
+        registrationResponses,
+        branchedFrom: rootNode,
+        license: licenseReqFields,
+    }, 'withSubjects', 'withAffiliatedInstitutions', 'withContributors');
+
+    server.create('draft-registration', {
+        id: 'rrpre',
+        registrationSchema: server.schema.registrationSchemas.find('replication_recipe_pre_registration'),
+        initiator: currentUser,
+        registrationResponses,
+        branchedFrom: rootNode,
+    });
+
+    server.create('draft-registration', {
+        id: 'pregc',
+        registrationSchema: server.schema.registrationSchemas.find('prereg_challenge'),
+        initiator: currentUser,
+        registrationResponses,
+        branchedFrom: rootNode,
+    });
+
     server.create('registration', {
         id: 'decaf',
         registrationSchema: server.schema.registrationSchemas.find('prereg_challenge'),
         linkedNodes: server.createList('node', 2),
         linkedRegistrations: server.createList('registration', 2),
         currentUserPermissions: Object.values(Permission),
-    }, 'withContributors', 'withComments', 'withDoi', 'withLicense', 'withAffiliatedInstitutions');
+    }, 'withContributors', 'withComments', 'withAffiliatedInstitutions');
+
+    server.createList('subject', 10, 'withChildren');
+
+    const provider = server.schema.registrationProviders.find('osf');
+
+    provider.update({
+        subjects: server.schema.subjects.all().models,
+    });
 
     // Current user Bookmarks collection
     server.create('collection', { title: 'Bookmarks', bookmarks: true });
@@ -61,6 +112,52 @@ function registrationScenario(server: Server, currentUser: ModelInstance<User>) 
 
 function quickfilesScenario(server: Server, currentUser: ModelInstance<User>) {
     server.createList('file', 5, { user: currentUser });
+}
+
+function collectionScenario(server: Server, currentUser: ModelInstance<User>) {
+    const licensesAcceptable = server.schema.licenses.all().models;
+    const primaryCollection = server.create('collection');
+    const nodeToBeAdded = server.create('node', {
+        title: 'Node to be added to collection',
+        currentUserPermissions: Object.values(Permission),
+    });
+    server.create('contributor', {
+        node: nodeToBeAdded,
+        users: currentUser,
+        index: 0,
+    });
+    const nodeAdded = server.create('node', {
+        description: 'A random description',
+        title: 'Added to collection',
+        license: licensesAcceptable[0],
+        currentUserPermissions: Object.values(Permission),
+    });
+    server.create('contributor', {
+        node: nodeAdded,
+        users: currentUser,
+        index: 0,
+    });
+    server.create('collected-metadatum', {
+        creator: currentUser,
+        guid: nodeAdded,
+        id: nodeAdded.id,
+        collection: primaryCollection,
+    });
+    server.create('collected-metadatum', {
+        creator: currentUser,
+        guid: server.create('node', 'withContributors'),
+        collection: primaryCollection,
+    });
+    server.create('collected-metadatum', {
+        creator: currentUser,
+        guid: server.create('node', 'withContributors'),
+        collection: primaryCollection,
+    });
+    server.create('collection-provider', {
+        id: 'studyswap',
+        primaryCollection,
+        licensesAcceptable,
+    });
 }
 
 function dashboardScenario(server: Server, currentUser: ModelInstance<User>) {
@@ -94,7 +191,13 @@ function dashboardScenario(server: Server, currentUser: ModelInstance<User>) {
     for (const node of nodes.slice(4, 10)) {
         server.create('contributor', { node, users: currentUser, index: 11 });
     }
+
+    // NOTE: Some institutions are already created by this point
     server.createList('institution', 20);
+    // Create a specific institution to test institutional dashboard with; should be ID 29 at this point
+    server.create('institution', {
+        id: 'has-users',
+    }, 'withMetrics');
 }
 
 function forksScenario(server: Server, currentUser: ModelInstance<User>) {
@@ -116,16 +219,14 @@ function handbookScenario(server: Server, currentUser: ModelInstance<User>) {
         description: 'Passing in `model=this.node` tells the form to make changes to this model instance directly.',
     });
 
-    // InstitutionsWidget
-    const institutionsNode = server.create('node', {
-        id: 'lacks',
+    // EditableField
+    const editable = server.create('registration', {
+        id: 'editj',
+        registrationSchema: server.schema.registrationSchemas.find('prereg_challenge'),
+        currentUserPermissions: Object.values(Permission),
     }, 'withAffiliatedInstitutions');
 
-    server.createList('institution', 2, { users: [currentUser], nodes: [institutionsNode] });
-
-    server.create('node', {
-        id: 'manys',
-    }, 'withManyAffiliatedInstitutions');
+    server.create('contributor', { users: currentUser, node: editable });
 
     // ContributorList
     for (const contributorCount of [1, 2, 3, 23]) {
@@ -138,6 +239,54 @@ function handbookScenario(server: Server, currentUser: ModelInstance<User>) {
     const child = server.create('node', { parent, id: 'ezcuj1', title: faker.lorem.sentences(5) });
     const grandChild = server.create('node', { parent: child, root: parent, id: 'ezcuj2' });
     server.create('node', { parent: grandChild, root: parent, id: 'ezcuj3' });
+
+    // Files Widget
+    const fileWidgetNode = server.create('node',
+        { id: 'ogst', currentUserPermissions: Object.values(Permission) }, 'withFiles');
+
+    const folderA = server.create('file', { target: fileWidgetNode }, 'asFolder');
+
+    const fileProviders = fileWidgetNode.files.models as Array<ModelInstance<FileProvider>>;
+    const [osfstorage] = fileProviders;
+    const providerFiles = osfstorage.rootFolder.files.models;
+
+    osfstorage.rootFolder.update({
+        files: [...providerFiles, folderA],
+    });
+
+    server.createList('file', 15, { target: fileWidgetNode, parentFolder: folderA });
+    const folderB = server.create('file', { target: fileWidgetNode, parentFolder: folderA }, 'asFolder');
+
+    server.createList('file', 2, { target: fileWidgetNode, parentFolder: folderB });
+    const folderC = server.create('file', { target: fileWidgetNode, parentFolder: folderB }, 'asFolder');
+
+    server.createList('file', 3, { target: fileWidgetNode, parentFolder: folderC });
+    server.create('file', { target: fileWidgetNode, parentFolder: folderC }, 'asFolder');
+
+    // SubjectWidgets
+    server.createList('subject', 10, 'withChildren');
+    const provider = server.schema.registrationProviders.find('osf');
+    provider.update({
+        subjects: server.schema.subjects.all().models,
+    });
+    server.create('registration', { id: 'subj' }, 'withSubjects');
+
+    // SchemaBlock Renderer
+    const schemaNode = server.create(
+        'node',
+        { id: 'dslt', currentUserPermissions: Object.values(Permission) },
+        'withFiles',
+    );
+
+    const folder = server.create('file', { target: schemaNode }, 'asFolder');
+    const providers = fileWidgetNode.files.models as Array<ModelInstance<FileProvider>>;
+    const storage = providers[0];
+    const providersFiles = storage.rootFolder.files.models;
+    storage.update({
+        files: [...providersFiles, folder],
+    });
+    server.createList('file', 15, { target: schemaNode, parentFolder: folder });
+    server.createList('contributor', 23, { node: schemaNode });
 }
 
 function settingsScenario(server: Server, currentUser: ModelInstance<User>) {
@@ -159,13 +308,15 @@ function meetingsScenario(server: Server) {
 }
 
 export default function(server: Server) {
+    server.loadFixtures('schema-blocks');
     server.loadFixtures('registration-schemas');
     server.loadFixtures('regions');
     server.loadFixtures('preprint-providers');
     server.loadFixtures('licenses');
+    server.loadFixtures('registration-providers');
 
-    const userTraits = !mirageScenarios.includes('loggedIn') ? [] :
-        [
+    const userTraits = !mirageScenarios.includes('loggedIn') ? []
+        : [
             'loggedIn',
             'withInstitutions',
             'withSettings',
@@ -180,6 +331,9 @@ export default function(server: Server) {
     }
     if (mirageScenarios.includes('registrations')) {
         registrationScenario(server, currentUser);
+    }
+    if (mirageScenarios.includes('collections')) {
+        collectionScenario(server, currentUser);
     }
     if (mirageScenarios.includes('forks')) {
         forksScenario(server, currentUser);

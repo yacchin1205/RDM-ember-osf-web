@@ -1,5 +1,7 @@
-import { attr } from '@ember-decorators/data';
 import OsfModel from './osf-model';
+import DS from 'ember-data';
+
+const { attr } = DS;
 
 export default class IQBRIMSStatusModel extends OsfModel {
     @attr('boolean') isAdmin!: boolean;

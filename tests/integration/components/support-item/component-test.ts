@@ -1,22 +1,23 @@
 import { render } from '@ember/test-helpers';
 import a11yAudit from 'ember-a11y-testing/test-support/audit';
-import { t } from 'ember-i18n/test-support';
+import { hbs } from 'ember-cli-htmlbars';
+import { setupIntl, t } from 'ember-intl/test-support';
 import { setupRenderingTest } from 'ember-qunit';
-import { module, test } from 'qunit';
 
-import hbs from 'htmlbars-inline-precompile';
+import { module, test } from 'qunit';
 
 module('Integration | Component | support-item', hooks => {
     setupRenderingTest(hooks);
+    setupIntl(hooks);
 
     test('it renders', async function(assert) {
         this.set('icon', 'search');
         this.set('header', 'Search and Discover');
-        this.set('description', 'Find papers, data, and materials to inspire your next research project. ' +
-        'Search public projects to build on the work of others and find new collaborators.');
+        this.set('description', 'Find papers, data, and materials to inspire your next research project. '
+        + 'Search public projects to build on the work of others and find new collaborators.');
 
         await render(hbs`
-            <NewHome::-Components::SupportSection::SupportItem
+            <Home::-Components::SupportSection::SupportItem
                 @icon={{this.icon}}
                 @header={{this.header}}
                 @description={{this.description}}

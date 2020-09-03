@@ -1,10 +1,11 @@
-import { action } from '@ember-decorators/object';
-import { bool } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
-import { task, timeout } from 'ember-concurrency';
+import { action } from '@ember/object';
+import { bool } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { timeout } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
 import DS from 'ember-data';
-import I18N from 'ember-i18n/services/i18n';
+import { stripDiacritics } from 'ember-power-select/utils/group-utils';
 
 import { layout, requiredAction } from 'ember-osf-web/decorators/component';
 import Collection from 'ember-osf-web/models/collection';
@@ -12,8 +13,7 @@ import Node from 'ember-osf-web/models/node';
 import { Permission, QueryHasManyResult } from 'ember-osf-web/models/osf-model';
 import CurrentUser from 'ember-osf-web/services/current-user';
 import defaultTo from 'ember-osf-web/utils/default-to';
-import { stripDiacritics } from 'ember-power-select/utils/group-utils';
-import $ from 'jquery';
+
 import styles from './styles';
 import template from './template';
 
@@ -22,14 +22,25 @@ function stripAndLower(text: string): string {
 }
 
 @layout(template, styles)
-export default class CollectionItemPicker extends Component.extend({
-    didReceiveAttrs(this: CollectionItemPicker) {
-        if (!this.get('initialLoad').hasStarted && this.collection) {
-            this.get('initialLoad').perform();
-        }
-    },
+export default class CollectionItemPicker extends Component {
+    @service currentUser!: CurrentUser;
+    @service store!: DS.Store;
 
-    initialLoad: task(function *(this: CollectionItemPicker) {
+    @requiredAction projectSelected!: (value: Node) => void;
+    @requiredAction validationChanged!: (isValid: boolean) => void;
+
+    collection: Collection = this.collection;
+    selected: Node | null = defaultTo(this.selected, null);
+    filter: string = '';
+    page: number = 1;
+    hasMore: boolean = false;
+    loadingMore: boolean = false;
+    items: Node[] = [];
+
+    @bool('selected') isValid!: boolean;
+
+    @task
+    initialLoad = task(function *(this: CollectionItemPicker) {
         this.setProperties({
             selected: null,
             filter: '',
@@ -37,9 +48,10 @@ export default class CollectionItemPicker extends Component.extend({
         });
 
         yield this.get('findNodes').perform();
-    }),
+    });
 
-    findNodes: task(function *(this: CollectionItemPicker, filter: string = '') {
+    @task({ restartable: true })
+    findNodes = task(function *(this: CollectionItemPicker, filter: string = '') {
         if (filter) {
             yield timeout(250);
         }
@@ -74,19 +86,14 @@ export default class CollectionItemPicker extends Component.extend({
 
         // Filter out nodes that are already in the current collection
         const nodeIds = nodes.mapBy('id').join();
-
-        const params = $.param({
+        const cgm = yield this.collection.queryHasMany('collectedMetadata', {
             'filter[id]': nodeIds,
-            'fields[collected-metadata]': '', // sparse fieldset optimization (only need IDs)
-        });
-
-        const { data } = yield this.currentUser.authenticatedAJAX({
-            url: `${this.collection.links.self}collected_metadata/?${params}`,
         });
 
         // Collected-metadata IDs are the same as node IDs
-        const cgmIds: string[] = data.mapBy('id');
-        const filteredNodes = nodes.filter(({ id }) => !cgmIds.includes(id));
+        const cgmCompoundIds: string[] = cgm.mapBy('id');
+        const cgmSimpleIds: string[] = cgmCompoundIds.map(id => id.split('-')[1]);
+        const filteredNodes = nodes.filter(({ id }) => !cgmSimpleIds.includes(id));
         const { meta } = nodes;
         const hasMore = meta.total > meta.per_page * this.page;
         const items = more ? this.items.concat(filteredNodes) : filteredNodes;
@@ -103,24 +110,7 @@ export default class CollectionItemPicker extends Component.extend({
         });
 
         return items;
-    }).restartable(),
-}) {
-    @service currentUser!: CurrentUser;
-    @service i18n!: I18N;
-    @service store!: DS.Store;
-
-    @requiredAction projectSelected!: (value: Node) => void;
-    @requiredAction validationChanged!: (isValid: boolean) => void;
-
-    collection: Collection = this.collection;
-    selected: Node | null = defaultTo(this.selected, null);
-    filter: string = '';
-    page: number = 1;
-    hasMore: boolean = false;
-    loadingMore: boolean = false;
-    items: Node[] = [];
-
-    @bool('selected') isValid!: boolean;
+    });
 
     /**
      * Passed into power-select component for customized searching.
@@ -140,7 +130,7 @@ export default class CollectionItemPicker extends Component.extend({
     }
 
     @action
-    valueChanged(this: CollectionItemPicker, value?: Node): void {
+    valueChanged(value?: Node): void {
         if (value) {
             this.set('selected', value);
             this.projectSelected(value);
@@ -159,5 +149,11 @@ export default class CollectionItemPicker extends Component.extend({
     @action
     oninput(this: CollectionItemPicker, term: string): true | Promise<Node[]> {
         return !!term || this.get('findNodes').perform();
+    }
+
+    didReceiveAttrs() {
+        if (!this.initialLoad.hasStarted && this.collection) {
+            this.initialLoad.perform();
+        }
     }
 }

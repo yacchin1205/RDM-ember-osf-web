@@ -1,9 +1,10 @@
-import { action, computed } from '@ember-decorators/object';
-import { alias, or } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import { A } from '@ember/array';
 import Controller from '@ember/controller';
-import { all, task, timeout } from 'ember-concurrency';
+import { action, computed } from '@ember/object';
+import { alias, or } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { all, timeout } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
 import DS from 'ember-data';
 import config from 'ember-get-config';
 
@@ -22,6 +23,9 @@ const {
     dashboard: {
         noteworthyNode,
         popularNode,
+    },
+    navbar: {
+        useSearch,
     },
 } = config;
 
@@ -49,7 +53,9 @@ export default class Dashboard extends Controller {
     noteworthy!: QueryHasManyResult<Node>;
     popular!: QueryHasManyResult<Node>;
     useSimplePage: boolean = simplePage;
+    useSearch: string = useSearch ? 'true' : 'false';
 
+    @task({ restartable: true })
     setupTask = task(function *(this: Dashboard) {
         this.set('filter', null);
 
@@ -57,28 +63,30 @@ export default class Dashboard extends Controller {
 
         yield all([
             institutions,
-            this.get('findNodes').perform(),
-            this.get('getPopularAndNoteworthy').perform(popularNode, 'popular'),
-            this.get('getPopularAndNoteworthy').perform(noteworthyNode, 'noteworthy'),
+            this.findNodes.perform(),
+            this.getPopularAndNoteworthy.perform(popularNode, 'popular'),
+            this.getPopularAndNoteworthy.perform(noteworthyNode, 'noteworthy'),
         ]);
 
         this.set('institutions', institutions.toArray());
-    }).restartable();
+    });
 
+    @task({ restartable: true })
     filterNodes = task(function *(this: Dashboard, filter: string) {
         yield timeout(500);
         this.setProperties({ filter });
         this.analytics.track('list', 'filter', 'Dashboard - Search projects');
-        yield this.get('findNodes').perform();
-    }).restartable();
+        yield this.findNodes.perform();
+    });
 
+    @task({ restartable: true })
     findNodes = task(function *(this: Dashboard, more?: boolean) {
         const indicatorProperty = more ? 'loadingMore' : 'loading';
         this.set(indicatorProperty, true);
 
         const user: User = yield this.currentUser.user;
 
-        const nodes: QueryHasManyResult<Node> = yield user.queryHasMany('nodes', {
+        const nodes: QueryHasManyResult<Node> = yield user.queryHasMany('sparseNodes', {
             embed: ['bibliographic_contributors', 'parent', 'root'],
             // eslint-disable-next-line ember/no-global-jquery
             filter: this.filter ? { title: $('<div>').text(this.filter).html() } : undefined,
@@ -94,8 +102,9 @@ export default class Dashboard extends Controller {
 
         this.set(indicatorProperty, false);
         this.set('initialLoad', false);
-    }).restartable();
+    });
 
+    @task
     getPopularAndNoteworthy = task(function *(this: Dashboard, id: string, dest: 'noteworthy' | 'popular') {
         try {
             const node: Node = yield this.store.findRecord('node', id);
@@ -120,23 +129,23 @@ export default class Dashboard extends Controller {
     }
 
     @action
-    more(this: Dashboard) {
-        this.get('findNodes').perform(true);
+    more() {
+        this.findNodes.perform(true);
     }
 
     @action
-    sortProjects(this: Dashboard, sort: string) {
+    sortProjects(sort: string) {
         this.setProperties({ sort });
-        this.get('findNodes').perform();
+        this.findNodes.perform();
     }
 
     @action
-    openModal(this: Dashboard) {
+    openModal() {
         this.set('modalOpen', true);
     }
 
     @action
-    closeModal(this: Dashboard) {
+    closeModal() {
         this.setProperties({
             modalOpen: false,
             newNode: null,
@@ -145,12 +154,12 @@ export default class Dashboard extends Controller {
     }
 
     @action
-    afterStay(this: Dashboard) {
-        this.get('findNodes').perform();
+    afterStay() {
+        this.findNodes.perform();
     }
 
     @action
-    projectCreated(this: Dashboard, newNode: Node) {
+    projectCreated(newNode: Node) {
         this.set('newNode', newNode);
         this.set('showNewNodeNavigation', true);
     }

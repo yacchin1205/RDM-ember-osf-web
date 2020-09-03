@@ -33,18 +33,16 @@
             <div class='form-group m-v-sm'>
                 <label class='f-w-lg text-bigger' local-class='NewProject__label'>
                     {{t 'general.title'}}
-                    {{! template-lint-disable no-implicit-this }}
-                    {{input
+                    <Input
                         data-test-new-project-title
-                        placeholder=(t 'new_project.title_placeholder')
-                        autofocus='autofocus'
-                        class='form-control project-name'
-                        required=true
-                        value=this.nodeTitle
-                        type='text'
-                        enter=(action this.create)
-                    }}
-                    {{! template-lint-enable no-implicit-this }}
+                        @placeholder={{t 'new_project.title_placeholder'}}
+                        @autofocus='autofocus'
+                        @class='form-control project-name'
+                        @required={{true}}
+                        @value={{this.nodeTitle}}
+                        @type='text'
+                        @enter={{action this.create}}
+                    />
                 </label>
             </div>
 
@@ -67,31 +65,33 @@
                         {{t 'new_project.select_all'}}
                     </OsfButton>
                     <table>
-                        <tr data-test-institution-button-row >
-                            {{#each this.institutions as | institution |}}
-                                <td>
-                                    <OsfButton
-                                        data-test-institution-selected='{{if (if-filter institution this.selectedInstitutions) 'selected' 'not-selected'}}'
-                                        data-analytics-name='select_institution'
-                                        local-class='NewProject__institution-button'
-                                        @type='link'
-                                        @onClick={{action this.selectInstitution institution}}
-                                    >
-                                        <div width='45px' height='45px' local-class='NewProject__institution-item'>
-                                            <img
-                                                name='{{institution.name}}'
-                                                width='45px'
-                                                height='45px'
-                                                class='img-circle pointer'
-                                                local-class='NewProject__institution-img-{{if (if-filter institution this.selectedInstitutions) 'selected' 'not-selected'}}'
-                                                src='{{institution.logoRoundedUrl}}'
-                                                alt='{{institution.name}}'
-                                                title='{{institution.name}}'>
-                                        </div>
-                                    </OsfButton>
-                                </td>
-                            {{/each}}
-                        </tr>
+                        <tbody>
+                            <tr data-test-institution-button-row >
+                                {{#each this.institutions as | institution |}}
+                                    <td>
+                                        <OsfButton
+                                            data-test-institution-selected='{{if (if-filter institution this.selectedInstitutions) 'selected' 'not-selected'}}'
+                                            data-analytics-name='select_institution'
+                                            local-class='NewProject__institution-button'
+                                            @type='link'
+                                            @onClick={{action this.selectInstitution institution}}
+                                        >
+                                            <div width='45px' height='45px' local-class='NewProject__institution-item'>
+                                                <img
+                                                    name='{{institution.name}}'
+                                                    width='45px'
+                                                    height='45px'
+                                                    class='img-circle pointer'
+                                                    local-class='NewProject__institution-img-{{if (if-filter institution this.selectedInstitutions) 'selected' 'not-selected'}}'
+                                                    src='{{institution.logoRoundedUrl}}'
+                                                    alt='{{institution.name}}'
+                                                    title='{{institution.name}}'>
+                                            </div>
+                                        </OsfButton>
+                                    </td>
+                                {{/each}}
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             {{/if}}
@@ -126,15 +126,13 @@
                 <div class='form-group m-v-sm'>
                     <label for='projectDesc' class='f-w-lg text-bigger' local-class='NewProject__label'>
                         {{t 'general.description'}}
-                        {{! template-lint-disable no-implicit-this }}
-                        {{input
+                        <Input
                             data-test-project-description-input
-                            placeholder=(t 'new_project.description_placeholder')
-                            class='form-control noresize project-desc'
-                            value=this.description
-                            type='text'
-                        }}
-                        {{! template-lint-enable no-implicit-this }}
+                            @placeholder={{t 'new_project.description_placeholder'}}
+                            @class='form-control noresize project-desc'
+                            @value={{this.description}}
+                            @type='text'
+                        />
                     </label>
                 </div>
                 <div data-test-select-template class='form-group m-v-md'>

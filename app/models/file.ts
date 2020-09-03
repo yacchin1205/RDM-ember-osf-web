@@ -1,27 +1,24 @@
-import { attr, belongsTo, hasMany } from '@ember-decorators/data';
 import DS from 'ember-data';
 import { Link } from 'jsonapi-typescript';
 
+import { FileReference } from 'ember-osf-web/packages/registration-schema';
 import getHref from 'ember-osf-web/utils/get-href';
 
-import BaseFileItem from './base-file-item';
+import BaseFileItem, { BaseFileLinks } from './base-file-item';
 import CommentModel from './comment';
 import FileVersionModel from './file-version';
 import NodeModel from './node';
-import { OsfLinks } from './osf-model';
 import UserModel from './user';
 
-export interface FileLinks extends OsfLinks {
+const { attr, belongsTo, hasMany } = DS;
+
+export interface FileLinks extends BaseFileLinks {
     info: Link;
     move: Link;
-    upload: Link;
     delete: Link;
 
     // only for files
     download?: Link;
-
-    // only for folders
-    new_folder?: Link; // eslint-disable-line camelcase
 }
 
 export default class FileModel extends BaseFileItem {
@@ -56,7 +53,7 @@ export default class FileModel extends BaseFileItem {
 
     // TODO: In the future apiv2 may also need to support this pointing at nodes OR registrations
     @belongsTo('node')
-    node!: DS.PromiseObject<NodeModel> & NodeModel;
+    target!: DS.PromiseObject<NodeModel> & NodeModel;
 
     @belongsTo('user')
     user!: DS.PromiseObject<UserModel> & UserModel;
@@ -80,6 +77,20 @@ export default class FileModel extends BaseFileItem {
             });
         }
         return Promise.reject(Error('Can only get the contents of files.'));
+    }
+
+    toFileReference(): FileReference {
+        return {
+            file_id: this.id,
+            file_name: this.name,
+            file_urls: {
+                html: (this.links.html as string),
+                download: (this.links.download as string),
+            },
+            file_hashes: {
+                sha256: this.extra.hashes.sha256,
+            },
+        };
     }
 
     async rename(newName: string, conflict = 'replace'): Promise<void> {

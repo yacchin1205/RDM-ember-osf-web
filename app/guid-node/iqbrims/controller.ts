@@ -1,6 +1,6 @@
-import { action, computed } from '@ember-decorators/object';
-import { reads } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
+import { action, computed } from '@ember/object';
+import { reads } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
 import Controller from '@ember/controller';
 import EmberError from '@ember/error';
 
@@ -8,7 +8,7 @@ import DS from 'ember-data';
 
 import { later } from '@ember/runloop';
 
-import I18N from 'ember-i18n/services/i18n';
+import Intl from 'ember-intl/services/intl';
 import File from 'ember-osf-web/models/file';
 import FileProviderModel from 'ember-osf-web/models/file-provider';
 import IQBRIMSStatusModel from 'ember-osf-web/models/iqbrims-status';
@@ -25,7 +25,7 @@ import IQBRIMSFileBrowser from './file-browser';
 
 export default class GuidNodeIQBRIMS extends Controller {
     @service toast!: Toast;
-    @service i18n!: I18N;
+    @service intl!: Intl;
     @service statusMessages!: StatusMessages;
     @service analytics!: Analytics;
     @service currentUser!: CurrentUser;
@@ -245,7 +245,7 @@ export default class GuidNodeIQBRIMS extends Controller {
 
     submitError(status: IQBRIMSStatusModel) {
         status.rollbackAttributes();
-        const message = this.i18n.t('iqbrims.failed_to_submit');
+        const message = this.intl.t('iqbrims.failed_to_submit');
         this.toast.error(message);
         this.set('submitting', false);
     }
@@ -947,13 +947,13 @@ export default class GuidNodeIQBRIMS extends Controller {
     }
 
     findWorkingDirectory(defaultStorage: FileProviderModel) {
-        if (!defaultStorage.files.isFulfilled && !defaultStorage.files.isRejected) {
+        if (!defaultStorage.rootFolder.isFulfilled && !defaultStorage.rootFolder.isRejected) {
             later(() => {
                 this.findWorkingDirectory(defaultStorage);
             }, 500);
             return undefined;
         }
-        const files = defaultStorage.files.filter(f => f.name === this.workingFolderName);
+        const files = defaultStorage.rootFolder.filter(f => f.name === this.workingFolderName);
         if (files.length === 0) {
             this.createWorkingDirectory(defaultStorage);
             return undefined;
@@ -1091,11 +1091,11 @@ export default class GuidNodeIQBRIMS extends Controller {
     toOverview() {
         const overview = [];
         overview.push({
-            header: this.i18n.t('iqbrims.labo').toString(),
+            header: this.intl.t('iqbrims.labo').toString(),
             value: this.laboName,
         });
         overview.push({
-            header: this.i18n.t('iqbrims.paper_title').toString(),
+            header: this.intl.t('iqbrims.paper_title').toString(),
             value: this.paperTitle,
         });
         const contributors = [this.owner ? this.owner.fullName : ''];
@@ -1105,54 +1105,54 @@ export default class GuidNodeIQBRIMS extends Controller {
             });
         }
         overview.push({
-            header: this.i18n.t('iqbrims.contributors').toString(),
+            header: this.intl.t('iqbrims.contributors').toString(),
             value: contributors.join(','),
         });
         const emails = this.contributorEmails ? this.contributorEmails.join(',') : '';
         overview.push({
-            header: this.i18n.t('iqbrims.email').toString(),
+            header: this.intl.t('iqbrims.email').toString(),
             value: emails,
         });
         if (this.modeDeposit) {
             overview.push({
-                header: this.i18n.t('iqbrims.accepted_date').toString(),
+                header: this.intl.t('iqbrims.accepted_date').toString(),
                 value: this.acceptedDate,
             });
             overview.push({
-                header: this.i18n.t('iqbrims.journal_name').toString(),
+                header: this.intl.t('iqbrims.journal_name').toString(),
                 value: this.journalName,
             });
             overview.push({
-                header: this.i18n.t('iqbrims.doi').toString(),
+                header: this.intl.t('iqbrims.doi').toString(),
                 value: this.doi || '',
             });
             overview.push({
-                header: this.i18n.t('iqbrims.publish_date').toString(),
+                header: this.intl.t('iqbrims.publish_date').toString(),
                 value: this.publishDate || '',
             });
             overview.push({
-                header: this.i18n.t('iqbrims.volume').toString(),
+                header: this.intl.t('iqbrims.volume').toString(),
                 value: this.volume || '',
             });
             overview.push({
-                header: this.i18n.t('iqbrims.page_number').toString(),
+                header: this.intl.t('iqbrims.page_number').toString(),
                 value: this.pageNumber || '',
             });
             overview.push({
-                header: this.i18n.t('iqbrims.has_paper').toString(),
+                header: this.intl.t('iqbrims.has_paper').toString(),
                 value: this.hasPaper ? '提出する' : '提出しない',
             });
             overview.push({
-                header: this.i18n.t('iqbrims.has_raw').toString(),
+                header: this.intl.t('iqbrims.has_raw').toString(),
                 value: this.hasRaw ? '提出する' : '提出しない',
             });
             overview.push({
-                header: this.i18n.t('iqbrims.has_checklist').toString(),
+                header: this.intl.t('iqbrims.has_checklist').toString(),
                 value: this.hasChecklist ? '提出する' : '提出しない',
             });
         }
         overview.push({
-            header: this.i18n.t('iqbrims.files_comment').toString(),
+            header: this.intl.t('iqbrims.files_comment').toString(),
             value: this.filesComment || '',
         });
         return JSON.stringify(overview);

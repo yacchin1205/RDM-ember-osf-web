@@ -1,5 +1,5 @@
-import { service } from '@ember-decorators/service';
 import { assert } from '@ember/debug';
+import { inject as service } from '@ember/service';
 import { underscore } from '@ember/string';
 import DS from 'ember-data';
 import config from 'ember-get-config';
@@ -102,7 +102,7 @@ export default class OsfAdapter extends JSONAPIAdapter {
         if (snapshot) {
             const { adapterOptions }: { adapterOptions?: { url?: string } } = snapshot;
             if (adapterOptions && adapterOptions.url) {
-                url = adapterOptions.url; // eslint-disable-line prefer-destructuring
+                url = adapterOptions.url;
             }
         }
 

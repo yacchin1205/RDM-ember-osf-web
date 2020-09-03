@@ -14,14 +14,16 @@ interface ResourceOptions extends ActionOptions<resourceAction> {
 
 interface NestedResourceOptions extends ResourceOptions {
     relatedModelName: keyof ModelRegistry;
+    onCreate?: (parent: ModelInstance, child: ModelInstance) => void;
 }
 
-type relationshipAction = 'related' | 'self' | 'add' | 'remove';
+type relationshipAction = 'self' | 'related' | 'update' | 'add' | 'remove';
 
 interface RelationshipOptions extends ActionOptions<relationshipAction> {
     defaultPageSize?: number;
     path: string;
     defaultSortKey: string;
+    relatedModelName: string;
 }
 
 interface ActionOptions<T extends string> {
@@ -45,20 +47,22 @@ function gatherResourceActions(opts: ResourceOptions) {
 }
 
 function gatherRelationshipActions(opts: RelationshipOptions) {
-    const actions: relationshipAction[] = ['related', 'self', 'add', 'remove'];
+    const actions: relationshipAction[] = ['self', 'related', 'update', 'add', 'remove'];
     return gatherActions(opts, actions);
 }
 
+// For top-level resources, e.g. `/v2/nodes/`
 export function osfResource(
     server: Server,
     modelName: keyof ModelRegistry,
     options?: Partial<ResourceOptions>,
 ) {
     const mirageModelName = pluralize(camelize(modelName));
-    const opts: ResourceOptions = Object.assign({
+    const opts: ResourceOptions = {
         path: `/${pluralize(underscore(modelName))}`,
         defaultSortKey: '-id',
-    }, options);
+        ...options,
+    };
     const detailPath = `${opts.path}/:id`;
     const actions = gatherResourceActions(opts);
 
@@ -96,17 +100,20 @@ export function osfResource(
     }
 }
 
+// For resources that are only accessible through a top-level resource's relationship,
+// e.g. `/v2/nodes/<node_id>/contributors/<contributor_id>` (there is no `/v2/contributors/<contributor_id>`)
 export function osfNestedResource<K extends keyof ModelRegistry>(
     server: Server,
     parentModelName: K,
     relationshipName: string & RelationshipsFor<ModelRegistry[K]>,
     options?: Partial<NestedResourceOptions>,
 ) {
-    const opts: NestedResourceOptions = Object.assign({
+    const opts: NestedResourceOptions = {
         path: `/${pluralize(underscore(parentModelName))}/:parentID/${underscore(relationshipName)}`,
-        relatedModelName: relationshipName,
+        relatedModelName: singularize(relationshipName) as keyof ModelRegistry,
         defaultSortKey: '-id',
-    }, options);
+        ...options,
+    };
     const mirageParentModelName = pluralize(camelize(parentModelName));
     const mirageRelatedModelName = pluralize(camelize(opts.relatedModelName));
     const detailPath = `${opts.path}/:id`;
@@ -119,16 +126,31 @@ export function osfNestedResource<K extends keyof ModelRegistry>(
                 .models
                 .filter((m: ModelInstance) => filter(m, request))
                 .map((model: ModelInstance) => this.serialize(model).data);
-            return process(schema, request, this, data, { defaultSortKey: opts.defaultSortKey });
+            return process(schema, request, this, data, opts);
         });
     }
 
     if (actions.includes('show')) {
-        server.get(detailPath, mirageRelatedModelName);
+        server.get(detailPath, function(schema, request) {
+            const model = this.serialize(schema[mirageRelatedModelName].find(request.params.id)).data;
+            const data = process(schema, request, this, [model], opts).data[0];
+            return { data };
+        });
     }
 
     if (actions.includes('create')) {
-        server.post(opts.path, mirageRelatedModelName);
+        server.post(opts.path, function(schema, request) {
+            const attrs = this.normalizedRequestAttrs(opts.relatedModelName);
+            const child = schema[mirageRelatedModelName].create(attrs);
+            const parent = schema[mirageParentModelName].find(request.params.parentID);
+            parent[relationshipName].models.pushObject(child);
+            parent.save();
+            child.reload();
+            if (opts.onCreate) {
+                opts.onCreate(parent, child);
+            }
+            return child;
+        });
     }
 
     if (actions.includes('update')) {
@@ -141,17 +163,20 @@ export function osfNestedResource<K extends keyof ModelRegistry>(
     }
 }
 
+// For to-many relationships between top-level resources,
+// e.g. `/v2/nodes/<node_id>/affiliated_institutions/<id>` (but the institution lives at `/v2/institutions/<id>`)
 export function osfToManyRelationship<K extends keyof ModelRegistry>(
     server: Server,
     parentModelName: K,
     relationshipName: string & RelationshipsFor<ModelRegistry[K]>,
     options?: Partial<RelationshipOptions>,
 ) {
-    const opts: RelationshipOptions = Object.assign({
+    const opts: RelationshipOptions = {
         path: `/${pluralize(underscore(parentModelName))}/:parentID/relationships/${underscore(relationshipName)}`,
         relatedModelName: relationshipName,
         defaultSortKey: '-id',
-    }, options);
+        ...options,
+    };
     const mirageParentModelName = pluralize(camelize(parentModelName));
     const actions = gatherRelationshipActions(opts);
 
@@ -182,6 +207,36 @@ export function osfToManyRelationship<K extends keyof ModelRegistry>(
                 [relatedIdsKey]: [...parentModel[relatedIdsKey], relatedModelId],
             });
             return { data: parentModel[relatedIdsKey].map((id: string) => ({ id, type })) };
+        });
+    }
+
+    if (actions.includes('update')) {
+        server.put(opts.path, (schema: Schema, request: Request) => {
+            const { parentID } = request.params;
+            const parentModel = schema[mirageParentModelName].find(parentID);
+            const { data: relateds } = JSON.parse(request.requestBody);
+            const relatedIdsKey = `${singularize(relationshipName)}Ids`;
+            parentModel.update({
+                [relatedIdsKey]: relateds.map((relatedModel: { id: string, type: string }) => relatedModel.id),
+            });
+            return { data: parentModel[relatedIdsKey].map((id: string) => ({ id, type: relateds[0].type })) };
+        });
+    }
+
+    if (actions.includes('self')) {
+        server.patch(opts.path, (schema: Schema, request: Request) => {
+            const { parentID } = request.params;
+            const parentModel = schema[mirageParentModelName].find(parentID);
+            const { data: relatedRefs } = JSON.parse(request.requestBody) as {
+                data: Array<Record<'id' | 'type', string>>,
+            };
+            const relatedIdsKey = `${singularize(relationshipName)}Ids`;
+
+            parentModel.update({
+                [relatedIdsKey]: relatedRefs.mapBy('id'),
+            });
+
+            return { data: relatedRefs };
         });
     }
 

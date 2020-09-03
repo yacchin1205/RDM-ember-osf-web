@@ -1,14 +1,16 @@
-import { action, computed } from '@ember-decorators/object';
-import { alias, or } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
-import { task, timeout } from 'ember-concurrency';
+import { action, computed } from '@ember/object';
+import { alias, or } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import { timeout } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
 import DS from 'ember-data';
-import I18n from 'ember-i18n/services/i18n';
+import Intl from 'ember-intl/services/intl';
 import Toast from 'ember-toastr/services/toast';
 
 import UserEmail from 'ember-osf-web/models/user-email';
 import CurrentUser from 'ember-osf-web/services/current-user';
+import captureException, { getApiErrorMessage } from 'ember-osf-web/utils/capture-exception';
 
 interface TranslationKeys {
     header: string;
@@ -28,68 +30,9 @@ enum EmailActions {
 
 type MessageLevel = 'error' | 'info' | 'success' | 'warning';
 
-export default class VerifyEmailModal extends Component.extend({
-    loadEmailsTask: task(function *(this: VerifyEmailModal) {
-        const { user } = this.currentUser;
-        if (user) {
-            const emails: UserEmail[] = yield user.queryHasMany('emails', {
-                filter: {
-                    confirmed: true,
-                    verified: false,
-                },
-            });
-            this.set('unverifiedEmails', emails);
-        }
-    }),
-
-    verifyTask: task(function *(this: VerifyEmailModal, emailAction: EmailActions) {
-        const { userEmail } = this;
-        if (!userEmail) {
-            return;
-        }
-
-        let successKey: keyof TranslationKeys;
-        let successMessageLevel: MessageLevel;
-        let errorKey: keyof TranslationKeys;
-
-        switch (emailAction) {
-        case EmailActions.Verify:
-            userEmail.set('verified', true);
-            successKey = 'verifySuccess';
-            successMessageLevel = 'success';
-            errorKey = 'verifyError';
-            break;
-        case EmailActions.Deny:
-            userEmail.deleteRecord();
-            successKey = 'denySuccess';
-            successMessageLevel = 'warning';
-            errorKey = 'denyError';
-            break;
-        default:
-            throw Error(`Action must be 'verify' or 'deny', got: ${emailAction}`);
-        }
-
-        try {
-            yield userEmail.save();
-
-            if (this.unverifiedEmails) {
-                this.unverifiedEmails.shiftObject();
-            }
-
-            this.showMessage(successMessageLevel, successKey, userEmail);
-
-            // Close the modal and open another one (if needed) because it's confusing for the text to change in place
-            this.set('shouldShowModal', false);
-            yield timeout(300);
-            this.set('shouldShowModal', true);
-        } catch (e) {
-            this.showMessage('error', errorKey, userEmail);
-            throw e;
-        }
-    }).drop(),
-}) {
+export default class VerifyEmailModal extends Component {
     @service currentUser!: CurrentUser;
-    @service i18n!: I18n;
+    @service intl!: Intl;
     @service store!: DS.Store;
     @service toast!: Toast;
 
@@ -128,22 +71,80 @@ export default class VerifyEmailModal extends Component.extend({
         };
     }
 
+    @task
+    loadEmailsTask = task(function *(this: VerifyEmailModal) {
+        const { user } = this.currentUser;
+        if (user) {
+            const emails: UserEmail[] = yield user.queryHasMany('emails', {
+                filter: {
+                    confirmed: true,
+                    verified: false,
+                },
+            });
+            this.set('unverifiedEmails', emails);
+        }
+    });
+
+    @task({ drop: true })
+    verifyTask = task(function *(this: VerifyEmailModal, emailAction: EmailActions) {
+        const { userEmail } = this;
+        if (!userEmail) {
+            return;
+        }
+
+        let successKey: keyof TranslationKeys;
+        let successMessageLevel: MessageLevel;
+        let errorKey: keyof TranslationKeys;
+
+        switch (emailAction) {
+        case EmailActions.Verify:
+            userEmail.set('verified', true);
+            successKey = 'verifySuccess';
+            successMessageLevel = 'success';
+            errorKey = 'verifyError';
+            break;
+        case EmailActions.Deny:
+            userEmail.deleteRecord();
+            successKey = 'denySuccess';
+            successMessageLevel = 'warning';
+            errorKey = 'denyError';
+            break;
+        default:
+            throw Error(`Action must be 'verify' or 'deny', got: ${emailAction}`);
+        }
+
+        try {
+            yield userEmail.save();
+
+            if (this.unverifiedEmails) {
+                this.unverifiedEmails.shiftObject();
+            }
+
+            this.toast[successMessageLevel](
+                this.intl.t(
+                    this.translationKeys[successKey],
+                    { email: userEmail.emailAddress, htmlSafe: true },
+                ),
+            );
+
+            // Close the modal and open another one (if needed) because it's confusing for the text to change in place
+            this.set('shouldShowModal', false);
+            yield timeout(300);
+            this.set('shouldShowModal', true);
+        } catch (e) {
+            const errorMessage = this.intl.t(
+                this.translationKeys[errorKey],
+                { email: userEmail.emailAddress, htmlSafe: true },
+            );
+            captureException(e, { errorMessage });
+            this.toast.error(getApiErrorMessage(e), errorMessage);
+            throw e;
+        }
+    });
+
     constructor(...args: any[]) {
         super(...args);
         this.loadEmailsTask.perform();
-    }
-
-    showMessage(
-        level: MessageLevel,
-        key: keyof TranslationKeys,
-        userEmail: UserEmail,
-    ) {
-        this.toast[level](
-            this.i18n.t(
-                this.translationKeys[key],
-                { email: userEmail.emailAddress },
-            ),
-        );
     }
 
     @action

@@ -1,26 +1,39 @@
-import { attr, hasMany } from '@ember-decorators/data';
-import { computed } from '@ember-decorators/object';
+import { computed } from '@ember/object';
+import { htmlSafe } from '@ember/string';
 import DS from 'ember-data';
 
+import InstitutionSummaryMetricModel from 'ember-osf-web/models/institution-summary-metric';
+import InstitutionDepartmentsModel from './institution-department';
+import InstitutionUserModel from './institution-user';
 import NodeModel from './node';
 import OsfModel from './osf-model';
 import RegistrationModel from './registration';
 import UserModel from './user';
 
+const { attr, belongsTo, hasMany } = DS;
+
 /* eslint-disable camelcase */
 export interface Assets {
-    logo: string;
-    logo_rounded: string;
+    banner?: string;
+    logo?: string;
+    logo_rounded?: string;
 }
 /* eslint-enable camelcase */
+
+export interface Department {
+    name: string;
+    numberOfUsers: number;
+}
 
 export default class InstitutionModel extends OsfModel {
     @attr('string') name!: string;
     @attr('fixstring') description!: string;
-    @attr('string') logoPath!: string;
     @attr('string') authUrl!: string;
-    @attr('object') assets!: Partial<Assets>;
+    @attr('object') assets?: Assets;
+    @attr('boolean', { defaultValue: false }) currentUserIsAdmin!: boolean;
+    @attr('date') lastUpdated!: Date;
 
+    // TODO Might want to replace calls to `users` with `institutionUsers.user`?
     @hasMany('user', { inverse: 'institutions' })
     users!: DS.PromiseManyArray<UserModel>;
 
@@ -30,12 +43,33 @@ export default class InstitutionModel extends OsfModel {
     @hasMany('registration', { inverse: 'affiliatedInstitutions' })
     registrations!: DS.PromiseManyArray<RegistrationModel>;
 
-    @computed('assets', 'assets.logo', 'logoPath', 'id')
+    @hasMany('institution-department')
+    departmentMetrics!: DS.PromiseManyArray<InstitutionDepartmentsModel>;
+
+    @hasMany('institution-user')
+    userMetrics!: DS.PromiseManyArray<InstitutionUserModel>;
+
+    @belongsTo('institution-summary-metric')
+    summaryMetrics!: DS.PromiseObject<InstitutionSummaryMetricModel> & InstitutionSummaryMetricModel;
+
+    // This is for the title helper, which does its own encoding of unsafe characters
+    @computed('name')
+    get unsafeName() {
+        return htmlSafe(this.name);
+    }
+
+    @computed('assets.banner', 'logoUrl')
+    get bannerUrl(): string {
+        if (this.assets && this.assets.banner) {
+            return this.assets.banner;
+        }
+        return this.logoUrl;
+    }
+
+    @computed('assets', 'assets.logo', 'id')
     get logoUrl(): string {
         if (this.assets && this.assets.logo) {
             return this.assets.logo;
-        } else if (this.logoPath) {
-            return this.logoPath;
         }
         return `/static/img/institutions/shields-rounded-corners/${this.id}-shield-rounded-corners.png`;
     }

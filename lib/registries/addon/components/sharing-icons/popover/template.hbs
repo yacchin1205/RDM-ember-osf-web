@@ -1,4 +1,10 @@
-<a tabindex='0' local-class='SharingIconsPopover__anchor' class='btn-link pull-right'>
+<button
+    type='button'
+    local-class='SharingIconsPopover__anchor'
+    class='btn-link pull-right'
+    tabindex='0'
+    ...attributes
+>
     <FaIcon @icon='share-alt' />
     {{#bs-popover placement='left' triggerEvents='focus' local-class='Popover' viewportSelector=(concat '#' @parentId) autoPlacement=true }}
         <SharingIcons
@@ -10,4 +16,4 @@
             @showText={{@showText}}
         />
     {{/bs-popover}}
-</a>
+</button>

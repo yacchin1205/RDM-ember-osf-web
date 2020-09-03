@@ -1,7 +1,7 @@
 import { className, classNames } from '@ember-decorators/component';
-import { computed } from '@ember-decorators/object';
-import { equal } from '@ember-decorators/object/computed';
 import Component from '@ember/component';
+import { computed } from '@ember/object';
+import { equal } from '@ember/object/computed';
 
 import { layout } from 'ember-osf-web/decorators/component';
 
@@ -19,6 +19,7 @@ export default class ValidatedXInputWrapper extends Component {
     // Optional arguments
     errors?: string;
     label?: string;
+    id?: string;
 
     @className
     @equal('validationStatus', ValidationStatus.HasError)
@@ -34,6 +35,6 @@ export default class ValidatedXInputWrapper extends Component {
 
     @computed('elementId', 'valuePath')
     get inputElementId() {
-        return `${this.elementId}__${this.valuePath}`;
+        return this.id ? this.id : `${this.elementId}__${this.valuePath}`;
     }
 }

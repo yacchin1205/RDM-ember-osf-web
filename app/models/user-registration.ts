@@ -1,10 +1,9 @@
-import { attr } from '@ember-decorators/data';
 import { computed } from '@ember/object';
 import { buildValidations, validator } from 'ember-cp-validations';
 import DS from 'ember-data';
 import config from 'ember-get-config';
 
-const { Model } = DS;
+const { attr, Model } = DS;
 
 const { support: { supportEmail } } = config;
 
@@ -16,6 +15,7 @@ const Validations = buildValidations({
             messageKey: 'validationErrors.email_registered',
             in: computed(function(): string[] {
                 return [...this.model.existingEmails];
+            // eslint-disable-next-line ember/no-volatile-computed-properties
             }).volatile(),
         }),
         validator('exclusion', {
@@ -23,6 +23,7 @@ const Validations = buildValidations({
             supportEmail,
             in: computed(function(): string[] {
                 return [...this.model.invalidEmails];
+            // eslint-disable-next-line ember/no-volatile-computed-properties
             }).volatile(),
         }),
         validator('length', {

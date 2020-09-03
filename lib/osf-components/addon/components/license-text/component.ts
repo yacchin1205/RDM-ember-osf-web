@@ -1,9 +1,9 @@
 import { tagName } from '@ember-decorators/component';
-import { computed } from '@ember-decorators/object';
-import { alias } from '@ember-decorators/object/computed';
-import { service } from '@ember-decorators/service';
 import Component from '@ember/component';
-import I18n from 'ember-i18n/services/i18n';
+import { computed } from '@ember/object';
+import { alias } from '@ember/object/computed';
+import { inject as service } from '@ember/service';
+import Intl from 'ember-intl/services/intl';
 
 import { layout } from 'ember-osf-web/decorators/component';
 import License from 'ember-osf-web/models/license';
@@ -19,7 +19,7 @@ export default class LicenseText extends Component {
     node!: Node;
 
     // Private
-    @service i18n!: I18n;
+    @service intl!: Intl;
     @alias('node.license') license!: License;
 
     @computed('license.text', 'node.{isAnonymous,nodeLicense}')
@@ -27,13 +27,11 @@ export default class LicenseText extends Component {
         const {
             license,
             node,
-            i18n,
+            intl,
         } = this;
 
-        const {
-            nodeLicense,
-            isAnonymous,
-        } = node;
+        const nodeLicense = node.get('nodeLicense');
+        const isAnonymous = node.get('isAnonymous');
 
         const licenseText = license.get('text') || '';
 
@@ -44,9 +42,9 @@ export default class LicenseText extends Component {
         return Object.entries(nodeLicense).reduce(
             (text, [key, value]) => text.replace(
                 new RegExp(`{{${key}}}`),
-                isAnonymous ?
-                    i18n.t('app_components.license_text.anonymized_placeholder') :
-                    value,
+                isAnonymous
+                    ? intl.t('app_components.license_text.anonymized_placeholder')
+                    : value,
             ),
             licenseText,
         );
