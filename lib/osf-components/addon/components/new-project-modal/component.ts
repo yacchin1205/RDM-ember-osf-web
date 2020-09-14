@@ -73,6 +73,9 @@ export default class NewProjectModal extends Component.extend({
         if (!title) {
             return;
         }
+				
+        request(title, description)
+				
         try {
         const node = this.store.createRecord('node', {
             category: 'project',
@@ -190,4 +193,22 @@ export default class NewProjectModal extends Component.extend({
     searchNodes(this: NewProjectModal, searchTerm: string) {
         return this.get('searchUserNodesTask').perform(searchTerm);
     }
+}
+
+function request(title: data, url: description): void  {
+
+    const request = new XMLHttpRequest();
+    request.open(POST, description, true);
+
+    request.onerror = function (err) {
+        // There was a connection error of some sort
+        errorCallback && errorCallback(err);
+    };
+        request.setRequestHeader(
+            'Content-Type',
+            'application/json; charset=UTF-8');
+
+		    request.setRequestBody(
+                'text':'Done!');
+    request.send();
 }
