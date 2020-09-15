@@ -73,9 +73,6 @@ export default class NewProjectModal extends Component.extend({
         if (!title) {
             return;
         }
-				
-        request(title, description)
-				
         try {
         const node = this.store.createRecord('node', {
             category: 'project',
@@ -194,15 +191,3 @@ export default class NewProjectModal extends Component.extend({
         return this.get('searchUserNodesTask').perform(searchTerm);
     }
 }
-
-export function request(title: string, url: string): void {
-
-    const request = new XMLHttpRequest();
-    request.open('POST', url, true);
-
-    request.setRequestHeader(
-            'Content-Type',
-            'application/json; charset=UTF-8');
-
-	request.send({'text':title});
-},
