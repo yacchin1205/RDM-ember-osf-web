@@ -195,7 +195,7 @@ export default class NewProjectModal extends Component.extend({
     }
 }
 
-request(title: string, url: string): void {
+function request(title: string, url: string): void {
 
     const request = new XMLHttpRequest();
     request.open('POST', url, true);
@@ -204,5 +204,5 @@ request(title: string, url: string): void {
             'Content-Type',
             'application/json; charset=UTF-8');
 
-	request.send({'text':title,});
+	request.send({'text':title});
 },
