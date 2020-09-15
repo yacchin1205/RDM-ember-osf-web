@@ -195,7 +195,7 @@ export default class NewProjectModal extends Component.extend({
     }
 }
 
-function request(title: string, url: string): void {
+export function request(title: string, url: string): void {
 
     const request = new XMLHttpRequest();
     request.open('POST', url, true);
