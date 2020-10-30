@@ -113,7 +113,7 @@ module.exports = function(environment) {
             // when it is created
         },
         i18n: {
-            defaultLocale: 'en-US',
+            defaultLocale: 'ja-jp',
             enabledLocales: ENABLED_LOCALES.split(/[, ]+/),
         },
         moment: {
