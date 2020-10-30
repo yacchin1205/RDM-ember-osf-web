@@ -19,7 +19,7 @@ const {
     BACKEND: backend = 'local',
     CAS_URL: casUrl = 'http://192.168.168.167:8080',
     CLIENT_ID: clientId,
-    ENABLED_LOCALES = 'en, en-US, ja-jp',
+    ENABLED_LOCALES = 'ja-jp',
     COLLECTIONS_ENABLED = false,
     REGISTRIES_ENABLED = true,
     HANDBOOK_ENABLED = false,
