@@ -13,6 +13,6 @@ function calculateLocale(locales) {
   // whatever you do to pick a locale for the user:
   const language = navigator.languages[0] || navigator.language || navigator.userLanguage;
 
-  return locales.includes(language.toLowerCase()) ? language : 'en-GB';
+  return locales.includes(language.toLowerCase()) ? language : 'ja';
 }
 
