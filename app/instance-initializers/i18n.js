@@ -15,7 +15,3 @@ function calculateLocale(locales) {
 
   return locales.includes(language.toLowerCase()) ? language : 'en-GB';
 }
-
-this.get('i18n').addTranslations('en', {
-  'user.profile.gravatar.help': 'Manage your avatar at gravatar.com.'
-});
