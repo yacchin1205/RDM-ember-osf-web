@@ -15,3 +15,4 @@ function calculateLocale(locales) {
 
   return locales.includes(language.toLowerCase()) ? language : 'en-GB';
 }
+
