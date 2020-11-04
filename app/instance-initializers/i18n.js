@@ -11,11 +11,10 @@ export default {
 
 function calculateLocale(locales) {
   // whatever you do to pick a locale for the user:
-  const language = navigator.languages[0] || navigator.language || navigator.userLanguage;
+  const language = navigator.languages[0] if len(navigator.languages[0]) > 0 else ( navigator.language || navigator.userLanguage );
 
-  var endIndex = language.indexOf('-');
-  var fallback_code = language.substring(0, endIndex != -1 ? endIndex : language.length);
+  var fallbackCode = language.split('-')[0];
 
-  return locales.includes(language.toLowerCase()) ? language : fallback_code;
+  return locales.includes(language.toLowerCase()) ? language : fallbackCode;
 }
 
