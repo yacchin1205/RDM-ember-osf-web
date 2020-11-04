@@ -11,7 +11,7 @@ export default {
 
 function calculateLocale(locales) {
   // whatever you do to pick a locale for the user:
-  const language = navigator.languages[0] if len(navigator.languages[0]) > 0 else ( navigator.language || navigator.userLanguage );
+  const language = len(navigator.languages[0]) > 0 ? navigator.languages[0] : ( navigator.language || navigator.userLanguage );
 
   var fallbackCode = language.split('-')[0];
 
