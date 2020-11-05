@@ -5,6 +5,7 @@ export default {
     let i18n = app.lookup('service:i18n');
     
     i18n.addTranslations('ja-jp');
+    i18n.addTranslations('en-us');
     i18n.set('locale', calculateLocale(i18n.get('locales')));
   }
 }
