@@ -12,7 +12,7 @@ export default {
 function calculateLocale(locales) {
   // whatever you do to pick a locale for the user:
   var defaultLanguage = 'en';
-  var language = navigator.languages ? navigator.languages[0] : navigator.language || navigator.userLanguage || defaultLanguage;
+  const language = navigator.languages[0] || navigator.language || navigator.userLanguage;
   var fallbackCode = language.split('-')[0];
 
   return locales.includes(language.toLowerCase()) ? language : fallbackCode;
