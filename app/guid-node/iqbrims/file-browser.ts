@@ -1,7 +1,8 @@
 import { A } from '@ember/array';
 import EmberObject, { action, computed } from '@ember/object';
 import { later } from '@ember/runloop';
-import { all, task, timeout } from 'ember-concurrency';
+import { all, timeout } from 'ember-concurrency';
+import { task } from 'ember-concurrency-decorators';
 
 import File from 'ember-osf-web/models/file';
 import Node from 'ember-osf-web/models/node';
@@ -45,17 +46,20 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         return false;
     }
 
+    @task({ restartable: true })
     updateFilter = task(function *(this: IQBRIMSFileBrowser, filter: string) {
         yield timeout(250);
-        this.filter = filter;
-    }).restartable();
+        this.setProperties({ filter });
+    });
 
+    @task
     flash = task(function *(item: File, message: string, type: string = 'success', duration: number = 2000) {
         item.set('flash', { message, type });
         yield timeout(duration);
         item.set('flash', null);
     });
 
+    @task
     addFile = task(function *(this: IQBRIMSFileBrowser, id: string) {
         const allFiles = this.get('allFiles');
         if (!allFiles || !this.owner) {
@@ -82,6 +86,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         this.get('flash').perform(file, intl.t('file_browser.file_added'));
     });
 
+    @task
     deleteFile = task(function *(this: IQBRIMSFileBrowser, file: File) {
         if (!this.owner) {
             return;
@@ -100,12 +105,14 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         }
     });
 
+    @task
     deleteFiles = task(function *(this: IQBRIMSFileBrowser, files: File[]) {
         const deleteFile = this.get('deleteFile');
 
         yield all(files.map(file => deleteFile.perform(file)));
     });
 
+    @task
     moveFile = task(function *(this: IQBRIMSFileBrowser, file: File, node: Node): IterableIterator<any> {
         if (!this.owner) {
             return;
@@ -124,6 +131,7 @@ export default class IQBRIMSFileBrowser extends EmberObject {
         }
     });
 
+    @task
     renameFile = task(function *(
         this: IQBRIMSFileBrowser,
         file: File,
