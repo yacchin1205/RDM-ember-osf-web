@@ -193,7 +193,7 @@ dashboard:
     quicksearch:
         search: 'Search your projects'
         other_links: |-
-            'Go to <a href="/myprojects/">My Projects</a> to organize your work {useSearch, select, 
+            'Go to <a href="/myprojects/">My Projects</a> to organize your work {useSearch, select,
                 true { 'or <a href="/search/">search</a>' }
                 false { 'in' }
             } GakuNin RDM'
@@ -550,6 +550,7 @@ node_navbar:
     addons: Add-ons
     settings: Settings
     comments: Comments
+    binderhub: BinderHub
 status:
     welcome_message: '<h1>Welcome to GakuNin RDM!</h1><p>Visit our <a href="https://openscience.zendesk.com/hc/en-us" target="_blank" rel="noreferrer">Guides</a> to learn about creating a project, or get inspiration from <a href="https://osf.io/explore/activity/#popularPublicProjects">popular public projects</a>.</p>'
     alternate_email_error: 'The email address has <b>NOT</b> been added to your account. Please log out and revisit the link in your email. Thank you.'
@@ -1742,3 +1743,22 @@ iqbrims:
     has_checklist: 'チェックリスト'
     files_comment: 'コメント'
     uploader_comment: 'コメント'
+binderhub:
+    page_title: '{nodeTitle} BidnerHub'
+    jupyter_servers_list:
+        header: 'このプロジェクトから作成した私の解析環境'
+    project_editor:
+        header: '新しい解析環境'
+        tab_editproject: 'このプロジェクトから作成'
+        tab_externalrepo: '外部リポジトリから作成'
+    loading: 'Loading BinderHub config...'
+    not_available: 'Not available'
+    deployment:
+        environment: 'Environment'
+        additionalpackages: 'Additional Packages'
+        postinstallscript: 'Post-Install Script'
+        select_environment: 'Select'
+        add_package: 'Add'
+        placeholders:
+            package_name: 'Name'
+            package_version: 'Version'

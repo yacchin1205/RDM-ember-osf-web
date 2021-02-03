@@ -1,0 +1,30 @@
+<div local-class='package_item_editor'>
+    {{input
+        name='package_name'
+        placeholder=(t 'binderhub.deployment.placeholders.package_name')
+        value=this.name
+        type='text'
+    }}
+    {{input
+        name='package_version'
+        placeholder=(t 'binderhub.deployment.placeholders.package_version')
+        value=this.version
+        type='text'
+    }}
+    <button
+        data-test-package-item-confirm
+        type='button'
+        class='btn btn-default'
+        {{action this.confirm target=this}}
+    >
+        <i class='fa fa-check' />
+    </button>
+    <button
+        data-test-package-item-cancel
+        type='button'
+        class='btn btn-default'
+        {{action this.cancel target=this}}
+    >
+        <i class='fa fa-times' />
+    </button>
+</div>

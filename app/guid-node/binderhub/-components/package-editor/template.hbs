@@ -1,0 +1,48 @@
+<div local-class='package_editor'>
+    <div local-class='package_label'>
+        {{this.label}}
+    </div>
+    {{#each this.packages as |pkg index|}}
+        {{#if (eq index this.editingIndex)}}
+            <GuidNode::Binderhub::-Components::PackageItemEditor
+                @name={{this.editingName}}
+                @version={{this.editingVersion}}
+                @onConfirm={{action this.confirmEdit}}
+                @onCancel={{action this.cancelEdit}}
+            />
+        {{else}}
+            <div local-class='package_item'>
+                <button
+                    {{action this.editPackage index target=this}}
+                >
+                    {{pkg.[0]}}:{{pkg.[1]}}
+                </button>
+                <button
+                    {{action this.removePackage index target=this}}
+                >
+                    <i class='fa fa-times' />
+                </button>
+            </div>
+        {{/if}}
+    {{/each}}
+    {{#if this.newPackage}}
+        <GuidNode::Binderhub::-Components::PackageItemEditor
+            @name={{this.editingName}}
+            @version={{this.editingVersion}}
+            @onConfirm={{action this.confirmAdd}}
+            @onCancel={{action this.cancelAdd}}
+        />
+    {{else}}
+        <div local-class='package_add'>
+            <button
+                data-test-package-add
+                type='button'
+                class='btn btn-default'
+                {{action this.addPackage target=this}}
+            >
+                <i class='fa fa-plus' />
+                {{t 'binderhub.deployment.add_package'}}
+            </button>
+        </div>
+    {{/if}}
+</div>

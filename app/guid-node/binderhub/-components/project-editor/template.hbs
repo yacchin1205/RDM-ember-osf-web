@@ -1,0 +1,39 @@
+<div local-class='project_editor'>
+    {{#if this.loading}}
+        {{t 'binderhub.loading'}}
+    {{else}}
+        <h3>{{t 'binderhub.deployment.environment'}}<//h3>
+        {{#each this.deployment.images as |image|}}
+            <div local-class='environment_candidate'>
+                <div local-class='environment_info'>
+                    <div local-class='environment_name'>
+                        {{image.name}}
+                        {{#if (eq this.selectedImageUrl image.url)}}
+                            <i class='fa fa-check' />
+                        {{/if}}
+                    </div>
+                    <div local-class='environment_description'>{{image.description}}</div>
+                </div>
+                <div local-class='environment_select'>
+                    <button
+                        data-test-image-selection
+                        type='button'
+                        class='btn btn-default'
+                        {{action this.selectImage image.url target=this}}
+                    >
+                        {{t 'binderhub.deployment.select_environment'}}
+                    </button>
+                </div>
+            </div>
+        {{/each}}
+        <h3>{{t 'binderhub.deployment.additionalpackages'}}</h3>
+        <div local-class='packages'>
+            <GuidNode::Binderhub::-Components::PackageEditor
+                @label='apt'
+                @packages={{this.aptPackages}}
+                @onUpdate={{action this.aptUpdated}}
+            />
+        </div>
+        <h3>{{t 'binderhub.deployment.postinstallscript'}}</h3>
+    {{/if}}
+</div>
