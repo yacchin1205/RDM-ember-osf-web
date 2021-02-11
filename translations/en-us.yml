@@ -1753,6 +1753,12 @@ binderhub:
         tab_externalrepo: '外部リポジトリから作成'
     loading: 'Loading BinderHub config...'
     not_available: 'Not available'
+    servers:
+        name: 'Server name'
+        url: 'URL'
+        last_activity: 'Last activity'
+        launch: 'Launch'
+        delete: 'Delete'
     deployment:
         environment: 'Environment'
         additionalpackages: 'Additional Packages'

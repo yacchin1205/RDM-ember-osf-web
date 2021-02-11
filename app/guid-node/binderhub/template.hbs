@@ -8,6 +8,7 @@
             <h2 local-class='BinderHub__header'>{{t 'binderhub.jupyter_servers_list.header'}}</h2>
             <div local-class='BinderHub__panel'>
                 <GuidNode::Binderhub::-Components::JupyterServersList
+                    @node={{this.node}}
                     @binderHubConfig={{this.config}}
                     @renewToken={{action this.renewJupyterHubToken}}
                 />

@@ -26,6 +26,23 @@ export default class ApplicationRoute extends Route.extend(
     };
 
     beforeModel() {
-        return this.intl.setLocale('en-us');
+        return this.intl.setLocale(this.getBrowserLocale());
+    }
+
+    getBrowserLocale() {
+        const defaultLocale = 'en-us';
+        const browserLanguage = (window.navigator.languages && window.navigator.languages[0])
+            || window.navigator.language;
+        const localeMatched = this.intl.locales
+            .filter(locale => locale.toLowerCase() === browserLanguage.toLowerCase());
+        const langMatched = this.intl.locales
+            .filter(locale => locale.split('-')[0].toLowerCase() === browserLanguage.split('-')[0].toLowerCase());
+        if (localeMatched.length > 0) {
+            return localeMatched[0];
+        }
+        if (langMatched.length > 0) {
+            return langMatched[0];
+        }
+        return defaultLocale;
     }
 }

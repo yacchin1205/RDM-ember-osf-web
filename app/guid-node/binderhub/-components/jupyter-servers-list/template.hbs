@@ -1,3 +1,38 @@
 <div local-class='jupyter_servers'>
-    {{t 'binderhub.not_available'}}
+    {{#if this.loading}}
+        {{t 'binderhub.loading'}}
+    {{else}}
+        <table class='table table-responsive'>
+            <thead>
+                <tr>
+                    <th class='col-md-2'>{{t 'binderhub.servers.name'}}</th>
+                    <th class='col-md-3'>{{t 'binderhub.servers.url'}}</th>
+                    <th class='col-md-3'>{{t 'binderhub.servers.last_activity'}}</th>
+                    <th class='col-md-2'>{{t 'binderhub.servers.launch'}}</th>
+                    <th class='col-md-2'>{{t 'binderhub.servers.delete'}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each this.servers as |server|}}
+                    <tr>
+                        <td class='col-md-2'>{{server.name}}</td>
+                        <td class='col-md-3'>
+                            <button
+                                data-test-server-link
+                                type='button'
+                                class='btn btn-link'
+                                local-class='jupyter-link'
+                                {{action this.openServer server target=this}}
+                            >
+                                {{server.url}}
+                            </button>
+                        </td>
+                        <td class='col-md-3'>{{server.last_activity}}</td>
+                        <td class='col-md-2'>-</td>
+                        <td class='col-md-2'>-</td>
+                    </tr>
+                {{/each}}
+            </tbody>
+        </table>
+    {{/if}}
 </div>

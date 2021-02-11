@@ -8,12 +8,14 @@ export interface Token {
     user?: string;
     access_token: string;
     expires_at: number | null;
+    token_type: string;
 }
 
 export interface Service {
     url: string;
     authorize_url: string;
     token?: Token;
+    api_url?: string;
 }
 
 export interface Image {
