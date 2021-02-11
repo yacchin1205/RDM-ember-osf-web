@@ -31,18 +31,35 @@ export default class ApplicationRoute extends Route.extend(
 
     getBrowserLocale() {
         const defaultLocale = 'en-us';
-        const browserLanguage = (window.navigator.languages && window.navigator.languages[0])
-            || window.navigator.language;
+        // Works in Chrome and Firefox (editable in settings)
+        if (navigator.languages && navigator.languages.length) {
+            for (const lang of navigator.languages) {
+                const locale = this.retrieveLocale(lang);
+                if (locale !== null) {
+                    return locale;
+                }
+            }
+        // Backup for Safari (uses system settings)
+        } else if (navigator.language) {
+            const locale = this.retrieveLocale(navigator.language);
+            if (locale !== null) {
+                return locale;
+            }
+        }
+        return defaultLocale;
+    }
+
+    retrieveLocale(browserLanguage: string): string | null {
         const localeMatched = this.intl.locales
             .filter(locale => locale.toLowerCase() === browserLanguage.toLowerCase());
-        const langMatched = this.intl.locales
-            .filter(locale => locale.split('-')[0].toLowerCase() === browserLanguage.split('-')[0].toLowerCase());
         if (localeMatched.length > 0) {
             return localeMatched[0];
         }
+        const langMatched = this.intl.locales
+            .filter(locale => locale.split('-')[0].toLowerCase() === browserLanguage.split('-')[0].toLowerCase());
         if (langMatched.length > 0) {
             return langMatched[0];
         }
-        return defaultLocale;
+        return null;
     }
 }
