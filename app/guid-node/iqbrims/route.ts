@@ -30,7 +30,7 @@ export default class GuidNodeIQBRIMSRoute extends Route.extend(ConfirmationMixin
     @service analytics!: Analytics;
     @service ready!: Ready;
 
-    model(this: GuidNodeIQBRIMSRoute) {
+    model() {
         return this.modelFor('guid-node');
     }
 
