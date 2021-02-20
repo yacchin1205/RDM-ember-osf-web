@@ -1760,11 +1760,16 @@ binderhub:
         launch: 'Launch'
         delete: 'Delete'
     deployment:
+        launch: 'Launch'
         environment: 'Environment'
         additionalpackages: 'Additional Packages'
         postinstallscript: 'Post-Install Script'
         select_environment: 'Select'
+        change_environment: 'Change'
         add_package: 'Add'
+        view_dockerfile: 'View Dockerfile'
+        reset_dockerfile: 'Reset Dockerfile'
+        unavailable: 'This Editor is disabled because its Dockerfile was customized manually.'
         placeholders:
             package_name: 'Name'
             package_version: 'Version'

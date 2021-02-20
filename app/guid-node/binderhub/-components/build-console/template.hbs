@@ -1,0 +1,18 @@
+<div local-class='build_console'>
+    <div local-class='build_console_button'>
+        <button
+            data-test-launch
+            type='button'
+            class='btn btn-default'
+            local-class='launch_button'
+            {{action this.launch target=this}}
+        >
+            {{t 'binderhub.deployment.launch'}}
+        </button>
+    </div>
+    {{#if this.buildLogVisible}}
+        <div local-class='build_terminal'>
+            <pre>{{this.buildLogLines}}</pre>
+        </div>
+    {{/if}}
+</div>

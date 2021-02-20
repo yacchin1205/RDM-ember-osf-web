@@ -5,7 +5,12 @@
         {{t 'binderhub.loading'}}
     {{else}}
         <div local-class='BinderHub__editor'>
-            <h2 local-class='BinderHub__header'>{{t 'binderhub.jupyter_servers_list.header'}}</h2>
+            <h2
+                data-test-servers-header
+                local-class='BinderHub__header'
+            >
+                {{t 'binderhub.jupyter_servers_list.header'}}
+            </h2>
             <div local-class='BinderHub__panel'>
                 <GuidNode::Binderhub::-Components::JupyterServersList
                     @node={{this.node}}
@@ -13,7 +18,12 @@
                     @renewToken={{action this.renewJupyterHubToken}}
                 />
             </div>
-            <h2 local-class='BinderHub__header'>{{t 'binderhub.project_editor.header'}}</h2>
+            <h2
+                data-test-binderhub-header
+                local-class='BinderHub__header'
+            >
+                {{t 'binderhub.project_editor.header'}}
+            </h2>
             <BsTab
                 data-analytics-scope='BinderHub Tab'
                 @activeId={{this.activeTab}}
@@ -42,6 +52,10 @@
                     </div>
                 </tab.pane>
             </BsTab>
+            <GuidNode::Binderhub::-Components::BuildConsole
+                @requestBuild={{action this.build}}
+                @buildLog={{this.buildLog}}
+              />
         </div>
     {{/if}}
 </div>

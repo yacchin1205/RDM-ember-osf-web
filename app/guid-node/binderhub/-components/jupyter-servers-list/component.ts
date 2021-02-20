@@ -6,8 +6,6 @@ import DS from 'ember-data';
 import { requiredAction } from 'ember-osf-web/decorators/component';
 import BinderHubConfigModel from 'ember-osf-web/models/binderhub-config';
 import Node from 'ember-osf-web/models/node';
-import { addPathSegment } from 'ember-osf-web/utils/url-parts';
-import RSVP from 'rsvp';
 
 /* eslint-disable camelcase */
 export interface JupyterServerOptions {
@@ -86,17 +84,11 @@ export default class JupyterServersList extends Component {
             throw new EmberError('Illegal config');
         }
         const jupyterhub = this.binderHubConfig.get('jupyterhub');
-        if (!jupyterhub || !jupyterhub.api_url || !jupyterhub.token) {
+        if (!jupyterhub || !jupyterhub.token) {
             throw new EmberError('Insufficient parameters');
         }
-        const opts = {
-            url: addPathSegment(jupyterhub.api_url, `users/${jupyterhub.token.user}`),
-            headers: {
-                Authorization: `${jupyterhub.token.token_type} ${jupyterhub.token.access_token}`,
-            },
-        };
-        const ajax = new RSVP.Promise((resolve, reject) => $.ajax(opts).then(resolve).catch(reject));
-        const response = await ajax;
+        const config = this.binderHubConfig.content as BinderHubConfigModel;
+        const response = await config.jupyterhubAPIAJAX(`users/${jupyterhub.token.user}`);
         const result = response as any;
         if (result.servers === undefined || result.servers === null) {
             throw new EmberError('Unexpected object');
