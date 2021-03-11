@@ -244,6 +244,12 @@ var wayf_idps = {
 		search:["https://idp.myu.ac.jp/idp/shibboleth", "Tohoku", "Miyagi University", "Miyagi University", "宮城大学"],
 		SAML1SSOurl:"https://idp.myu.ac.jp/idp/profile/Shibboleth/SSO"
 		},
+	"https://idp.isu.ac.jp/idp/shibboleth":{
+		type:"tohoku",
+		name:"Iryo Sosei University",
+		search:["https://idp.isu.ac.jp/idp/shibboleth", "Tohoku", "Iryo Sosei University", "Iryo Sosei University", "医療創生大学"],
+		SAML1SSOurl:"https://idp.isu.ac.jp/idp/profile/Shibboleth/SSO"
+		},
 	"https://idp.nii.ac.jp/idp/shibboleth":{
 		type:"kanto",
 		name:"National Institute of Informatics",
@@ -670,6 +676,12 @@ var wayf_idps = {
 		search:["https://slink.secioss.com/rois.ac.jp", "Kanto", "Research Organization of Information and Systems", "Research Organization of Information and Systems", "情報・システム研究機構"],
 		SAML1SSOurl:"https://slink.secioss.com/saml/shib13/idp/SSOService.php/rois.ac.jp"
 		},
+	"https://idp.u-tokai.ac.jp/idp/shibboleth":{
+		type:"kanto",
+		name:"TOKAI UNIVERSITY",
+		search:["https://idp.u-tokai.ac.jp/idp/shibboleth", "Kanto", "TOKAI UNIVERSITY", "TOKAI UNIVERSITY", "東海大学"],
+		SAML1SSOurl:"https://idp.u-tokai.ac.jp/idp/profile/Shibboleth/SSO"
+		},
 	"https://fed.mie-u.ac.jp/idp":{
 		type:"chubu",
 		name:"Mie University",
@@ -898,6 +910,12 @@ var wayf_idps = {
 		search:["https://idp.ygu.ac.jp/idp/shibboleth", "Chubu", "Yamanashi Gakuin University", "Yamanashi Gakuin University", "山梨学院大学"],
 		SAML1SSOurl:"https://idp.ygu.ac.jp/idp/profile/Shibboleth/SSO"
 		},
+	"https://auth.jaist.ac.jp/sso-s/shibboleth":{
+		type:"chubu",
+		name:"Japan Advanced Institute of Science and Technology",
+		search:["https://auth.jaist.ac.jp/sso-s/shibboleth", "Chubu", "Japan Advanced Institute of Science and Technology", "Japan Advanced Institute of Science and Technology", "北陸先端科学技術大学院大学"],
+		SAML1SSOurl:"https://auth.jaist.ac.jp/sso-s/profile/Shibboleth/SSO"
+		},
 	"https://authidp1.iimc.kyoto-u.ac.jp/idp/shibboleth":{
 		type:"kinki",
 		name:"Kyoto University",
@@ -993,12 +1011,6 @@ var wayf_idps = {
 		name:"National Institute of Technology,Akashi College",
 		search:["https://kidp.akashi.ac.jp/idp/shibboleth", "Kinki", "National Institute of Technology,Akashi College", "National Institute of Technology,Akashi College", "明石工業高等専門学校"],
 		SAML1SSOurl:"https://kidp.akashi.ac.jp/idp/profile/Shibboleth/SSO"
-		},
-	"https://g-shib.auth.oit.ac.jp/idp/shibboleth":{
-		type:"kinki",
-		name:"Osaka Institute of Technology",
-		search:["https://g-shib.auth.oit.ac.jp/idp/shibboleth", "Kinki", "Osaka Institute of Technology", "Osaka Institute of Technology", "大阪工業大学"],
-		SAML1SSOurl:"https://g-shib.auth.oit.ac.jp/idp/profile/Shibboleth/SSO"
 		},
 	"https://kidp.nara-k.ac.jp/idp/shibboleth":{
 		type:"kinki",
@@ -1138,6 +1150,12 @@ var wayf_idps = {
 		search:["https://idp.konan-u.ac.jp/idp/shibboleth", "Kinki", "KONAN UNIVERSITY", "KONAN UNIVERSITY", "甲南大学"],
 		SAML1SSOurl:"https://idp.konan-u.ac.jp/idp/profile/Shibboleth/SSO"
 		},
+	"https://authenticate.kwansei.ac.jp/idp/shibboleth":{
+		type:"kinki",
+		name:"Kwansei Gakuin University",
+		search:["https://authenticate.kwansei.ac.jp/idp/shibboleth", "Kinki", "Kwansei Gakuin University", "Kwansei Gakuin University", "関西学院大学"],
+		SAML1SSOurl:"https://no.saml1.sso.url.defined.com/error"
+		},
 	"https://idp.hiroshima-u.ac.jp/idp/shibboleth":{
 		type:"chugoku",
 		name:"Hiroshima University",
@@ -1257,6 +1275,24 @@ var wayf_idps = {
 		name:"Okayama University of Science",
 		search:["https://idp.pub.ous.ac.jp/idp/shibboleth", "Chugoku", "Okayama University of Science", "Okayama University of Science", "岡山理科大学"],
 		SAML1SSOurl:"https://idp.pub.ous.ac.jp/idp/profile/Shibboleth/SSO"
+		},
+	"https://ldap.fukuyama-u.ac.jp/idp/shibboleth":{
+		type:"chugoku",
+		name:"Fukuyama University",
+		search:["https://ldap.fukuyama-u.ac.jp/idp/shibboleth", "Chugoku", "Fukuyama University", "Fukuyama University", "福山大学"],
+		SAML1SSOurl:"https://ldap.fukuyama-u.ac.jp/idp/profile/Shibboleth/SSO"
+		},
+	"https://ldap.heisei-u.ac.jp/idp/shibboleth":{
+		type:"chugoku",
+		name:"Fukuyama Heisei University",
+		search:["https://ldap.heisei-u.ac.jp/idp/shibboleth", "Chugoku", "Fukuyama Heisei University", "Fukuyama Heisei University", "福山平成大学"],
+		SAML1SSOurl:"https://ldap.heisei-u.ac.jp/idp/profile/Shibboleth/SSO"
+		},
+	"https://idm.eikei.ac.jp/idp/shibboleth":{
+		type:"chugoku",
+		name:"EIKEI UNIVERSITY OF HIROSHIMA",
+		search:["https://idm.eikei.ac.jp/idp/shibboleth", "Chugoku", "EIKEI UNIVERSITY OF HIROSHIMA", "EIKEI UNIVERSITY OF HIROSHIMA", "叡啓大学"],
+		SAML1SSOurl:"https://idm.eikei.ac.jp/idp/profile/Shibboleth/SSO"
 		},
 	"https://idp.cc.ehime-u.ac.jp/idp/shibboleth":{
 		type:"shikoku",
@@ -1504,6 +1540,18 @@ var wayf_idps = {
 		search:["https://sso.meio-u.ac.jp", "Kyushu", "Meio University", "Meio University", "名桜大学"],
 		SAML1SSOurl:"https://sso.meio-u.ac.jp/saml/shib13/idp/SSOService.php"
 		},
+	"https://rdu1001.pu-kumamoto.ac.jp/idp/shibboleth":{
+		type:"kyushu",
+		name:"Prefectural University of Kumamoto",
+		search:["https://rdu1001.pu-kumamoto.ac.jp/idp/shibboleth", "Kyushu", "Prefectural University of Kumamoto", "Prefectural University of Kumamoto", "熊本県立大学"],
+		SAML1SSOurl:"https://rdu1001.pu-kumamoto.ac.jp/idp/profile/Shibboleth/SSO"
+		},
+	"https://vairocana.okinawa-u.ac.jp/idp/shibboleth":{
+		type:"kyushu",
+		name:"Okinawa University",
+		search:["https://vairocana.okinawa-u.ac.jp/idp/shibboleth", "Kyushu", "Okinawa University", "Okinawa University", "沖縄大学"],
+		SAML1SSOurl:"https://vairocana.okinawa-u.ac.jp/idp/profile/Shibboleth/SSO"
+		},
 	"https://idp.gakunin.nii.ac.jp/idp/shibboleth":{
 		type:"others",
 		name:"GakuNin IdP",
@@ -1515,6 +1563,12 @@ var wayf_idps = {
 		name:"KAGRA",
 		search:["https://shibbi.pki.itc.u-tokyo.ac.jp/idp/shibboleth", "Others", "KAGRA", "KAGRA", "KAGRA"],
 		SAML1SSOurl:"https://shibbi.pki.itc.u-tokyo.ac.jp/idp/profile/Shibboleth/SSO"
+		},
+	"https://auth.sist.ac.jp/idp/shibboleth":{
+		type:"others",
+		name:"Shizuoka Institute of Science and Technology",
+		search:["https://auth.sist.ac.jp/idp/shibboleth", "Others", "Shizuoka Institute of Science and Technology", "Shizuoka Institute of Science and Technology", "静岡理工科大学"],
+		SAML1SSOurl:"https://auth.sist.ac.jp/idp/profile/Shibboleth/SSO"
 		} };
 var wayf_hint_list = [  ];
 var inc_search_list = [];
@@ -2104,7 +2158,7 @@ function decodeBase64(input) {
 			+ '&amp;shire=' + encodeURIComponent(wayf_sp_samlACURL)
 			+ '&amp;target=' + encodeURIComponent(wayf_return_url);
 			
-			form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" onSubmit="return submitForm()" action="' + wayf_authReq_URL + '&amp;time=1600143660'
+			form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" onSubmit="return submitForm()" action="' + wayf_authReq_URL + '&amp;time=1615447514'
 			+ '">';
 		}
 		
@@ -2505,6 +2559,17 @@ function decodeBase64(input) {
 				dispDefault = 'Miyagi University';
 			}
 			pushIncSearchList('https://idp.myu.ac.jp/idp/shibboleth');
+		}		if (last_idp == 'https://idp.isu.ac.jp/idp/shibboleth'){
+			dispDefault = 'Iryo Sosei University';
+		}		if (isAllowedType('https://idp.isu.ac.jp/idp/shibboleth','tohoku') && isAllowedIdP('https://idp.isu.ac.jp/idp/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://idp.isu.ac.jp/idp/shibboleth"
+				){
+				dispDefault = 'Iryo Sosei University';
+			}
+			pushIncSearchList('https://idp.isu.ac.jp/idp/shibboleth');
 		}		if (last_idp == 'https://idp.nii.ac.jp/idp/shibboleth'){
 			dispDefault = 'National Institute of Informatics';
 		}		if (isAllowedType('https://idp.nii.ac.jp/idp/shibboleth','kanto') && isAllowedIdP('https://idp.nii.ac.jp/idp/shibboleth')){
@@ -3286,6 +3351,17 @@ function decodeBase64(input) {
 				dispDefault = 'Research Organization of Information and Systems';
 			}
 			pushIncSearchList('https://slink.secioss.com/rois.ac.jp');
+		}		if (last_idp == 'https://idp.u-tokai.ac.jp/idp/shibboleth'){
+			dispDefault = 'TOKAI UNIVERSITY';
+		}		if (isAllowedType('https://idp.u-tokai.ac.jp/idp/shibboleth','kanto') && isAllowedIdP('https://idp.u-tokai.ac.jp/idp/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://idp.u-tokai.ac.jp/idp/shibboleth"
+				){
+				dispDefault = 'TOKAI UNIVERSITY';
+			}
+			pushIncSearchList('https://idp.u-tokai.ac.jp/idp/shibboleth');
 		}		if (last_idp == 'https://fed.mie-u.ac.jp/idp'){
 			dispDefault = 'Mie University';
 		}		if (isAllowedType('https://fed.mie-u.ac.jp/idp','chubu') && isAllowedIdP('https://fed.mie-u.ac.jp/idp')){
@@ -3704,6 +3780,17 @@ function decodeBase64(input) {
 				dispDefault = 'Yamanashi Gakuin University';
 			}
 			pushIncSearchList('https://idp.ygu.ac.jp/idp/shibboleth');
+		}		if (last_idp == 'https://auth.jaist.ac.jp/sso-s/shibboleth'){
+			dispDefault = 'Japan Advanced Institute of Science and Technology';
+		}		if (isAllowedType('https://auth.jaist.ac.jp/sso-s/shibboleth','chubu') && isAllowedIdP('https://auth.jaist.ac.jp/sso-s/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://auth.jaist.ac.jp/sso-s/shibboleth"
+				){
+				dispDefault = 'Japan Advanced Institute of Science and Technology';
+			}
+			pushIncSearchList('https://auth.jaist.ac.jp/sso-s/shibboleth');
 		}		if (last_idp == 'https://authidp1.iimc.kyoto-u.ac.jp/idp/shibboleth'){
 			dispDefault = 'Kyoto University';
 		}		if (isAllowedType('https://authidp1.iimc.kyoto-u.ac.jp/idp/shibboleth','kinki') && isAllowedIdP('https://authidp1.iimc.kyoto-u.ac.jp/idp/shibboleth')){
@@ -3880,17 +3967,6 @@ function decodeBase64(input) {
 				dispDefault = 'National Institute of Technology,Akashi College';
 			}
 			pushIncSearchList('https://kidp.akashi.ac.jp/idp/shibboleth');
-		}		if (last_idp == 'https://g-shib.auth.oit.ac.jp/idp/shibboleth'){
-			dispDefault = 'Osaka Institute of Technology';
-		}		if (isAllowedType('https://g-shib.auth.oit.ac.jp/idp/shibboleth','kinki') && isAllowedIdP('https://g-shib.auth.oit.ac.jp/idp/shibboleth')){
-			if (
-				"-" == "-" 
-				&& typeof(wayf_default_idp) != "undefined"
-				&& wayf_default_idp == "https://g-shib.auth.oit.ac.jp/idp/shibboleth"
-				){
-				dispDefault = 'Osaka Institute of Technology';
-			}
-			pushIncSearchList('https://g-shib.auth.oit.ac.jp/idp/shibboleth');
 		}		if (last_idp == 'https://kidp.nara-k.ac.jp/idp/shibboleth'){
 			dispDefault = 'National Institute of Technology,Nara College';
 		}		if (isAllowedType('https://kidp.nara-k.ac.jp/idp/shibboleth','kinki') && isAllowedIdP('https://kidp.nara-k.ac.jp/idp/shibboleth')){
@@ -4144,6 +4220,17 @@ function decodeBase64(input) {
 				dispDefault = 'KONAN UNIVERSITY';
 			}
 			pushIncSearchList('https://idp.konan-u.ac.jp/idp/shibboleth');
+		}		if (last_idp == 'https://authenticate.kwansei.ac.jp/idp/shibboleth'){
+			dispDefault = 'Kwansei Gakuin University';
+		}		if (isAllowedType('https://authenticate.kwansei.ac.jp/idp/shibboleth','kinki') && isAllowedIdP('https://authenticate.kwansei.ac.jp/idp/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://authenticate.kwansei.ac.jp/idp/shibboleth"
+				){
+				dispDefault = 'Kwansei Gakuin University';
+			}
+			pushIncSearchList('https://authenticate.kwansei.ac.jp/idp/shibboleth');
 		}		if (last_idp == 'https://idp.hiroshima-u.ac.jp/idp/shibboleth'){
 			dispDefault = 'Hiroshima University';
 		}		if (isAllowedType('https://idp.hiroshima-u.ac.jp/idp/shibboleth','chugoku') && isAllowedIdP('https://idp.hiroshima-u.ac.jp/idp/shibboleth')){
@@ -4364,6 +4451,39 @@ function decodeBase64(input) {
 				dispDefault = 'Okayama University of Science';
 			}
 			pushIncSearchList('https://idp.pub.ous.ac.jp/idp/shibboleth');
+		}		if (last_idp == 'https://ldap.fukuyama-u.ac.jp/idp/shibboleth'){
+			dispDefault = 'Fukuyama University';
+		}		if (isAllowedType('https://ldap.fukuyama-u.ac.jp/idp/shibboleth','chugoku') && isAllowedIdP('https://ldap.fukuyama-u.ac.jp/idp/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://ldap.fukuyama-u.ac.jp/idp/shibboleth"
+				){
+				dispDefault = 'Fukuyama University';
+			}
+			pushIncSearchList('https://ldap.fukuyama-u.ac.jp/idp/shibboleth');
+		}		if (last_idp == 'https://ldap.heisei-u.ac.jp/idp/shibboleth'){
+			dispDefault = 'Fukuyama Heisei University';
+		}		if (isAllowedType('https://ldap.heisei-u.ac.jp/idp/shibboleth','chugoku') && isAllowedIdP('https://ldap.heisei-u.ac.jp/idp/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://ldap.heisei-u.ac.jp/idp/shibboleth"
+				){
+				dispDefault = 'Fukuyama Heisei University';
+			}
+			pushIncSearchList('https://ldap.heisei-u.ac.jp/idp/shibboleth');
+		}		if (last_idp == 'https://idm.eikei.ac.jp/idp/shibboleth'){
+			dispDefault = 'EIKEI UNIVERSITY OF HIROSHIMA';
+		}		if (isAllowedType('https://idm.eikei.ac.jp/idp/shibboleth','chugoku') && isAllowedIdP('https://idm.eikei.ac.jp/idp/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://idm.eikei.ac.jp/idp/shibboleth"
+				){
+				dispDefault = 'EIKEI UNIVERSITY OF HIROSHIMA';
+			}
+			pushIncSearchList('https://idm.eikei.ac.jp/idp/shibboleth');
 		}		if (last_idp == 'https://idp.cc.ehime-u.ac.jp/idp/shibboleth'){
 			dispDefault = 'Ehime University';
 		}		if (isAllowedType('https://idp.cc.ehime-u.ac.jp/idp/shibboleth','shikoku') && isAllowedIdP('https://idp.cc.ehime-u.ac.jp/idp/shibboleth')){
@@ -4815,6 +4935,28 @@ function decodeBase64(input) {
 				dispDefault = 'Meio University';
 			}
 			pushIncSearchList('https://sso.meio-u.ac.jp');
+		}		if (last_idp == 'https://rdu1001.pu-kumamoto.ac.jp/idp/shibboleth'){
+			dispDefault = 'Prefectural University of Kumamoto';
+		}		if (isAllowedType('https://rdu1001.pu-kumamoto.ac.jp/idp/shibboleth','kyushu') && isAllowedIdP('https://rdu1001.pu-kumamoto.ac.jp/idp/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://rdu1001.pu-kumamoto.ac.jp/idp/shibboleth"
+				){
+				dispDefault = 'Prefectural University of Kumamoto';
+			}
+			pushIncSearchList('https://rdu1001.pu-kumamoto.ac.jp/idp/shibboleth');
+		}		if (last_idp == 'https://vairocana.okinawa-u.ac.jp/idp/shibboleth'){
+			dispDefault = 'Okinawa University';
+		}		if (isAllowedType('https://vairocana.okinawa-u.ac.jp/idp/shibboleth','kyushu') && isAllowedIdP('https://vairocana.okinawa-u.ac.jp/idp/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://vairocana.okinawa-u.ac.jp/idp/shibboleth"
+				){
+				dispDefault = 'Okinawa University';
+			}
+			pushIncSearchList('https://vairocana.okinawa-u.ac.jp/idp/shibboleth');
 		}		if (last_idp == 'https://idp.gakunin.nii.ac.jp/idp/shibboleth'){
 			dispDefault = 'GakuNin IdP';
 		}		if (isAllowedType('https://idp.gakunin.nii.ac.jp/idp/shibboleth','others') && isAllowedIdP('https://idp.gakunin.nii.ac.jp/idp/shibboleth')){
@@ -4837,6 +4979,17 @@ function decodeBase64(input) {
 				dispDefault = 'KAGRA';
 			}
 			pushIncSearchList('https://shibbi.pki.itc.u-tokyo.ac.jp/idp/shibboleth');
+		}		if (last_idp == 'https://auth.sist.ac.jp/idp/shibboleth'){
+			dispDefault = 'Shizuoka Institute of Science and Technology';
+		}		if (isAllowedType('https://auth.sist.ac.jp/idp/shibboleth','others') && isAllowedIdP('https://auth.sist.ac.jp/idp/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://auth.sist.ac.jp/idp/shibboleth"
+				){
+				dispDefault = 'Shizuoka Institute of Science and Technology';
+			}
+			pushIncSearchList('https://auth.sist.ac.jp/idp/shibboleth');
 		}		if (wayf_additional_idps.length > 0){
 			var listcnt = inc_search_list.length;
 			
