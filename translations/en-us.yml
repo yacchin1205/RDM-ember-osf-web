@@ -1747,6 +1747,8 @@ binderhub:
     page_title: '{nodeTitle} BidnerHub'
     jupyter_servers_list:
         header: 'このプロジェクトから作成した私の解析環境'
+        delete_confirm_dialog_title: '削除確認'
+        delete_confirm_dialog_body: 'サーバーを削除しますか？ '
     project_editor:
         header: '新しい解析環境'
         tab_editproject: 'このプロジェクトから作成'
@@ -1759,6 +1761,7 @@ binderhub:
         last_activity: 'Last activity'
         launch: 'Launch'
         delete: 'Delete'
+        no_servers: 'No Servers'
     deployment:
         launch: 'Launch'
         environment: 'Environment'

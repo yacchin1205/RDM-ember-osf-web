@@ -3,6 +3,7 @@ import EmberError from '@ember/error';
 import { action, computed } from '@ember/object';
 import DS from 'ember-data';
 import { requiredAction } from 'ember-osf-web/decorators/component';
+import { getJupyterHubServerURL } from 'ember-osf-web/guid-node/binderhub/-components/jupyter-servers-list/component';
 import { BootstrapPath, BuildMessage } from 'ember-osf-web/guid-node/binderhub/controller';
 import BinderHubConfigModel from 'ember-osf-web/models/binderhub-config';
 
@@ -50,26 +51,7 @@ export default class BuildConsole extends Component {
         if (!originalUrl || !token) {
             throw new EmberError('Missing parameters in the result');
         }
-        // redirect a user to a running server with a token
-        let url = originalUrl;
-        if (targetPath && targetPath.path) {
-            // strip trailing /
-            url = url.replace(/\/$/, '');
-            // trim leading '/'
-            let path = targetPath.path.replace(/(^\/)/g, '');
-            if (targetPath.pathType === 'file') {
-                // trim trailing / on file paths
-                path = path.replace(/(\/$)/g, '');
-                // /tree is safe because it allows redirect to files
-                // need more logic here if we support things other than notebooks
-                url = `${url}/tree/${encodeURI(path)}`;
-            } else {
-                // pathType === 'url'
-                url = `${url}/${path}`;
-            }
-        }
-        const sep = url.includes('?') ? '&' : '?';
-        url = `${url}${sep}token=${encodeURIComponent(token)}`;
+        const url = getJupyterHubServerURL(originalUrl, token, targetPath);
         window.open(url, '_blank');
     }
 }

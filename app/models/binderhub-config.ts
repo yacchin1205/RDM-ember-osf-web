@@ -52,16 +52,15 @@ export default class BinderHubConfigModel extends OsfModel {
 
     @attr('object') launcher!: Launcher;
 
-    async jupyterhubAPIAJAX(apiPath: string) {
+    async jupyterhubAPIAJAX(apiPath: string, ajaxOptions: JQuery.AjaxSettings | null = null) {
+        const opts = ajaxOptions ? { ...ajaxOptions } : {};
         const jupyterhub = this.get('jupyterhub');
         if (!jupyterhub || !jupyterhub.api_url || !jupyterhub.token) {
             throw new EmberError('Insufficient parameters');
         }
-        const opts = {
-            url: addPathSegment(jupyterhub.api_url, apiPath),
-            headers: {
-                Authorization: `${jupyterhub.token.token_type} ${jupyterhub.token.access_token}`,
-            },
+        opts.url = addPathSegment(jupyterhub.api_url, apiPath);
+        opts.headers = {
+            Authorization: `${jupyterhub.token.token_type} ${jupyterhub.token.access_token}`,
         };
         return new RSVP.Promise((resolve, reject) => $.ajax(opts).then(resolve).catch(reject));
     }

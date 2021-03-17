@@ -1,3 +1,15 @@
 .jupyter-link {
     padding: 0;
 }
+
+.toolbar-button {
+    display: flex;
+}
+
+.refresh-button {
+    margin-left: auto;
+}
+
+.no-jupyter-servers {
+    text-align: center;
+}

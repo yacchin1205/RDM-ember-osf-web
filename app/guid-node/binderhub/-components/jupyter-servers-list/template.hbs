@@ -2,6 +2,17 @@
     {{#if this.loading}}
         {{t 'binderhub.loading'}}
     {{else}}
+        <div local-class='toolbar-button'>
+            <button
+                data-test-server-refresh-button
+                type='button'
+                class='btn btn-default'
+                local-class='refresh-button'
+                {{action this.refreshServers target=this}}
+            >
+                {{fa-icon 'fa-undo'}}
+            </button>
+        </div>
         <table class='table table-responsive'>
             <thead>
                 <tr>
@@ -13,26 +24,78 @@
                 </tr>
             </thead>
             <tbody>
-                {{#each this.servers as |server|}}
+                {{#if this.servers.length}}
+                    {{#each this.servers as |server|}}
+                        <tr>
+                            <td class='col-md-2'>{{server.name}}</td>
+                            <td class='col-md-3'>
+                                <button
+                                    data-test-server-link
+                                    type='button'
+                                    class='btn btn-link'
+                                    local-class='jupyter-link'
+                                    {{action this.openServer server target=this}}
+                                >
+                                    {{server.url}}
+                                </button>
+                            </td>
+                            <td class='col-md-3'>{{server.last_activity}}</td>
+                            <td class='col-md-2'>
+                                <GuidNode::Binderhub::-Components::LaunchButtons
+                                    @binderHubConfig={{this.binderHubConfig}}
+                                    @onClick={{action this.openServerWithPath server}}
+                                />
+                            </td>
+                            <td class='col-md-2'>
+                                <button
+                                    data-test-server-link
+                                    type='button'
+                                    class='btn btn-default'
+                                    {{action (mut this.showDeleteConfirmDialogTarget) server}}
+                                >
+                                    {{fa-icon 'fa-trash'}}
+                                </button>
+                            </td>
+                        </tr>
+                    {{/each}}
+                {{else}}
                     <tr>
-                        <td class='col-md-2'>{{server.name}}</td>
-                        <td class='col-md-3'>
-                            <button
-                                data-test-server-link
-                                type='button'
-                                class='btn btn-link'
-                                local-class='jupyter-link'
-                                {{action this.openServer server target=this}}
-                            >
-                                {{server.url}}
-                            </button>
+                        <td colspan='5' class='col-md-12' local-class='no-jupyter-servers'>
+                            {{t 'binderhub.servers.no_servers'}}
                         </td>
-                        <td class='col-md-3'>{{server.last_activity}}</td>
-                        <td class='col-md-2'>-</td>
-                        <td class='col-md-2'>-</td>
                     </tr>
-                {{/each}}
+                {{/if}}
             </tbody>
         </table>
     {{/if}}
+    <BsModal
+        data-test-delete-server-confirm-modal
+        @open={{this.showDeleteConfirmDialogTarget}}
+        @onHidden={{action (mut this.showDeleteConfirmDialogTarget) null}}
+        as |modal|
+    >
+        <modal.header>
+            <h4>
+                {{t 'binderhub.jupyter_servers_list.delete_confirm_dialog_title'}}
+            </h4>
+        </modal.header>
+        <modal.body>
+            {{t 'binderhub.jupyter_servers_list.delete_confirm_dialog_body'}}
+            {{this.showDeleteConfirmDialogTarget.name}}
+        </modal.body>
+        <modal.footer>
+            <BsButton
+                @disabled={{this.submitting}}
+                @onClick={{action (mut this.showDeleteConfirmDialogTarget) null}}
+            >
+                {{t 'general.cancel'}}
+            </BsButton>
+            <BsButton
+                @onClick={{action this.deleteServer}}
+                @type='danger'
+            >
+                {{t 'general.ok'}}
+            </BsButton>
+        </modal.footer>
+    </BsModal>
 </div>
