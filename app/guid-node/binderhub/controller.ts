@@ -24,8 +24,14 @@ export interface BuildMessage {
     message: string;
     authorization_url?: string;
     url?: string;
+    token?: string;
 }
 /* eslint-enable camelcase */
+
+export interface BootstrapPath {
+    path: string;
+    pathType: string;
+}
 
 export default class GuidNodeBinderHub extends Controller {
     @service toast!: Toast;
@@ -45,6 +51,8 @@ export default class GuidNodeBinderHub extends Controller {
     buildLog: BuildMessage[] | null = null;
 
     externalRepoBuildFormValues: BuildFormValues | null = null;
+
+    binderHubBuildError = false;
 
     @computed('config.isFulfilled')
     get loading(): boolean {
@@ -104,7 +112,11 @@ export default class GuidNodeBinderHub extends Controller {
         return provider.get('rootFolder');
     }
 
-    async performBuild(needsPersonalToken: boolean, callback: (result: BuildMessage) => void) {
+    async performBuild(
+        needsPersonalToken: boolean,
+        path: BootstrapPath | null,
+        callback: (result: BuildMessage) => void,
+    ) {
         if (!this.config) {
             throw new EmberError('Illegal config');
         }
@@ -112,7 +124,7 @@ export default class GuidNodeBinderHub extends Controller {
         if (!buildFormValues) {
             throw new EmberError('Illegal state');
         }
-        const buildPath = this.getBinderV2Path(buildFormValues, '', '');
+        const buildPath = this.getBinderPath(buildFormValues, path);
         if (!buildPath) {
             throw new EmberError('Illegal state');
         }
@@ -133,17 +145,21 @@ export default class GuidNodeBinderHub extends Controller {
             additional = `&repo_token=${token.tokenValue}`;
         }
         const buildUrl = addPathSegment(binderhub.url, buildPath);
-        const source = new EventSource(`${buildUrl}?token=${binderhub.token.access_token}${additional}`);
+        const urlSep = buildUrl.includes('?') ? '&' : '?';
+        const source = new EventSource(`${buildUrl}${urlSep}token=${binderhub.token.access_token}${additional}`);
         source.onmessage = (message: MessageEvent) => {
             const data = JSON.parse(message.data) as BuildMessage;
             if (data.phase === 'auth' && data.authorization_url && !needsPersonalToken) {
                 source.close();
                 later(async () => {
-                    await this.performBuild(true, callback);
+                    await this.performBuild(true, path, callback);
                 }, 0);
                 return;
             }
             this.handleBuildMessage(source, data, callback);
+        };
+        source.onerror = (_: any) => {
+            this.set('binderHubBuildError', true);
         };
     }
 
@@ -164,16 +180,16 @@ export default class GuidNodeBinderHub extends Controller {
         } as BuildFormValues;
     }
 
-    getBinderV2Path(args: BuildFormValues, path: string, pathType: string) {
+    getBinderPath(args: BuildFormValues, path: BootstrapPath | null) {
         // return a v2 url from a providerPrefix, repository, ref, and (file|url)path
         if (args.repo.length === 0) {
             // no repo, no url
             return null;
         }
-        let url = `build/v2/${args.providerPrefix}/${args.repo}/${args.ref}`;
-        if (path && path.length > 0) {
+        let url = `build/${args.providerPrefix}/${args.repo}/${args.ref}`;
+        if (path && path.path && path.path.length > 0) {
             // encode the path, it will be decoded in loadingMain
-            url = `${url}?${pathType}path=${encodeURIComponent(path)}`;
+            url = `${url}?${path.pathType}path=${encodeURIComponent(path.path)}`;
         }
         return url;
     }
@@ -209,10 +225,10 @@ export default class GuidNodeBinderHub extends Controller {
     }
 
     @action
-    build(this: GuidNodeBinderHub, callback: (result: BuildMessage) => void) {
+    build(this: GuidNodeBinderHub, path: BootstrapPath | null, callback: (result: BuildMessage) => void) {
         this.set('buildLog', []);
         later(async () => {
-            await this.performBuild(false, callback);
+            await this.performBuild(false, path, callback);
         }, 0);
     }
 }

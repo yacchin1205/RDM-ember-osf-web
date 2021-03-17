@@ -1,0 +1,13 @@
+<div local-class='launch_buttons'>
+    {{#each this.launcher.endpoints as |item|}}
+        <button
+            data-test-launch
+            type='button'
+            class='btn btn-default'
+            local-class='launch_button'
+            {{action this.launch item.id}}
+        >
+            {{item.name}}
+        </button>
+    {{/each}}
+</div>

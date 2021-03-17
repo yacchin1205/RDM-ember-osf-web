@@ -31,6 +31,16 @@ export interface Image {
 export interface Deployment {
     images: Image[];
 }
+
+export interface Endpoint {
+    id: string;
+    name: string;
+    path: string | null;
+}
+
+export interface Launcher {
+    endpoints: Endpoint[];
+}
 /* eslint-enable camelcase */
 
 export default class BinderHubConfigModel extends OsfModel {
@@ -39,6 +49,8 @@ export default class BinderHubConfigModel extends OsfModel {
     @attr('object') jupyterhub?: Service;
 
     @attr('object') deployment!: Deployment;
+
+    @attr('object') launcher!: Launcher;
 
     async jupyterhubAPIAJAX(apiPath: string) {
         const jupyterhub = this.get('jupyterhub');

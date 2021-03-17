@@ -1773,3 +1773,6 @@ binderhub:
         placeholders:
             package_name: 'Name'
             package_version: 'Version'
+    error:
+        binderhub_build_error: 'BinderHubとの接続時にエラーが発生しました。再認証してください。'
+        reconnect_binderhub: 'Authorize'
