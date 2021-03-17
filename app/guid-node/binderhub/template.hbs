@@ -48,7 +48,8 @@
                     @title={{t 'binderhub.project_editor.tab_externalrepo'}}
                 >
                     <div local-class='BinderHub__panel'>
-                        <GuidNode::Binderhub::-Components::ExternalRepository />
+                        <GuidNode::Binderhub::-Components::ExternalRepository
+                            @onChange={{action this.externalRepoChanged}}/>
                     </div>
                 </tab.pane>
             </BsTab>

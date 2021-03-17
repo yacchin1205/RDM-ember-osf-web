@@ -8,6 +8,7 @@ import { inject as service } from '@ember/service';
 import DS from 'ember-data';
 
 import Intl from 'ember-intl/services/intl';
+import { BuildFormValues } from 'ember-osf-web/guid-node/binderhub/-components/external-repository/component';
 import BinderHubConfigModel from 'ember-osf-web/models/binderhub-config';
 import FileModel from 'ember-osf-web/models/file';
 import FileProviderModel from 'ember-osf-web/models/file-provider';
@@ -42,6 +43,8 @@ export default class GuidNodeBinderHub extends Controller {
     configCache?: DS.PromiseObject<BinderHubConfigModel>;
 
     buildLog: BuildMessage[] | null = null;
+
+    externalRepoBuildFormValues: BuildFormValues | null = null;
 
     @computed('config.isFulfilled')
     get loading(): boolean {
@@ -102,10 +105,17 @@ export default class GuidNodeBinderHub extends Controller {
     }
 
     async performBuild(needsPersonalToken: boolean, callback: (result: BuildMessage) => void) {
-        if (!this.node || !this.config) {
+        if (!this.config) {
             throw new EmberError('Illegal config');
         }
-        const nodeUrl = this.node.links.html as string;
+        const { buildFormValues } = this;
+        if (!buildFormValues) {
+            throw new EmberError('Illegal state');
+        }
+        const buildPath = this.getBinderV2Path(buildFormValues, '', '');
+        if (!buildPath) {
+            throw new EmberError('Illegal state');
+        }
         const config = this.config.content as BinderHubConfigModel;
         const { binderhub } = config;
         if (!binderhub || !binderhub.token) {
@@ -122,9 +132,7 @@ export default class GuidNodeBinderHub extends Controller {
             await token.save();
             additional = `&repo_token=${token.tokenValue}`;
         }
-        const storageUrl = addPathSegment(nodeUrl, 'osfstorage');
-        const encodedNodeUrl = encodeURIComponent(storageUrl);
-        const buildUrl = addPathSegment(binderhub.url, `build/rdm/${encodedNodeUrl}/master`);
+        const buildUrl = addPathSegment(binderhub.url, buildPath);
         const source = new EventSource(`${buildUrl}?token=${binderhub.token.access_token}${additional}`);
         source.onmessage = (message: MessageEvent) => {
             const data = JSON.parse(message.data) as BuildMessage;
@@ -137,6 +145,37 @@ export default class GuidNodeBinderHub extends Controller {
             }
             this.handleBuildMessage(source, data, callback);
         };
+    }
+
+    get buildFormValues(): BuildFormValues | null {
+        if (this.activeTab === 'externalrepo') {
+            return this.externalRepoBuildFormValues;
+        }
+        if (!this.node) {
+            throw new EmberError('Illegal config');
+        }
+        const nodeUrl = this.node.links.html as string;
+        const storageUrl = addPathSegment(nodeUrl, 'osfstorage');
+        const encodedNodeUrl = encodeURIComponent(storageUrl);
+        return {
+            providerPrefix: 'rdm',
+            repo: encodedNodeUrl,
+            ref: 'master',
+        } as BuildFormValues;
+    }
+
+    getBinderV2Path(args: BuildFormValues, path: string, pathType: string) {
+        // return a v2 url from a providerPrefix, repository, ref, and (file|url)path
+        if (args.repo.length === 0) {
+            // no repo, no url
+            return null;
+        }
+        let url = `build/v2/${args.providerPrefix}/${args.repo}/${args.ref}`;
+        if (path && path.length > 0) {
+            // encode the path, it will be decoded in loadingMain
+            url = `${url}?${pathType}path=${encodeURIComponent(path)}`;
+        }
+        return url;
     }
 
     handleBuildMessage(source: EventSource, data: BuildMessage, callback: (result: BuildMessage) => void) {
@@ -162,6 +201,11 @@ export default class GuidNodeBinderHub extends Controller {
         }
         this.configCache = this.store.findRecord('binderhub-config', this.node.id);
         return this.configCache!;
+    }
+
+    @action
+    externalRepoChanged(this: GuidNodeBinderHub, buildFormValues: BuildFormValues) {
+        this.externalRepoBuildFormValues = buildFormValues;
     }
 
     @action
