@@ -11,6 +11,7 @@ import Node from 'ember-osf-web/models/node';
 /* eslint-disable camelcase */
 export interface JupyterServerOptions {
     binder_persistent_request?: string;
+    rdm_node?: string;
 }
 
 export interface JupyterServer {
@@ -137,22 +138,13 @@ export default class JupyterServersList extends Component {
     }
 
     isTarget(server: JupyterServer) {
-        if (!server.user_options || !server.user_options.binder_persistent_request) {
+        if (!server.user_options || !server.user_options.rdm_node) {
             return false;
         }
         if (!this.node) {
             return false;
         }
-        const pathMatched = server.user_options.binder_persistent_request.match(/^v[0-9]+\/rdm\/(.+)\/([a-z]+)$/);
-        if (!pathMatched) {
-            return false;
-        }
-        const url = new URL(decodeURIComponent(pathMatched[1]));
-        const osfPathMatched = url.pathname.match(/^\/([a-z0-9A-Z]+)\/.*/);
-        if (!osfPathMatched) {
-            return false;
-        }
-        return osfPathMatched[1] === this.node.id;
+        return this.node.links.self === server.user_options.rdm_node;
     }
 
     @action

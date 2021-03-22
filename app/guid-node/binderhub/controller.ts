@@ -144,6 +144,7 @@ export default class GuidNodeBinderHub extends Controller {
             await token.save();
             additional = `&repo_token=${token.tokenValue}`;
         }
+        additional += `&${this.getUserOptions()}`;
         const buildUrl = addPathSegment(binderhub.url, buildPath);
         const urlSep = buildUrl.includes('?') ? '&' : '?';
         const source = new EventSource(`${buildUrl}${urlSep}token=${binderhub.token.access_token}${additional}`);
@@ -161,6 +162,24 @@ export default class GuidNodeBinderHub extends Controller {
         source.onerror = (_: any) => {
             this.set('binderHubBuildError', true);
         };
+    }
+
+    getUserOptions(): string {
+        if (!this.node) {
+            throw new EmberError('Illegal config');
+        }
+        if (!this.node.links.self) {
+            throw new EmberError('Illegal config');
+        }
+        const nodeUrl = this.node.links.self.toString();
+        let opts = `useropt.rdm_node=${encodeURIComponent(nodeUrl)}`;
+        const matched = nodeUrl.match(/^(http.+\/v2\/)nodes\/([a-zA-Z0-9]+)\/.*$/);
+        if (!matched) {
+            throw new EmberError('Illegal config');
+        }
+        opts += `&useropt.rdm_api_url=${encodeURIComponent(matched[1])}`;
+        opts += `&useropt.rdm_node_id=${encodeURIComponent(matched[2])}`;
+        return opts;
     }
 
     get buildFormValues(): BuildFormValues | null {
