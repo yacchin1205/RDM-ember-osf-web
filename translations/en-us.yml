@@ -1746,15 +1746,14 @@ iqbrims:
 binderhub:
     page_title: '{nodeTitle} BidnerHub'
     jupyter_servers_list:
-        header: 'このプロジェクトから作成した私の解析環境'
-        delete_confirm_dialog_title: '削除確認'
-        delete_confirm_dialog_body: 'サーバーを削除しますか？ '
+        header: 'My environments for this project'
+        delete_confirm_dialog_title: 'Delete confirmation'
+        delete_confirm_dialog_body: 'Do you want to delete the server?'
     project_editor:
-        header: '新しい解析環境'
-        tab_editproject: 'このプロジェクトから作成'
-        tab_externalrepo: '外部リポジトリから作成'
+        header: 'New environment'
+        tab_editproject: 'From This Project'
+        tab_externalrepo: 'From External Repository'
     loading: 'Loading BinderHub config...'
-    not_available: 'Not available'
     servers:
         name: 'Server name'
         url: 'URL'
@@ -1777,5 +1776,5 @@ binderhub:
             package_name: 'Name'
             package_version: 'Version'
     error:
-        binderhub_build_error: 'BinderHubとの接続時にエラーが発生しました。再認証してください。'
+        binderhub_build_error: 'An error occurred while connecting to the BinderHub. Please reauthenticate.'
         reconnect_binderhub: 'Authorize'
