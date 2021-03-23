@@ -1,9 +1,19 @@
 <div local-class='build_console'>
     <div local-class='build_console_button'>
-        <GuidNode::Binderhub::-Components::LaunchButtons
-            @binderHubConfig={{this.binderHubConfig}}
-            @onClick={{action this.launch}}
-        />
+        <div>
+            {{t 'binderhub.build.status'}}
+        </div>
+        {{#if this.buildPhase}}
+            <div local-class='build_phase'>
+                {{this.buildPhase}}
+            </div>
+        {{/if}}
+        <div local-class='launch_buttons'>
+            <GuidNode::Binderhub::-Components::LaunchButtons
+                @binderHubConfig={{this.binderHubConfig}}
+                @onClick={{action this.launch}}
+            />
+        </div>
     </div>
     {{#if this.buildLogVisible}}
         <div local-class='build_terminal'>

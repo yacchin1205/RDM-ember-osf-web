@@ -1663,6 +1663,11 @@ binderhub:
         placeholders:
             package_name: '名前'
             package_version: 'バージョン'
+    build:
+        status: 'ビルド状況'
     error:
         binderhub_build_error: 'BinderHubとの接続時にエラーが発生しました。再認証してください。'
         reconnect_binderhub: '再認証'
+        jupyterhub_auth_error: 'JupyterHubとの接続時にエラーが発生しました。再認証してください。'
+        jupyterhub_api_error: 'JupyterHubとの接続時にエラーが発生しました。ページを再読み込みしてください。'
+        reconnect_jupyterhub: '再認証'

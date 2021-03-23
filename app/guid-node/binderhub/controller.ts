@@ -52,7 +52,13 @@ export default class GuidNodeBinderHub extends Controller {
 
     externalRepoBuildFormValues: BuildFormValues | null = null;
 
+    jupyterHubAPIError = false;
+
+    jupyterHubAuthError = false;
+
     binderHubBuildError = false;
+
+    buildPhase: string | null = null;
 
     @computed('config.isFulfilled')
     get loading(): boolean {
@@ -217,6 +223,9 @@ export default class GuidNodeBinderHub extends Controller {
         const logs: BuildMessage[] = (this.buildLog || []).map(elem => elem);
         logs.push(data);
         this.set('buildLog', logs);
+        if (data.phase) {
+            this.set('buildPhase', data.phase);
+        }
         if (data.phase === 'ready' || data.phase === 'failed' || data.phase === 'failure') {
             source.close();
             if (!callback) {
@@ -241,6 +250,12 @@ export default class GuidNodeBinderHub extends Controller {
     @action
     externalRepoChanged(this: GuidNodeBinderHub, buildFormValues: BuildFormValues) {
         this.externalRepoBuildFormValues = buildFormValues;
+    }
+
+    @action
+    requestError(this: GuidNodeBinderHub, exception: any) {
+        this.set('jupyterHubAPIError', true);
+        this.set('jupyterHubAuthError', exception.status === 403);
     }
 
     @action

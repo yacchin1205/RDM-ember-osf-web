@@ -23,7 +23,7 @@
                     <th class='col-md-2'>{{t 'binderhub.servers.delete'}}</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody local-class='jupyter-server'>
                 {{#if this.servers.length}}
                     {{#each this.servers as |server|}}
                         <tr>

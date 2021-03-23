@@ -60,6 +60,8 @@ export default class JupyterServersList extends Component {
 
     @requiredAction renewToken!: () => void;
 
+    @requiredAction onError!: (exception: any) => void;
+
     initialized: boolean = false;
 
     node?: Node | null = null;
@@ -68,6 +70,10 @@ export default class JupyterServersList extends Component {
 
     showDeleteConfirmDialogTarget: JupyterServer | null = null;
 
+    buildPhase: string | null = this.buildPhase;
+
+    oldBuildPhase: string | null = null;
+
     didReceiveAttrs() {
         if (!this.validateToken()) {
             return;
@@ -75,10 +81,11 @@ export default class JupyterServersList extends Component {
         if (!this.node) {
             return;
         }
-        if (this.initialized) {
+        if (this.initialized && this.buildPhase === this.oldBuildPhase) {
             return;
         }
         this.initialized = true;
+        this.oldBuildPhase = this.buildPhase;
         this.performLoadServers();
     }
 
@@ -117,6 +124,22 @@ export default class JupyterServersList extends Component {
         return false;
     }
 
+    async jupyterhubAPIAJAX(apiPath: string, ajaxOptions: JQuery.AjaxSettings | null = null) {
+        if (!this.binderHubConfig || !this.binderHubConfig.get('isFulfilled')) {
+            throw new EmberError('Illegal config');
+        }
+        const config = this.binderHubConfig.content as BinderHubConfigModel;
+        try {
+            return await config.jupyterhubAPIAJAX(apiPath, ajaxOptions);
+        } catch (e) {
+            if (!this.onError) {
+                return null;
+            }
+            this.onError(e);
+            return null;
+        }
+    }
+
     async loadServers(): Promise<JupyterServer[]> {
         if (!this.binderHubConfig || !this.binderHubConfig.get('isFulfilled')) {
             throw new EmberError('Illegal config');
@@ -125,8 +148,7 @@ export default class JupyterServersList extends Component {
         if (!jupyterhub || !jupyterhub.token) {
             throw new EmberError('Insufficient parameters');
         }
-        const config = this.binderHubConfig.content as BinderHubConfigModel;
-        const response = await config.jupyterhubAPIAJAX(`users/${jupyterhub.token.user}`);
+        const response = await this.jupyterhubAPIAJAX(`users/${jupyterhub.token.user}`);
         const result = response as any;
         if (result.servers === undefined || result.servers === null) {
             throw new EmberError('Unexpected object');
@@ -187,12 +209,11 @@ export default class JupyterServersList extends Component {
             throw new EmberError('Insufficient parameters');
         }
         const { user } = jupyterhub.token;
-        const config = this.binderHubConfig.content as BinderHubConfigModel;
         const server = this.showDeleteConfirmDialogTarget;
         this.set('showDeleteConfirmDialogTarget', null);
         later(async () => {
             const serverpath = server.name.length > 0 ? `servers/${server.name}` : 'server';
-            await config.jupyterhubAPIAJAX(
+            await this.jupyterhubAPIAJAX(
                 `users/${user}/${serverpath}`,
                 {
                     method: 'DELETE',

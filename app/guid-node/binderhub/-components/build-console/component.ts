@@ -14,6 +14,8 @@ export default class BuildConsole extends Component {
 
     buildLog: BuildMessage[] | null = this.buildLog;
 
+    buildPhase: string | null = this.buildPhase;
+
     @requiredAction requestBuild!: (path: BootstrapPath | null, callback: (result: BuildMessage) => void) => void;
 
     @computed('buildLog')

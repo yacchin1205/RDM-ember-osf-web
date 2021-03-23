@@ -1781,6 +1781,11 @@ binderhub:
         placeholders:
             package_name: 'Name'
             package_version: 'Version'
+    build:
+        status: 'Build status'
     error:
         binderhub_build_error: 'An error occurred while connecting to the BinderHub. Please reauthenticate.'
         reconnect_binderhub: 'Authorize'
+        jupyterhub_auth_error: 'An error occurred while connecting to the JupyterHub. Please reauthenticate.'
+        jupyterhub_api_error: 'An error occurred while connecting to the JupyterHub. Please reload this page.'
+        reconnect_jupyterhub: 'Authorize'

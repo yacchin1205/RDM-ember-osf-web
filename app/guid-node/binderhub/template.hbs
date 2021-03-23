@@ -11,11 +11,33 @@
             >
                 {{t 'binderhub.jupyter_servers_list.header'}}
             </h2>
+            <BsAlert
+                @type='danger'
+                @dismissible={{false}}
+                @visible={{this.jupyterHubAPIError}}
+                local-class='BinderHub__connection_alert'
+            >
+                {{#if this.jupyterHubAuthError}}
+                    {{t 'binderhub.error.jupyterhub_auth_error'}}
+                    <button
+                        data-test-reconnect-jupyterhub
+                        type='button'
+                        class='btn btn-danger'
+                        {{action this.renewJupyterHubToken}}
+                    >
+                        {{t 'binderhub.error.reconnect_jupyterhub'}}
+                    </button>
+                {{else}}
+                    {{t 'binderhub.error.jupyterhub_api_error'}}
+                {{/if}}
+            </BsAlert>
             <div local-class='BinderHub__panel'>
                 <GuidNode::Binderhub::-Components::JupyterServersList
                     @node={{this.node}}
                     @binderHubConfig={{this.config}}
                     @renewToken={{action this.renewJupyterHubToken}}
+                    @buildPhase={{this.buildPhase}}
+                    @onError={{action this.requestError}}
                 />
             </div>
             <h2
@@ -74,6 +96,7 @@
                 @binderHubConfig={{this.config}}
                 @requestBuild={{action this.build}}
                 @buildLog={{this.buildLog}}
+                @buildPhase={{this.buildPhase}}
               />
         </div>
     {{/if}}
