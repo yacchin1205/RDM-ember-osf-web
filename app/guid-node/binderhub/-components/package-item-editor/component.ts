@@ -1,6 +1,7 @@
 import Component from '@ember/component';
 import { action } from '@ember/object';
 import { requiredAction } from 'ember-osf-web/decorators/component';
+import $ from 'jquery';
 
 export default class PackageItemEditor extends Component {
     name: string = '';
@@ -11,8 +12,14 @@ export default class PackageItemEditor extends Component {
 
     @requiredAction onCancel!: () => void;
 
+    didRender() {
+        $('.input-package-name').focus();
+    }
+
     @action
     confirm(this: PackageItemEditor) {
+        this.set('name', $('.input-package-name').val());
+        this.set('version', $('.input-package-version').val());
         if (!this.onConfirm) {
             return;
         }
@@ -25,5 +32,31 @@ export default class PackageItemEditor extends Component {
             return;
         }
         this.onCancel();
+    }
+
+    @action
+    nameKeyDown(this: PackageItemEditor, event: KeyboardEvent) {
+        const { key } = event;
+        if (key === 'Escape') {
+            this.cancel();
+            return;
+        }
+        if (key !== 'Enter') {
+            return;
+        }
+        $('.input-package-version').focus();
+    }
+
+    @action
+    versionKeyDown(this: PackageItemEditor, event: KeyboardEvent) {
+        const { key } = event;
+        if (key === 'Escape') {
+            this.cancel();
+            return;
+        }
+        if (key !== 'Enter') {
+            return;
+        }
+        this.confirm();
     }
 }

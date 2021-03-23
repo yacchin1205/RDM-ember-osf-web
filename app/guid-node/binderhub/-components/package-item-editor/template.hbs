@@ -1,16 +1,18 @@
 <div local-class='package_item_editor'>
-    {{input
+    <input
         name='package_name'
-        placeholder=(t 'binderhub.deployment.placeholders.package_name')
-        value=this.name
-        type='text'
-    }}
-    {{input
+        class='input-package-name'
+        placeholder={{t 'binderhub.deployment.placeholders.package_name'}}
+        value={{this.name}}
+        onkeyup={{action this.nameKeyDown target=this}}
+        type='text'>
+    <input
         name='package_version'
-        placeholder=(t 'binderhub.deployment.placeholders.package_version')
-        value=this.version
-        type='text'
-    }}
+        class='input-package-version'
+        placeholder={{t 'binderhub.deployment.placeholders.package_version'}}
+        value={{this.version}}
+        onkeyup={{action this.versionKeyDown target=this}}
+        type='text'>
     <button
         data-test-package-item-confirm
         type='button'
