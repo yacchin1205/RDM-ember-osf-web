@@ -18,6 +18,8 @@ enum DockerfileProperty {
     Apt,
     Conda,
     Pip,
+    RCran,
+    RGitHub,
     PostInstall,
 }
 
@@ -48,6 +50,28 @@ function getPipPackageId(pkg: string[]) {
 
 function parsePipPackageId(id: string) {
     return parseCondaPackageId(id);
+}
+
+function getRCranScript(packageId: string[]) {
+    const name = packageId[0];
+    const version = packageId[1] || '';
+    const args = version.length > 0 ? `, "${version}"` : '';
+    return `Rscript -e 'remotes::install_version("${name}"${args})'`;
+}
+
+function getRGitHubScript(packageId: string[]) {
+    const name = packageId[0];
+    const version = packageId[1] || '';
+    const args = version.length > 0 ? `, ref = "${version}"` : '';
+    return `Rscript -e 'remotes::install_github("${name}"${args})'`;
+}
+
+function removeQuotes(item: string) {
+    const m = item.match(/^\s*"(.*)"\s*/);
+    if (!m) {
+        throw new Error(`Unexpected text: ${item}`);
+    }
+    return m[1];
 }
 
 export default class ProjectEditor extends Component {
@@ -144,12 +168,23 @@ export default class ProjectEditor extends Component {
         const pipPackages = key === DockerfileProperty.Pip
             ? value.split(/\s/).filter(item => item.length > 0)
             : basePipPackages.map(pkg => getPipPackageId(pkg));
+        const rCranPackages = key === DockerfileProperty.RCran
+            ? value.split(/\s/).filter(item => item.length > 0)
+                .map(item => parseCondaPackageId(item))
+            : (this.rCranPackages || []);
+        const rGitHubPackages = key === DockerfileProperty.RGitHub
+            ? value.split(/\s/).filter(item => item.length > 0)
+                .map(item => parseCondaPackageId(item))
+            : (this.rGitHubPackages || []);
         const hasPostInstall = key === DockerfileProperty.PostInstall
             ? value === 'true'
             : this.hasPostInstall;
         const superuser = aptPackages.length > 0
+            || hasPostInstall
             || (condaPackages.length > 0 && this.condaSupported)
-            || (pipPackages.length > 0 && this.pipSupported);
+            || (pipPackages.length > 0 && this.pipSupported)
+            || (rCranPackages.length > 0 && this.rCranSupported)
+            || (rGitHubPackages.length > 0 && this.rGitHubSupported);
         if (superuser) {
             content += 'USER root\n';
         }
@@ -166,6 +201,16 @@ export default class ProjectEditor extends Component {
         if (pipPackages.length > 0 && this.pipSupported) {
             content += 'RUN pip install -U --no-cache-dir \\\n\t\t';
             content += pipPackages.map(item => `${item} `).join(' \\\n\t\t');
+            content += '\n\n';
+        }
+        if (rCranPackages.length > 0 && this.rCranSupported) {
+            content += 'RUN ';
+            content += rCranPackages.map(pid => getRCranScript(pid)).join(' \\\n\t&& ');
+            content += '\n\n';
+        }
+        if (rGitHubPackages.length > 0 && this.rGitHubSupported) {
+            content += 'RUN ';
+            content += rGitHubPackages.map(pid => getRGitHubScript(pid)).join(' \\\n\t&& ');
             content += '\n\n';
         }
         if (hasPostInstall === true) {
@@ -257,6 +302,24 @@ export default class ProjectEditor extends Component {
         return image.packages.includes('pip');
     }
 
+    @computed('selectedImage')
+    get rCranSupported() {
+        const image = this.get('selectedImage');
+        if (image === null || !image.packages) {
+            return false;
+        }
+        return image.packages.includes('rcran');
+    }
+
+    @computed('selectedImage')
+    get rGitHubSupported() {
+        const image = this.get('selectedImage');
+        if (image === null || !image.packages) {
+            return false;
+        }
+        return image.packages.includes('rgithub');
+    }
+
     @computed('dockerfileStatements')
     get aptPackages() {
         const dockerfileStatements = this.get('dockerfileStatements');
@@ -317,6 +380,92 @@ export default class ProjectEditor extends Component {
             .map(item => item.trim())
             .filter(item => item.length > 0)
             .map(item => parsePipPackageId(item));
+    }
+
+    @computed('dockerfileStatements')
+    get rCranPackages() {
+        const dockerfileStatements = this.get('dockerfileStatements');
+        if (dockerfileStatements === null) {
+            return null;
+        }
+        const pattern = /^Rscript\s+-e\s+'remotes::install_version\(([^)]+)\)'(.*)$/;
+        const statements = dockerfileStatements
+            .map(line => line.trim().match(/^RUN\s+(.+)$/))
+            .map(match => (match ? match[1].trim().match(pattern) : null))
+            .map(match => (match ? match[0] : null))
+            .filter(match => match);
+        if (statements.length === 0) {
+            return [];
+        }
+        let statement = statements[0] as string;
+        const packages = [];
+        while (statement.length > 0) {
+            const m = statement.match(pattern);
+            if (!m) {
+                throw new Error(`Unexpected string: ${statement}`);
+            }
+            const params = m[1].split(',').map(item => removeQuotes(item));
+            if (params.length === 1) {
+                packages.push([params[0], '']);
+            } else {
+                packages.push([params[0], params[1]]);
+            }
+            statement = m[2].trim();
+            if (statement.length === 0) {
+                break;
+            }
+            const cont = statement.match(/^&&\s+(.+)$/);
+            if (!cont) {
+                throw new Error(`Unexpected string: ${statement}`);
+            }
+            statement = cont[1].trim();
+        }
+        return packages;
+    }
+
+    @computed('dockerfileStatements')
+    get rGitHubPackages() {
+        const dockerfileStatements = this.get('dockerfileStatements');
+        if (dockerfileStatements === null) {
+            return null;
+        }
+        const pattern = /^Rscript\s+-e\s+'remotes::install_github\(([^)]+)\)'(.*)$/;
+        const statements = dockerfileStatements
+            .map(line => line.trim().match(/^RUN\s+(.+)$/))
+            .map(match => (match ? match[1].trim().match(pattern) : null))
+            .map(match => (match ? match[0] : null))
+            .filter(match => match);
+        if (statements.length === 0) {
+            return [];
+        }
+        let statement = statements[0] as string;
+        const packages = [];
+        while (statement.length > 0) {
+            const m = statement.match(pattern);
+            if (!m) {
+                throw new Error(`Unexpected string: ${statement}`);
+            }
+            const params = m[1].split(',');
+            if (params.length === 1) {
+                packages.push([removeQuotes(params[0]), '']);
+            } else {
+                const version = params[1].trim().match(/ref\s*=\s*"(.+)"/);
+                if (!version) {
+                    throw new Error(`Invalid statement: ${params[1]}`);
+                }
+                packages.push([removeQuotes(params[0]), version[1]]);
+            }
+            statement = m[2].trim();
+            if (statement.length === 0) {
+                break;
+            }
+            const cont = statement.match(/^&&\s+(.+)$/);
+            if (!cont) {
+                throw new Error(`Unexpected string: ${statement}`);
+            }
+            statement = cont[1].trim();
+        }
+        return packages;
     }
 
     @computed('dockerfileStatements')
@@ -506,6 +655,22 @@ export default class ProjectEditor extends Component {
         this.updateDockerfile(
             DockerfileProperty.Pip,
             packages.map(pkg => getPipPackageId(pkg)).join(' '),
+        );
+    }
+
+    @action
+    rCranUpdated(this: ProjectEditor, packages: Array<[string, string]>) {
+        this.updateDockerfile(
+            DockerfileProperty.RCran,
+            packages.map(pkg => getCondaPackageId(pkg)).join(' '),
+        );
+    }
+
+    @action
+    rGitHubUpdated(this: ProjectEditor, packages: Array<[string, string]>) {
+        this.updateDockerfile(
+            DockerfileProperty.RGitHub,
+            packages.map(pkg => getCondaPackageId(pkg)).join(' '),
         );
     }
 

@@ -84,6 +84,22 @@
                             @onUpdate={{action this.pipUpdated}}
                         />
                     {{/if}}
+                    {{#if this.rCranSupported}}
+                        <GuidNode::Binderhub::-Components::PackageEditor
+                            data-test-package-editor='rcran'
+                            @label='rcran'
+                            @packages={{this.rCranPackages}}
+                            @onUpdate={{action this.rCranUpdated}}
+                        />
+                    {{/if}}
+                    {{#if this.rGitHubSupported}}
+                        <GuidNode::Binderhub::-Components::PackageEditor
+                            data-test-package-editor='rgithub'
+                            @label='rgithub'
+                            @packages={{this.rGitHubPackages}}
+                            @onUpdate={{action this.rGitHubUpdated}}
+                        />
+                    {{/if}}
                 </div>
                 <h3>{{t 'binderhub.deployment.postinstallscript'}}</h3>
                 <div local-class='postscript_view'>
