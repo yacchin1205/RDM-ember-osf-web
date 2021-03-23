@@ -86,6 +86,43 @@
                     {{/if}}
                 </div>
                 <h3>{{t 'binderhub.deployment.postinstallscript'}}</h3>
+                <div local-class='postscript_view'>
+                    <div local-class='postscript_status'>
+                        {{#if this.postInstallScriptModel}}
+                            {{t 'binderhub.deployment.has_post_install'}}
+                            <a
+                                href={{this.postInstallScriptModel.links.html}}
+                                target='_blank'
+                                rel='noopener'
+                            >
+                                {{t 'binderhub.deployment.open_post_install'}}
+                            </a>
+                        {{else}}
+                            {{t 'binderhub.deployment.no_post_install'}}
+                            <a
+                                href={{this.nodeFilesLink}}
+                                target='_blank'
+                                rel='noopener'
+                            >
+                                {{t 'binderhub.deployment.open_node_files'}}
+                            </a>
+                        {{/if}}
+                    </div>
+                    <button
+                        data-test-refresh-post-install
+                        type='button'
+                        class='btn btn-default'
+                        disabled={{this.refreshingPostInstallScript}}
+                        {{action this.refreshPostInstall}}
+                    >
+                        {{fa-icon 'fa-undo'}}
+                        {{#if this.refreshingPostInstallScript}}
+                            {{t 'binderhub.deployment.refreshing_post_install'}}
+                        {{else}}
+                            {{t 'binderhub.deployment.refresh_post_install'}}
+                        {{/if}}
+                    </button>
+                </div>
             {{/if}}
         {{/if}}
     {{/if}}

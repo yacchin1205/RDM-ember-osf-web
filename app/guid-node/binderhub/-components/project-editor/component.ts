@@ -8,6 +8,7 @@ import { requiredAction } from 'ember-osf-web/decorators/component';
 import BinderHubConfigModel from 'ember-osf-web/models/binderhub-config';
 import FileModel from 'ember-osf-web/models/file';
 import FileProviderModel from 'ember-osf-web/models/file-provider';
+import Node from 'ember-osf-web/models/node';
 import CurrentUser from 'ember-osf-web/services/current-user';
 import getHref from 'ember-osf-web/utils/get-href';
 import md5 from 'js-md5';
@@ -17,6 +18,7 @@ enum DockerfileProperty {
     Apt,
     Conda,
     Pip,
+    PostInstall,
 }
 
 function getAptPackageId(pkg: string[]) {
@@ -51,11 +53,15 @@ function parsePipPackageId(id: string) {
 export default class ProjectEditor extends Component {
     @service currentUser!: CurrentUser;
 
+    node?: Node | null = null;
+
     binderHubConfig: DS.PromiseObject<BinderHubConfigModel> & BinderHubConfigModel = this.binderHubConfig;
 
     configFolder: FileModel = this.configFolder;
 
     dockerfileModel: FileModel | null = this.dockerfileModel;
+
+    postInstallScriptModel: FileModel | null = this.postInstallScriptModel;
 
     configStorageProvider: FileProviderModel = this.configStorageProvider;
 
@@ -64,6 +70,8 @@ export default class ProjectEditor extends Component {
     imageSelectable = false;
 
     loadingPath?: string;
+
+    refreshingPostInstallScript = false;
 
     dockerfile: string | undefined = undefined;
 
@@ -79,6 +87,7 @@ export default class ProjectEditor extends Component {
         this.loadingPath = this.configFolder.get('path');
         later(async () => {
             await this.loadCurrentConfig();
+            await this.performRefreshPostInstall();
         }, 0);
     }
 
@@ -135,6 +144,9 @@ export default class ProjectEditor extends Component {
         const pipPackages = key === DockerfileProperty.Pip
             ? value.split(/\s/).filter(item => item.length > 0)
             : basePipPackages.map(pkg => getPipPackageId(pkg));
+        const hasPostInstall = key === DockerfileProperty.PostInstall
+            ? value === 'true'
+            : this.hasPostInstall;
         const superuser = aptPackages.length > 0
             || (condaPackages.length > 0 && this.condaSupported)
             || (pipPackages.length > 0 && this.pipSupported);
@@ -155,6 +167,11 @@ export default class ProjectEditor extends Component {
             content += 'RUN pip install -U --no-cache-dir \\\n\t\t';
             content += pipPackages.map(item => `${item} `).join(' \\\n\t\t');
             content += '\n\n';
+        }
+        if (hasPostInstall === true) {
+            content += 'COPY postInstall /\n';
+            content += 'RUN chmod +x /postInstall && /postInstall\n';
+            content += '\n';
         }
         if (superuser) {
             content += 'USER $NB_USER\n';
@@ -302,6 +319,20 @@ export default class ProjectEditor extends Component {
             .map(item => parsePipPackageId(item));
     }
 
+    @computed('dockerfileStatements')
+    get hasPostInstall() {
+        const dockerfileStatements = this.get('dockerfileStatements');
+        if (dockerfileStatements === null) {
+            return null;
+        }
+        if (dockerfileStatements.some(
+            line => line.match(/^COPY\s+postInstall.*$/) !== null,
+        )) {
+            return true;
+        }
+        return false;
+    }
+
     @computed('dockerfile')
     get dockerfileStatements() {
         if (this.manuallyChanged) {
@@ -328,6 +359,14 @@ export default class ProjectEditor extends Component {
             statements.push(statement);
         }
         return statements;
+    }
+
+    @computed('node')
+    get nodeFilesLink() {
+        if (!this.node) {
+            return null;
+        }
+        return `${this.node.links.html}files`;
     }
 
     validateToken() {
@@ -359,6 +398,35 @@ export default class ProjectEditor extends Component {
         }
         const envFile = await envFiles[0];
         return envFile;
+    }
+
+    async performRefreshPostInstall(reload: boolean = false) {
+        if (this.hasPostInstall === null) {
+            return;
+        }
+        if (!this.configFolder) {
+            return;
+        }
+        let { configFolder } = this;
+        if (reload) {
+            configFolder = await configFolder.reload();
+        }
+        const files = await configFolder.get('files');
+        if (!files) {
+            return;
+        }
+        const scriptFiles = files.filter(file => file.name === 'postInstall');
+        this.set('postInstallScriptModel', scriptFiles.length > 0 ? scriptFiles[0] : null);
+        if (scriptFiles.length === 0 && this.hasPostInstall === false) {
+            return;
+        }
+        if (scriptFiles.length > 0 && this.hasPostInstall === true) {
+            return;
+        }
+        this.updateDockerfile(
+            DockerfileProperty.PostInstall,
+            scriptFiles.length > 0 ? 'true' : 'false',
+        );
     }
 
     async loadCurrentConfig() {
@@ -454,6 +522,15 @@ export default class ProjectEditor extends Component {
     resetDockerfile(this: ProjectEditor) {
         later(async () => {
             await this.performResetDockerfile();
+        }, 0);
+    }
+
+    @action
+    refreshPostInstall(this: ProjectEditor) {
+        this.set('refreshingPostInstallScript', true);
+        later(async () => {
+            await this.performRefreshPostInstall(true);
+            this.set('refreshingPostInstallScript', false);
         }, 0);
     }
 }
