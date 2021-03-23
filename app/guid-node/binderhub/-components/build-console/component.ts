@@ -1,8 +1,10 @@
 import Component from '@ember/component';
 import EmberError from '@ember/error';
 import { action, computed } from '@ember/object';
+import { htmlSafe } from '@ember/template';
 import DS from 'ember-data';
 import { requiredAction } from 'ember-osf-web/decorators/component';
+import AnsiUp from 'ember-osf-web/guid-node/binderhub/-components/build-console/ansi_up';
 import { getJupyterHubServerURL } from 'ember-osf-web/guid-node/binderhub/-components/jupyter-servers-list/component';
 import { BootstrapPath, BuildMessage } from 'ember-osf-web/guid-node/binderhub/controller';
 import BinderHubConfigModel from 'ember-osf-web/models/binderhub-config';
@@ -20,6 +22,16 @@ export default class BuildConsole extends Component {
             return '';
         }
         return this.buildLog.map(log => log.message).join('');
+    }
+
+    @computed('buildLog')
+    get buildLogLinesHTML() {
+        if (!this.buildLog) {
+            return htmlSafe('');
+        }
+        const text = this.buildLog.map(log => log.message).join('');
+        const ansiUp = new AnsiUp();
+        return htmlSafe(ansiUp.ansi_to_html(text));
     }
 
     @computed('buildLog')
