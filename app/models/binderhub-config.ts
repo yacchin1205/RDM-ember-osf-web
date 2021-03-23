@@ -36,6 +36,7 @@ export interface Endpoint {
     id: string;
     name: string;
     path: string | null;
+    imageurl?: string;
 }
 
 export interface Launcher {

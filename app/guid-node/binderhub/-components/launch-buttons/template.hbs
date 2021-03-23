@@ -7,7 +7,11 @@
             local-class='launch_button'
             {{action this.launch item.id}}
         >
-            {{item.name}}
+            {{#if item.imageurl}}
+                <img src={{item.imageurl}} alt={{item.name}}>
+            {{else}}
+                {{item.name}}
+            {{/if}}
         </button>
     {{/each}}
 </div>
