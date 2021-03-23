@@ -64,7 +64,7 @@
                 <div local-class='packages'>
                     <GuidNode::Binderhub::-Components::PackageEditor
                         data-test-package-editor='apt'
-                        @label='apt'
+                        @label='apt-get'
                         @packages={{this.aptPackages}}
                         @onUpdate={{action this.aptUpdated}}
                     />
@@ -87,7 +87,7 @@
                     {{#if this.rCranSupported}}
                         <GuidNode::Binderhub::-Components::PackageEditor
                             data-test-package-editor='rcran'
-                            @label='rcran'
+                            @label='R (CRAN)'
                             @packages={{this.rCranPackages}}
                             @onUpdate={{action this.rCranUpdated}}
                         />
@@ -95,7 +95,7 @@
                     {{#if this.rGitHubSupported}}
                         <GuidNode::Binderhub::-Components::PackageEditor
                             data-test-package-editor='rgithub'
-                            @label='rgithub'
+                            @label='R (GitHub)'
                             @packages={{this.rGitHubPackages}}
                             @onUpdate={{action this.rGitHubUpdated}}
                         />
