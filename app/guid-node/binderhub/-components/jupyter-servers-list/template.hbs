@@ -39,7 +39,7 @@
                                     {{server.url}}
                                 </button>
                             </td>
-                            <td class='col-md-3'>{{server.last_activity}}</td>
+                            <td class='col-md-3'> {{moment-format server.last_activity 'YYYY-MM-DD hh:mm A'}}</td>
                             <td class='col-md-2'>
                                 <GuidNode::Binderhub::-Components::LaunchButtons
                                     @binderHubConfig={{this.binderHubConfig}}

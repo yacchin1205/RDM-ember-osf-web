@@ -160,13 +160,14 @@ export default class JupyterServersList extends Component {
     }
 
     isTarget(server: JupyterServer) {
-        if (!server.user_options || !server.user_options.rdm_node) {
-            return false;
-        }
         if (!this.node) {
             return false;
         }
-        return this.node.links.self === server.user_options.rdm_node;
+        const m = server.name.match(/^(.+)-osfstorage-(.+)$/);
+        if (!m) {
+            return false;
+        }
+        return m[1] === this.node.id;
     }
 
     @action
