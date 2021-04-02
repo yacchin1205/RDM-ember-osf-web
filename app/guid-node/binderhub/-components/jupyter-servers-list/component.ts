@@ -218,6 +218,8 @@ export default class JupyterServersList extends Component {
                 `users/${user}/${serverpath}`,
                 {
                     method: 'DELETE',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ remove: true }),
                 },
             );
             const servers = await this.loadServers();
