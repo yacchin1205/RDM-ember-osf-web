@@ -4,22 +4,24 @@
     {{else}}
         {{#if this.manuallyChanged}}
             {{t 'binderhub.deployment.unavailable'}}
-            <button
-                data-test-view-dockerfile
-                type='button'
-                class='btn btn-default'
-                {{action this.viewDockerfile target=this}}
-            >
-                {{t 'binderhub.deployment.view_dockerfile'}}
-            </button>
-            <button
-                data-test-reset-dockerfile
-                type='button'
-                class='btn btn-danger'
-                {{action (mut this.showResetDockerfileConfirmDialog) true}}
-            >
-                {{t 'binderhub.deployment.reset_dockerfile'}}
-            </button>
+            {{#if this.node.userHasWritePermission}}
+                <button
+                    data-test-view-dockerfile
+                    type='button'
+                    class='btn btn-default'
+                    {{action this.viewDockerfile target=this}}
+                >
+                    {{t 'binderhub.deployment.view_dockerfile'}}
+                </button>
+                <button
+                    data-test-reset-dockerfile
+                    type='button'
+                    class='btn btn-danger'
+                    {{action (mut this.showResetDockerfileConfirmDialog) true}}
+                >
+                    {{t 'binderhub.deployment.reset_dockerfile'}}
+                </button>
+            {{/if}}
         {{else}}
             <h3>{{t 'binderhub.deployment.environment'}}<//h3>
             {{#each this.selectableImages as |image|}}
@@ -37,24 +39,26 @@
                         <div local-class='environment_description'>{{image.description}}</div>
                     </div>
                     <div local-class='environment_select'>
-                        {{#if (or (not this.selectedImageUrl) this.imageSelectable)}}
-                            <button
-                                data-test-image-selection={{image.url}}
-                                type='button'
-                                class='btn btn-default'
-                                {{action this.selectImage image.url target=this}}
-                            >
-                                {{t 'binderhub.deployment.select_environment'}}
-                            </button>
-                        {{else}}
-                            <button
-                                data-test-image-change={{image.url}}
-                                type='button'
-                                class='btn btn-default'
-                                {{action (mut this.imageSelectable) true}}
-                            >
-                                {{t 'binderhub.deployment.change_environment'}}
-                            </button>
+                        {{#if this.node.userHasWritePermission}}
+                            {{#if (or (not this.selectedImageUrl) this.imageSelectable)}}
+                                <button
+                                    data-test-image-selection={{image.url}}
+                                    type='button'
+                                    class='btn btn-default'
+                                    {{action this.selectImage image.url target=this}}
+                                >
+                                    {{t 'binderhub.deployment.select_environment'}}
+                                </button>
+                            {{else}}
+                                <button
+                                    data-test-image-change={{image.url}}
+                                    type='button'
+                                    class='btn btn-default'
+                                    {{action (mut this.imageSelectable) true}}
+                                >
+                                    {{t 'binderhub.deployment.change_environment'}}
+                                </button>
+                            {{/if}}
                         {{/if}}
                     </div>
                 </div>
@@ -64,6 +68,7 @@
                 <div local-class='packages'>
                     <GuidNode::Binderhub::-Components::PackageEditor
                         data-test-package-editor='apt'
+                        @node={{this.node}}
                         @label='apt-get'
                         @packages={{this.aptPackages}}
                         @onUpdate={{action this.aptUpdated}}
@@ -71,6 +76,7 @@
                     {{#if this.condaSupported}}
                         <GuidNode::Binderhub::-Components::PackageEditor
                             data-test-package-editor='conda'
+                            @node={{this.node}}
                             @label='conda'
                             @packages={{this.condaPackages}}
                             @onUpdate={{action this.condaUpdated}}
@@ -79,6 +85,7 @@
                     {{#if this.pipSupported}}
                         <GuidNode::Binderhub::-Components::PackageEditor
                             data-test-package-editor='pip'
+                            @node={{this.node}}
                             @label='pip'
                             @packages={{this.pipPackages}}
                             @onUpdate={{action this.pipUpdated}}
@@ -87,6 +94,7 @@
                     {{#if this.rCranSupported}}
                         <GuidNode::Binderhub::-Components::PackageEditor
                             data-test-package-editor='rcran'
+                            @node={{this.node}}
                             @label='R (CRAN)'
                             @packages={{this.rCranPackages}}
                             @onUpdate={{action this.rCranUpdated}}
@@ -95,6 +103,7 @@
                     {{#if this.rGitHubSupported}}
                         <GuidNode::Binderhub::-Components::PackageEditor
                             data-test-package-editor='rgithub'
+                            @node={{this.node}}
                             @label='R (GitHub)'
                             @packages={{this.rGitHubPackages}}
                             @onUpdate={{action this.rGitHubUpdated}}
@@ -124,20 +133,22 @@
                             </a>
                         {{/if}}
                     </div>
-                    <button
-                        data-test-refresh-post-install
-                        type='button'
-                        class='btn btn-default'
-                        disabled={{this.refreshingPostInstallScript}}
-                        {{action this.refreshPostInstall}}
-                    >
-                        {{fa-icon 'fa-undo'}}
-                        {{#if this.refreshingPostInstallScript}}
-                            {{t 'binderhub.deployment.refreshing_post_install'}}
-                        {{else}}
-                            {{t 'binderhub.deployment.refresh_post_install'}}
-                        {{/if}}
-                    </button>
+                    {{#if this.node.userHasWritePermission}}
+                        <button
+                            data-test-refresh-post-install
+                            type='button'
+                            class='btn btn-default'
+                            disabled={{this.refreshingPostInstallScript}}
+                            {{action this.refreshPostInstall}}
+                        >
+                            {{fa-icon 'fa-undo'}}
+                            {{#if this.refreshingPostInstallScript}}
+                                {{t 'binderhub.deployment.refreshing_post_install'}}
+                            {{else}}
+                                {{t 'binderhub.deployment.refresh_post_install'}}
+                            {{/if}}
+                        </button>
+                    {{/if}}
                 </div>
             {{/if}}
         {{/if}}

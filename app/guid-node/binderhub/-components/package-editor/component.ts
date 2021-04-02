@@ -5,6 +5,8 @@ import { requiredAction } from 'ember-osf-web/decorators/component';
 // import BinderHubConfigModel from 'ember-osf-web/models/binderhub-config';
 
 export default class PackageEditor extends Component {
+    node?: Node | null = null;
+
     label: string = this.label;
 
     packages: Array<[string, string]> = this.packages;

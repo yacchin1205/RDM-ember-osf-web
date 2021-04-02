@@ -12,16 +12,20 @@
             />
         {{else}}
             <div local-class='package_item'>
-                <button
-                    {{action this.editPackage index target=this}}
-                >
+                {{#if this.node.userHasWritePermission}}
+                    <button
+                        {{action this.editPackage index target=this}}
+                    >
+                        {{pkg.[0]}}:{{pkg.[1]}}
+                    </button>
+                    <button
+                        {{action this.removePackage index target=this}}
+                    >
+                        <i class='fa fa-times' />
+                    </button>
+                {{else}}
                     {{pkg.[0]}}:{{pkg.[1]}}
-                </button>
-                <button
-                    {{action this.removePackage index target=this}}
-                >
-                    <i class='fa fa-times' />
-                </button>
+                {{/if}}
             </div>
         {{/if}}
     {{/each}}
@@ -33,7 +37,7 @@
             @onCancel={{action this.cancelAdd}}
         />
     {{else}}
-        {{#if (eq this.editingIndex -1)}}
+        {{#if (and this.node.userHasWritePermission (eq this.editingIndex -1))}}
             <div local-class='package_add'>
                 <button
                     data-test-package-add
