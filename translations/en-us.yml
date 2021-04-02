@@ -1782,6 +1782,7 @@ binderhub:
             package_name: 'Name'
             package_version: 'Version'
     build:
+        launch: 'Launch'
         status: 'Build status'
     error:
         binderhub_build_error: 'An error occurred while connecting to the BinderHub. Please reauthenticate.'

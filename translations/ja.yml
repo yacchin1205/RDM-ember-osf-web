@@ -1664,6 +1664,7 @@ binderhub:
             package_name: '名前'
             package_version: 'バージョン'
     build:
+        launch: '起動'
         status: 'ビルド状況'
     error:
         binderhub_build_error: 'BinderHubとの接続時にエラーが発生しました。再認証してください。'

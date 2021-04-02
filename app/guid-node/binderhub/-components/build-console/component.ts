@@ -8,15 +8,31 @@ import AnsiUp from 'ember-osf-web/guid-node/binderhub/-components/build-console/
 import { getJupyterHubServerURL } from 'ember-osf-web/guid-node/binderhub/-components/jupyter-servers-list/component';
 import { BootstrapPath, BuildMessage } from 'ember-osf-web/guid-node/binderhub/controller';
 import BinderHubConfigModel from 'ember-osf-web/models/binderhub-config';
+import $ from 'jquery';
 
 export default class BuildConsole extends Component {
     binderHubConfig: DS.PromiseObject<BinderHubConfigModel> & BinderHubConfigModel = this.binderHubConfig;
 
     buildLog: BuildMessage[] | null = this.buildLog;
 
+    buildLogLineCount = 0;
+
+    buildStatusOpen = true;
+
     buildPhase: string | null = this.buildPhase;
 
     @requiredAction requestBuild!: (path: BootstrapPath | null, callback: (result: BuildMessage) => void) => void;
+
+    didReceiveAttrs() {
+        if (!this.buildLog) {
+            return;
+        }
+        if (this.buildLog.length === this.buildLogLineCount) {
+            return;
+        }
+        this.buildLogLineCount = this.buildLog.length;
+        this.scrollToBottom();
+    }
 
     @computed('buildLog')
     get buildLogLines(): string {
@@ -67,5 +83,12 @@ export default class BuildConsole extends Component {
         }
         const url = getJupyterHubServerURL(originalUrl, token, targetPath);
         window.open(url, '_blank');
+    }
+
+    scrollToBottom() {
+        const terminal = $('#binderhub-build-terminal');
+        terminal.delay(10).animate({
+            scrollTop: terminal.height(),
+        }, 500);
     }
 }

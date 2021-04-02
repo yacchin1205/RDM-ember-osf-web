@@ -11,6 +11,16 @@
     align-items: center;
 }
 
+.build_status {
+    margin-left: 0.5em;
+    align-items: center;
+}
+
+.build_status button {
+    padding: 0;
+    color: #555;
+}
+
 .build_phase {
     border-radius: 0.5em;
     background-color: #555;
@@ -25,9 +35,16 @@
     margin-left: auto;
 }
 
+.build_terminal {
+    overflow-y: scroll;
+    height: 30vh;
+    background-color: #000;
+}
+
 .build_terminal pre {
     background-color: #000;
     color: #fff;
+    border-style: none;
 }
 
 .launch_button {
