@@ -6,6 +6,7 @@ import sinon from 'sinon';
 
 import BinderHubConfigModel from 'ember-osf-web/models/binderhub-config';
 import FileModel from 'ember-osf-web/models/file';
+import { Permission } from 'ember-osf-web/models/osf-model';
 import { currentURL, setupOSFApplicationTest, visit } from 'ember-osf-web/tests/helpers';
 
 module('Acceptance | guid-node/binderhub', hooks => {
@@ -13,7 +14,10 @@ module('Acceptance | guid-node/binderhub', hooks => {
     setupMirage(hooks);
 
     test('logged in', async assert => {
-        const node = server.create('node', { id: 'i9bri' });
+        const node = server.create('node', {
+            id: 'i9bri',
+            currentUserPermissions: [Permission.Write],
+        });
         server.create('binderhub-config', {
             id: node.id,
             binderhub: {
@@ -43,6 +47,15 @@ module('Acceptance | guid-node/binderhub', hooks => {
                         name: 'Test Image',
                         description: 'dummy description',
                         packages: ['conda'],
+                    },
+                ],
+            },
+            launcher: {
+                endpoints: [
+                    {
+                        id: 'fake',
+                        name: 'Fake',
+                        path: 'Fake',
                     },
                 ],
             },
@@ -79,7 +92,7 @@ module('Acceptance | guid-node/binderhub', hooks => {
         assert.dom('[data-test-package-editor="pip"]').doesNotExist();
 
         assert.ok(
-            ajaxStub.calledOnceWithExactly('users/testuser'),
+            ajaxStub.calledOnceWithExactly('users/testuser', null),
             'BinderHub calls JupyterHub REST API',
         );
 
@@ -87,7 +100,10 @@ module('Acceptance | guid-node/binderhub', hooks => {
     });
 
     test('already configured', async assert => {
-        const node = server.create('node', { id: 'i9bri' });
+        const node = server.create('node', {
+            id: 'i9bri',
+            currentUserPermissions: [Permission.Write],
+        });
         server.create('binderhub-config', {
             id: node.id,
             binderhub: {
@@ -117,6 +133,15 @@ module('Acceptance | guid-node/binderhub', hooks => {
                         name: 'Test Image',
                         description: 'dummy description',
                         packages: ['conda'],
+                    },
+                ],
+            },
+            launcher: {
+                endpoints: [
+                    {
+                        id: 'fake',
+                        name: 'Fake',
+                        path: 'Fake',
                     },
                 ],
             },
@@ -151,7 +176,7 @@ module('Acceptance | guid-node/binderhub', hooks => {
         assert.dom('[data-test-binderhub-header]').exists();
         assert.dom('[data-test-launch]').exists();
         assert.dom('[data-test-image-change="jupyter/scipy-notebook"]').exists();
-        assert.dom('[data-test-image-selected]').exists();
+        assert.dom('[data-test-image-selected="jupyter/scipy-notebook"]').exists();
         assert.dom('[data-test-image-selection]').doesNotExist();
         assert.dom('[data-test-package-editor="apt"]').exists();
         assert.dom('[data-test-package-editor="conda"]').exists();
@@ -162,7 +187,7 @@ module('Acceptance | guid-node/binderhub', hooks => {
             'BinderHub retrieves Dockerfile data',
         );
         assert.ok(
-            ajaxStub.calledOnceWithExactly('users/testuser'),
+            ajaxStub.calledOnceWithExactly('users/testuser', null),
             'BinderHub calls JupyterHub REST API',
         );
 

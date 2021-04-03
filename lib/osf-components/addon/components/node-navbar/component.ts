@@ -48,7 +48,7 @@ export default class NodeNavbar extends Component {
             if (!addons) {
                 return false;
             }
-            const iqbrims = addons.filter(addon => addon.id === 'iqbrims');
+            const iqbrims = addons.filter(addon => addon.id === 'iqbrims' && addon.configured);
             return iqbrims.length > 0;
         })();
     }
@@ -64,7 +64,7 @@ export default class NodeNavbar extends Component {
             if (!addons) {
                 return false;
             }
-            const binderhub = addons.filter(addon => addon.id === 'binderhub');
+            const binderhub = addons.filter(addon => addon.id === 'binderhub' && addon.configured);
             return binderhub.length > 0;
         })();
     }
