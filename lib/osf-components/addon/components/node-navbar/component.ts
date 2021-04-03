@@ -53,6 +53,22 @@ export default class NodeNavbar extends Component {
         })();
     }
 
+    @computed('node.addons.[]')
+    get binderhubEnabled(): Promise<boolean> | null {
+        if (!this.node) {
+            return null;
+        }
+        const { node } = this;
+        return (async () => {
+            const addons = await node.addons;
+            if (!addons) {
+                return false;
+            }
+            const binderhub = addons.filter(addon => addon.id === 'binderhub');
+            return binderhub.length > 0;
+        })();
+    }
+
     @action
     toggleNav() {
         this.toggleProperty('collapsedNav');

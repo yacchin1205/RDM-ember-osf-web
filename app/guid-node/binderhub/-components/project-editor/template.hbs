@@ -1,0 +1,185 @@
+<div local-class='project_editor'>
+    {{#if this.loading}}
+        {{t 'binderhub.loading'}}
+    {{else}}
+        {{#if this.manuallyChanged}}
+            {{t 'binderhub.deployment.unavailable'}}
+            {{#if this.node.userHasWritePermission}}
+                <button
+                    data-test-view-dockerfile
+                    type='button'
+                    class='btn btn-default'
+                    {{action this.viewDockerfile target=this}}
+                >
+                    {{t 'binderhub.deployment.view_dockerfile'}}
+                </button>
+                <button
+                    data-test-reset-dockerfile
+                    type='button'
+                    class='btn btn-danger'
+                    {{action (mut this.showResetDockerfileConfirmDialog) true}}
+                >
+                    {{t 'binderhub.deployment.reset_dockerfile'}}
+                </button>
+            {{/if}}
+        {{else}}
+            <h3>{{t 'binderhub.deployment.environment'}}<//h3>
+            {{#each this.selectableImages as |image|}}
+                <div local-class='environment_candidate'>
+                    <div local-class='environment_info'>
+                        <div local-class='environment_name'>
+                            {{image.name}}
+                            {{#if (eq this.selectedImageUrl image.url)}}
+                                <i
+                                    data-test-image-selected={{image.url}}
+                                    class='fa fa-check'
+                                />
+                            {{/if}}
+                        </div>
+                        <div local-class='environment_description'>{{image.description}}</div>
+                    </div>
+                    <div local-class='environment_select'>
+                        {{#if this.node.userHasWritePermission}}
+                            {{#if (or (not this.selectedImageUrl) this.imageSelectable)}}
+                                <button
+                                    data-test-image-selection={{image.url}}
+                                    type='button'
+                                    class='btn btn-default'
+                                    {{action this.selectImage image.url target=this}}
+                                >
+                                    {{t 'binderhub.deployment.select_environment'}}
+                                </button>
+                            {{else}}
+                                <button
+                                    data-test-image-change={{image.url}}
+                                    type='button'
+                                    class='btn btn-default'
+                                    {{action (mut this.imageSelectable) true}}
+                                >
+                                    {{t 'binderhub.deployment.change_environment'}}
+                                </button>
+                            {{/if}}
+                        {{/if}}
+                    </div>
+                </div>
+            {{/each}}
+            {{#if this.selectedImageUrl}}
+                <h3>{{t 'binderhub.deployment.additionalpackages'}}</h3>
+                <div local-class='packages'>
+                    <GuidNode::Binderhub::-Components::PackageEditor
+                        data-test-package-editor='apt'
+                        @node={{this.node}}
+                        @label='apt-get'
+                        @packages={{this.aptPackages}}
+                        @onUpdate={{action this.aptUpdated}}
+                    />
+                    {{#if this.condaSupported}}
+                        <GuidNode::Binderhub::-Components::PackageEditor
+                            data-test-package-editor='conda'
+                            @node={{this.node}}
+                            @label='conda'
+                            @packages={{this.condaPackages}}
+                            @onUpdate={{action this.condaUpdated}}
+                        />
+                    {{/if}}
+                    {{#if this.pipSupported}}
+                        <GuidNode::Binderhub::-Components::PackageEditor
+                            data-test-package-editor='pip'
+                            @node={{this.node}}
+                            @label='pip'
+                            @packages={{this.pipPackages}}
+                            @onUpdate={{action this.pipUpdated}}
+                        />
+                    {{/if}}
+                    {{#if this.rCranSupported}}
+                        <GuidNode::Binderhub::-Components::PackageEditor
+                            data-test-package-editor='rcran'
+                            @node={{this.node}}
+                            @label='R (CRAN)'
+                            @packages={{this.rCranPackages}}
+                            @onUpdate={{action this.rCranUpdated}}
+                        />
+                    {{/if}}
+                    {{#if this.rGitHubSupported}}
+                        <GuidNode::Binderhub::-Components::PackageEditor
+                            data-test-package-editor='rgithub'
+                            @node={{this.node}}
+                            @label='R (GitHub)'
+                            @packages={{this.rGitHubPackages}}
+                            @onUpdate={{action this.rGitHubUpdated}}
+                        />
+                    {{/if}}
+                </div>
+                <h3>{{t 'binderhub.deployment.postinstallscript'}}</h3>
+                <div local-class='postscript_view'>
+                    <div local-class='postscript_status'>
+                        {{#if this.postInstallScriptModel}}
+                            {{t 'binderhub.deployment.has_post_install'}}
+                            <a
+                                href={{this.postInstallScriptModel.links.html}}
+                                target='_blank'
+                                rel='noopener'
+                            >
+                                {{t 'binderhub.deployment.open_post_install'}}
+                            </a>
+                        {{else}}
+                            {{t 'binderhub.deployment.no_post_install'}}
+                            <a
+                                href={{this.nodeFilesLink}}
+                                target='_blank'
+                                rel='noopener'
+                            >
+                                {{t 'binderhub.deployment.open_node_files'}}
+                            </a>
+                        {{/if}}
+                    </div>
+                    {{#if this.node.userHasWritePermission}}
+                        <button
+                            data-test-refresh-post-install
+                            type='button'
+                            class='btn btn-default'
+                            disabled={{this.refreshingPostInstallScript}}
+                            {{action this.refreshPostInstall}}
+                        >
+                            {{fa-icon 'fa-undo'}}
+                            {{#if this.refreshingPostInstallScript}}
+                                {{t 'binderhub.deployment.refreshing_post_install'}}
+                            {{else}}
+                                {{t 'binderhub.deployment.refresh_post_install'}}
+                            {{/if}}
+                        </button>
+                    {{/if}}
+                </div>
+            {{/if}}
+        {{/if}}
+    {{/if}}
+</div>
+
+<BsModal
+    data-test-reset-dockerfile-confirm-modal
+    @open={{this.showResetDockerfileConfirmDialog}}
+    @onHidden={{action (mut this.showResetDockerfileConfirmDialog) false}}
+    as |modal|
+>
+    <modal.header>
+        <h4>
+            {{t 'binderhub.deployment.reset_dockerfile_confirm_dialog_title'}}
+        </h4>
+    </modal.header>
+    <modal.body>
+        {{t 'binderhub.deployment.reset_dockerfile_confirm_dialog_body'}}
+    </modal.body>
+    <modal.footer>
+        <BsButton
+            @onClick={{action (mut this.showResetDockerfileConfirmDialog) false}}
+        >
+            {{t 'general.cancel'}}
+        </BsButton>
+        <BsButton
+            @onClick={{action this.resetDockerfile}}
+            @type='success'
+        >
+            {{t 'general.ok'}}
+        </BsButton>
+    </modal.footer>
+</BsModal>

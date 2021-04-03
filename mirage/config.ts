@@ -1,6 +1,7 @@
 import { Server } from 'ember-cli-mirage';
 import config from 'ember-get-config';
 
+import { binderhubConfig } from './views/binderhub-config';
 import { getCitation } from './views/citation';
 import { searchCollections } from './views/collection-search';
 import { reportDelete } from './views/comment';
@@ -253,6 +254,7 @@ export default function(this: Server) {
     this.namespace = '/api/v1';
 
     this.get('/project/:id/iqbrims/status', iqbrimsStatus);
+    this.get('/project/:id/binderhub/config', binderhubConfig);
 
     this.urlPrefix = apiUrl;
     this.namespace = apiNamespace;

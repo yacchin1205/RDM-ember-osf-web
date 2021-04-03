@@ -1,0 +1,22 @@
+.jupyter-link {
+    padding: 0;
+}
+
+.toolbar-button {
+    display: flex;
+    margin-bottom: -2.5em;
+}
+
+.refresh-button {
+    margin-left: auto;
+    border-style: none;
+    background: none;
+}
+
+.no-jupyter-servers {
+    text-align: center;
+}
+
+.jupyter-server td {
+    vertical-align: middle !important;
+}
