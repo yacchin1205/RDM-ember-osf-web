@@ -46,6 +46,13 @@ module('Acceptance | guid-node/binderhub', hooks => {
                     },
                 ],
             },
+            launcher: {
+                endpoints: {
+                    id: 'fake',
+                    name: 'Fake',
+                    path: 'Fake',
+                },
+            },
         });
         const osfstorage = server.create('file-provider',
             { node, name: 'osfstorage' });
