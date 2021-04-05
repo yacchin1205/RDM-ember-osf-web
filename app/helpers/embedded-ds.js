@@ -13,13 +13,13 @@ const { settingFile, wayfScript } = ENV.dsconfig;
  * @param {String} parentId embeddedDS will be drawn to child element of this ID.
  */
 export function embeddedDs(parentId) {
-    const language = (window.navigator.languages && window.navigator.languages[0]) ||
-        window.navigator.language ||
-        window.navigator.userLanguage ||
-        window.navigator.browserLanguage;
+    let language = (window.navigator.languages && window.navigator.languages[0])
+        || window.navigator.language
+        || window.navigator.userLanguage
+        || window.navigator.browserLanguage;
     if (language) {
         language = language.split('-')[0];
-    } 
+    }
     if (!['ja', 'en'].includes(language)) {
         language = 'ja';
     }
