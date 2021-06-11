@@ -1742,3 +1742,50 @@ iqbrims:
     has_checklist: チェックリスト
     files_comment: コメント
     uploader_comment: コメント
+binderhub:
+    page_title: '{nodeTitle} BidnerHub'
+    jupyter_servers_list:
+        header: 'このプロジェクトから作成した私の解析環境'
+        delete_confirm_dialog_title: '削除確認'
+        delete_confirm_dialog_body: 'サーバーを削除しますか？ '
+    project_editor:
+        header: '新しい解析環境'
+        tab_editproject: 'このプロジェクトから作成'
+        tab_externalrepo: '外部リポジトリから作成'
+    loading: 'BinderHub設定を読み込んでいます...'
+    servers:
+        name: '解析環境名'
+        url: 'URL'
+        last_activity: '最終更新'
+        launch: '起動'
+        delete: '削除'
+        no_servers: '解析環境はありません'
+    deployment:
+        launch: '起動'
+        environment: '環境'
+        additionalpackages: '追加パッケージ'
+        postinstallscript: 'インストール後に実行するスクリプト'
+        select_environment: '選択'
+        change_environment: '変更'
+        add_package: '追加'
+        view_dockerfile: 'Dockerfileの参照'
+        reset_dockerfile: 'Dockerfileのリセット'
+        unavailable: 'Dockerfileがエディタ以外で変更されました。'
+        has_post_install: 'postInstallスクリプトを使用します。'
+        no_post_install: 'デフォルトストレージ内にpostInstallスクリプトを定義すると、イメージビルド時に任意の処理を実行できます。'
+        open_post_install: 'ファイルを開く'
+        open_node_files: 'ファイル一覧を開く'
+        refresh_post_install: '更新'
+        refreshing_post_install: '更新中...'
+        placeholders:
+            package_name: '名前'
+            package_version: 'バージョン'
+    build:
+        launch: '起動'
+        status: 'ビルド状況'
+    error:
+        binderhub_build_error: 'BinderHubとの接続時にエラーが発生しました。再認証してください。'
+        reconnect_binderhub: '再認証'
+        jupyterhub_auth_error: 'JupyterHubとの接続時にエラーが発生しました。再認証してください。'
+        jupyterhub_api_error: 'JupyterHubとの接続時にエラーが発生しました。ページを再読み込みしてください。'
+        reconnect_jupyterhub: '再認証'

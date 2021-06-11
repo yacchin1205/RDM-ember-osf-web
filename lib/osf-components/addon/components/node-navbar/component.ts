@@ -48,8 +48,24 @@ export default class NodeNavbar extends Component {
             if (!addons) {
                 return false;
             }
-            const iqbrims = addons.filter(addon => addon.id === 'iqbrims');
+            const iqbrims = addons.filter(addon => addon.id === 'iqbrims' && addon.configured);
             return iqbrims.length > 0;
+        })();
+    }
+
+    @computed('node.addons.[]')
+    get binderhubEnabled(): Promise<boolean> | null {
+        if (!this.node) {
+            return null;
+        }
+        const { node } = this;
+        return (async () => {
+            const addons = await node.addons;
+            if (!addons) {
+                return false;
+            }
+            const binderhub = addons.filter(addon => addon.id === 'binderhub' && addon.configured);
+            return binderhub.length > 0;
         })();
     }
 

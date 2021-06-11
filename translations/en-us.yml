@@ -193,7 +193,7 @@ dashboard:
     quicksearch:
         search: 'Search your projects'
         other_links: |-
-            'Go to <a href="/myprojects/">My Projects</a> to organize your work {useSearch, select, 
+            'Go to <a href="/myprojects/">My Projects</a> to organize your work {useSearch, select,
                 true { 'or <a href="/search/">search</a>' }
                 other { 'in' }
             } GakuNin RDM'
@@ -550,6 +550,7 @@ node_navbar:
     addons: Add-ons
     settings: Settings
     comments: Comments
+    binderhub: BinderHub
 status:
     welcome_message: '<h1>Welcome to GakuNin RDM!</h1><p>Visit our <a href="https://openscience.zendesk.com/hc/en-us" target="_blank" rel="noreferrer">Guides</a> to learn about creating a project, or get inspiration from <a href="https://osf.io/explore/activity/#popularPublicProjects">popular public projects</a>.</p>'
     alternate_email_error: 'The email address has <b>NOT</b> been added to your account. Please log out and revisit the link in your email. Thank you.'
@@ -1742,3 +1743,50 @@ iqbrims:
     has_checklist: 'チェックリスト'
     files_comment: 'コメント'
     uploader_comment: 'コメント'
+binderhub:
+    page_title: '{nodeTitle} BidnerHub'
+    jupyter_servers_list:
+        header: 'My environments for this project'
+        delete_confirm_dialog_title: 'Delete confirmation'
+        delete_confirm_dialog_body: 'Do you want to delete the server?'
+    project_editor:
+        header: 'New environment'
+        tab_editproject: 'From This Project'
+        tab_externalrepo: 'From External Repository'
+    loading: 'Loading BinderHub config...'
+    servers:
+        name: 'Server name'
+        url: 'URL'
+        last_activity: 'Last activity'
+        launch: 'Launch'
+        delete: 'Delete'
+        no_servers: 'No Servers'
+    deployment:
+        launch: 'Launch'
+        environment: 'Environment'
+        additionalpackages: 'Additional Packages'
+        postinstallscript: 'Post-Install Script'
+        select_environment: 'Select'
+        change_environment: 'Change'
+        add_package: 'Add'
+        view_dockerfile: 'View Dockerfile'
+        reset_dockerfile: 'Reset Dockerfile'
+        unavailable: 'This Editor is disabled because its Dockerfile was customized manually.'
+        has_post_install: 'Using the postInstall script.'
+        no_post_install: 'You can define a postInstall script in the default storage to perform optional operations during image build.'
+        open_post_install: 'Open File'
+        open_node_files: 'Open Files'
+        refresh_post_install: 'Refresh'
+        refreshing_post_install: 'Refreshing...'
+        placeholders:
+            package_name: 'Name'
+            package_version: 'Version'
+    build:
+        launch: 'Launch'
+        status: 'Build status'
+    error:
+        binderhub_build_error: 'An error occurred while connecting to the BinderHub. Please reauthenticate.'
+        reconnect_binderhub: 'Authorize'
+        jupyterhub_auth_error: 'An error occurred while connecting to the JupyterHub. Please reauthenticate.'
+        jupyterhub_api_error: 'An error occurred while connecting to the JupyterHub. Please reload this page.'
+        reconnect_jupyterhub: 'Authorize'

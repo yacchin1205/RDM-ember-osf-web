@@ -1,0 +1,103 @@
+{{! using unsafeTitle here to avoid double encoding because the title helper does its own }}
+{{title (t 'binderhub.page_title' nodeTitle=this.model.taskInstance.value.unsafeTitle)}}
+<div class='container' local-class='BinderHub'>
+    {{#if this.loading}}
+        {{t 'binderhub.loading'}}
+    {{else}}
+        <div local-class='BinderHub__editor'>
+            <h2
+                data-test-servers-header
+                local-class='BinderHub__header'
+            >
+                {{t 'binderhub.jupyter_servers_list.header'}}
+            </h2>
+            <BsAlert
+                @type='danger'
+                @dismissible={{false}}
+                @visible={{this.jupyterHubAPIError}}
+                local-class='BinderHub__connection_alert'
+            >
+                {{#if this.jupyterHubAuthError}}
+                    {{t 'binderhub.error.jupyterhub_auth_error'}}
+                    <button
+                        data-test-reconnect-jupyterhub
+                        type='button'
+                        class='btn btn-danger'
+                        {{action this.renewJupyterHubToken}}
+                    >
+                        {{t 'binderhub.error.reconnect_jupyterhub'}}
+                    </button>
+                {{else}}
+                    {{t 'binderhub.error.jupyterhub_api_error'}}
+                {{/if}}
+            </BsAlert>
+            <div local-class='BinderHub__panel'>
+                <GuidNode::Binderhub::-Components::JupyterServersList
+                    @node={{this.node}}
+                    @binderHubConfig={{this.config}}
+                    @renewToken={{action this.renewJupyterHubToken}}
+                    @buildPhase={{this.buildPhase}}
+                    @onError={{action this.requestError}}
+                />
+            </div>
+            <h2
+                data-test-binderhub-header
+                local-class='BinderHub__header'
+            >
+                {{t 'binderhub.project_editor.header'}}
+            </h2>
+            <BsTab
+                data-analytics-scope='BinderHub Tab'
+                @activeId={{this.activeTab}}
+                @onChange={{action this.changeTab}}
+                as |tab|
+            >
+                <tab.pane
+                    @id='editproject'
+                    @title={{t 'binderhub.project_editor.tab_editproject'}}
+                >
+                    <div local-class='BinderHub__panel'>
+                        <GuidNode::Binderhub::-Components::ProjectEditor
+                            @node={{this.node}}
+                            @binderHubConfig={{this.config}}
+                            @configFolder={{this.defaultStorage}}
+                            @configStorageProvider={{this.defaultStorageProvider}}
+                            @renewToken={{action this.renewBinderHubToken}}
+                        />
+                    </div>
+                </tab.pane>
+                <tab.pane
+                    @id='externalrepo'
+                    @title={{t 'binderhub.project_editor.tab_externalrepo'}}
+                >
+                    <div local-class='BinderHub__panel'>
+                        <GuidNode::Binderhub::-Components::ExternalRepository
+                            @onChange={{action this.externalRepoChanged}}/>
+                    </div>
+                </tab.pane>
+            </BsTab>
+            <BsAlert
+                @type='danger'
+                @dismissible={{false}}
+                @visible={{this.binderHubBuildError}}
+                local-class='BinderHub__connection_alert'
+            >
+                {{t 'binderhub.error.binderhub_build_error'}}
+                <button
+                    data-test-reconnect-binderhub
+                    type='button'
+                    class='btn btn-danger'
+                    {{action this.renewBinderHubToken}}
+                >
+                    {{t 'binderhub.error.reconnect_binderhub'}}
+                </button>
+            </BsAlert>
+            <GuidNode::Binderhub::-Components::BuildConsole
+                @binderHubConfig={{this.config}}
+                @requestBuild={{action this.build}}
+                @buildLog={{this.buildLog}}
+                @buildPhase={{this.buildPhase}}
+              />
+        </div>
+    {{/if}}
+</div>
