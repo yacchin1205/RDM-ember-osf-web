@@ -1399,7 +1399,7 @@ osf-components:
     hero-banner:
         headingA: 'The place to share your research'
         headingB: 'There’s a better way to manage your research'
-        subheading: 'GakuNin RDMは、研究をサポートし、コラボレーションを可能にする無料のオープンプラットフォームです。'
+        subheading: 'GakuNin RDMは研究をサポートし、継続的なコラボレーションを可能にする研究データマネージメントサービスです。'
         add_your_research:
             heading: あなたの研究を追加
             subheading: '世界中のラボとチームがGakuNin RDMを使用して、プロジェクトを科学コミュニティに公開しています。'
