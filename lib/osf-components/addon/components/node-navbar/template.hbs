@@ -35,10 +35,10 @@
                         {{/node-navbar/link}}
                         {{node-navbar/link node=@node useLinkTo=false destination='files'}}
 
-                        {{#if this.iqbrimsEnabled }}
+                        {{#if @node.iqbrimsEnabled }}
                             {{node-navbar/link node=@node useLinkTo=false destination='iqbrims'}}
                         {{/if}}
-                        {{#if this.binderhubEnabled }}
+                        {{#if @node.binderhubEnabled }}
                             {{node-navbar/link node=@node useLinkTo=false destination='binderhub'}}
                         {{/if}}
                         {{#if @node.wikiEnabled}}

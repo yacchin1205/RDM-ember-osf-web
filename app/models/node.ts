@@ -109,6 +109,8 @@ export default class NodeModel extends BaseFileItem.extend(Validations, Collecta
     @attr('boolean') preprint!: boolean;
     @attr('boolean') currentUserCanComment!: boolean;
     @attr('boolean') wikiEnabled!: boolean;
+    @attr('boolean') binderhubEnabled!: boolean;
+    @attr('boolean') iqbrimsEnabled!: boolean;
 
     @hasMany('contributor', { inverse: 'node' })
     contributors!: DS.PromiseManyArray<ContributorModel>;

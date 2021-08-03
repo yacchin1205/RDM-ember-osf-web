@@ -8,8 +8,8 @@ import { OsfLinkRouterStub } from '../../helpers/osf-link-router-stub';
 
 enum NavCondition {
     HasParent,
-    IQBRIMSEnabled,
-    BinderHubEnabled,
+    IQBRIMSEnabled = 'iqbrimsEnabled',
+    BinderHubEnabled = 'binderhubEnabled',
     IsRegistration = 'isRegistration',
     IsPublic = 'public',
     UserCanRead = 'userHasReadPermission',
@@ -43,6 +43,8 @@ export class FakeNode {
     public: boolean = false;
     isRegistration: boolean = false;
     wikiEnabled: boolean = false;
+    binderhubEnabled: boolean = false;
+    iqbrimsEnabled: boolean = false;
     currentUserIsContributor: boolean = false;
     userHasWritePermission: boolean = false;
     userHasReadPermission: boolean = false;
@@ -55,8 +57,7 @@ export class FakeNode {
         for (const condition of conditions) {
             if (condition === NavCondition.HasParent) {
                 this.parentId = faker.random.uuid();
-            } else if (condition !== NavCondition.IQBRIMSEnabled
-                && condition !== NavCondition.BinderHubEnabled) {
+            } else {
                 this[condition] = true;
             }
         }
@@ -304,14 +305,9 @@ module('Integration | Component | node-navbar', () => {
 
                 const node = new FakeNode(testCase.conditions);
                 this.set('node', node);
-                const iqbrimsEnabled = testCase.conditions.filter(c => c === NavCondition.IQBRIMSEnabled);
-                this.set('iqbrimsEnabled', iqbrimsEnabled.length > 0);
-                const binderhubEnabled = testCase.conditions.filter(c => c === NavCondition.BinderHubEnabled);
-                this.set('binderhubEnabled', binderhubEnabled.length > 0);
 
                 await render(
-                    hbs`{{node-navbar node=this.node iqbrimsEnabled=this.iqbrimsEnabled
-                        binderhubEnabled=this.binderhubEnabled renderInPlace=true}}`,
+                    hbs`{{node-navbar node=this.node renderInPlace=true}}`,
                 );
 
                 assert.dom('[data-test-node-navbar-link]').exists({ count: testCase.links.length });
