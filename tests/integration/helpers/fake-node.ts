@@ -7,6 +7,8 @@ export default class FakeNode {
     public: boolean = false;
     isRegistration: boolean = false;
     wikiEnabled: boolean = false;
+    binderhubEnabled: boolean = false;
+    iqbrimsEnabled: boolean = false;
     currentUserIsContributor: boolean = false;
     userHasWritePermission: boolean = false;
     userHasReadPermission: boolean = false;
