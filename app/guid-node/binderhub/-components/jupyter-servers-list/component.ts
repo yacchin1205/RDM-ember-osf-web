@@ -146,12 +146,12 @@ export default class JupyterServersList extends Component {
         this.performLoadServers(url);
     }
 
-    @computed('servers')
+    @computed('servers', 'serversLink')
     get loading(): boolean {
-        if (this.servers) {
+        if (this.servers !== null) {
             return false;
         }
-        if (this.serversLink) {
+        if (this.serversLink !== null) {
             return false;
         }
         return true;
@@ -252,7 +252,14 @@ export default class JupyterServersList extends Component {
     performLoadServers(jupyterhubUrl: string) {
         later(async () => {
             const servers = await this.loadServers(jupyterhubUrl);
+            if (servers === null) {
+                const homeUrl = addPathSegment(jupyterhubUrl, 'hub/home');
+                this.set('servers', null);
+                this.set('serversLink', homeUrl);
+                return;
+            }
             this.set('servers', servers);
+            this.set('serversLink', null);
         }, 0);
     }
 
@@ -309,7 +316,7 @@ export default class JupyterServersList extends Component {
         }
     }
 
-    async loadServers(jupyterhubUrl: string): Promise<JupyterServerEntry[]> {
+    async loadServers(jupyterhubUrl: string): Promise<JupyterServerEntry[] | null> {
         if (!this.binderHubConfig || !this.binderHubConfig.get('isFulfilled')) {
             throw new EmberError('Illegal config');
         }
@@ -317,7 +324,7 @@ export default class JupyterServersList extends Component {
         const jupyterhub = config.findJupyterHubByURL(jupyterhubUrl);
         if (jupyterhub && !jupyterhub.authorize_url) {
             // Non-API
-            return [];
+            return null;
         }
         if (!jupyterhub || !jupyterhub.token || !validateJupyterHubToken(jupyterhub)) {
             this.set('notAuthorized', true);
@@ -433,7 +440,11 @@ export default class JupyterServersList extends Component {
                 },
             );
             const servers = await this.loadServers(server.ownerUrl);
+            if (servers === null) {
+                return;
+            }
             this.set('servers', servers);
+            this.set('serversLink', null);
         }, 0);
     }
 }
