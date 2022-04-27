@@ -176,6 +176,7 @@ export default class GuidNodeBinderHub extends Controller {
         if (this.currentUser && this.currentUser.currentUserId) {
             additional += `&userctx=${this.currentUser.currentUserId}`;
         }
+        additional += `&${this.getUserOptions()}`;
         if (binderhub && !binderhub.authorize_url) {
             const token = await this.generatePersonalToken();
             additional += `&repo_token=${token.tokenValue}`;
@@ -193,7 +194,6 @@ export default class GuidNodeBinderHub extends Controller {
             const token = await this.generatePersonalToken();
             additional += `&repo_token=${token.tokenValue}`;
         }
-        additional += `&${this.getUserOptions()}`;
         const buildUrl = addPathSegment(binderhub.url, buildPath);
         const urlSep = buildUrl.includes('?') ? '&' : '?';
         const source = new EventSource(`${buildUrl}${urlSep}token=${binderhub.token.access_token}${additional}`);
