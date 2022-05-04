@@ -23,7 +23,9 @@
                 <GuidNode::Binderhub::-Components::JupyterServersList
                     @node={{this.node}}
                     @binderHubConfig={{this.config}}
+                    @loggedOutDomains={{this.loggedOutDomains}}
                     @renewToken={{action this.renewJupyterHubToken}}
+                    @logout={{action this.logoutJupyterHub}}
                     @buildPhase={{this.buildPhase}}
                     @onError={{action this.requestError}}
                 />
@@ -48,8 +50,7 @@
                         <GuidNode::Binderhub::-Components::ProjectEditor
                             @node={{this.node}}
                             @binderHubConfig={{this.config}}
-                            @configFolder={{this.defaultStorage}}
-                            @configStorageProvider={{this.defaultStorageProvider}}
+                            @configFolder={{this.configFolder}}
                             @onError={{action this.projectError}}
                         />
                     </div>
@@ -64,6 +65,13 @@
                     </div>
                 </tab.pane>
             </BsTab>
+            <GuidNode::Binderhub::-Components::BuildConsole
+                @binderHubConfig={{this.config}}
+                @renewToken={{action this.renewBinderHubToken}}
+                @requestBuild={{action this.build}}
+                @buildLog={{this.buildLog}}
+                @buildPhase={{this.buildPhase}}
+              />
             <BsAlert
                 @type='danger'
                 @dismissible={{false}}
@@ -72,13 +80,6 @@
             >
                 {{t 'binderhub.error.binderhub_build_error'}}
             </BsAlert>
-            <GuidNode::Binderhub::-Components::BuildConsole
-                @binderHubConfig={{this.config}}
-                @renewToken={{action this.renewBinderHubToken}}
-                @requestBuild={{action this.build}}
-                @buildLog={{this.buildLog}}
-                @buildPhase={{this.buildPhase}}
-              />
         </div>
     {{/if}}
 </div>
