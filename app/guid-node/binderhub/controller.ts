@@ -12,11 +12,11 @@ import { BuildFormValues } from 'ember-osf-web/guid-node/binderhub/-components/e
 import { getContext } from 'ember-osf-web/guid-node/binderhub/-components/jupyter-servers-list/component';
 import BinderHubConfigModel from 'ember-osf-web/models/binderhub-config';
 import FileModel from 'ember-osf-web/models/file';
-import FileProviderModel from 'ember-osf-web/models/file-provider';
 import Node from 'ember-osf-web/models/node';
 import Analytics from 'ember-osf-web/services/analytics';
 import CurrentUser from 'ember-osf-web/services/current-user';
 import StatusMessages from 'ember-osf-web/services/status-messages';
+import getHref from 'ember-osf-web/utils/get-href';
 import { addPathSegment } from 'ember-osf-web/utils/url-parts';
 import Toast from 'ember-toastr/services/toast';
 
@@ -51,6 +51,8 @@ export default class GuidNodeBinderHub extends Controller {
 
     isPageDirty = false;
 
+    configFolder: FileModel | null = null;
+
     configCache?: DS.PromiseObject<BinderHubConfigModel>;
 
     buildLog: BuildMessage[] | null = null;
@@ -66,6 +68,10 @@ export default class GuidNodeBinderHub extends Controller {
     bh: string | null = null;
 
     jh: string | null = null;
+
+    loadingPath?: string;
+
+    loggedOutDomains: string[] | null = null;
 
     @computed('config.isFulfilled')
     get loading(): boolean {
@@ -121,25 +127,82 @@ export default class GuidNodeBinderHub extends Controller {
         this.renewBinderHubToken(binderhubCand.binderhub_url);
     }
 
-    @computed('node.files.[]')
-    get defaultStorageProvider(): FileProviderModel | null {
-        if (!this.node) {
-            return null;
+    @action
+    logoutJupyterHub(this: GuidNodeBinderHub, jupyterhubUrl: string) {
+        if (!this.config) {
+            throw new EmberError('Illegal config');
         }
-        const providers = this.node.get('files').filter(f => f.name === 'osfstorage');
-        if (providers.length === 0) {
-            return null;
+        const config = this.config.content as BinderHubConfigModel;
+        const jupyterhub = config.findJupyterHubByURL(jupyterhubUrl);
+        if (!jupyterhub) {
+            // Already logout
+            return;
         }
-        return providers[0];
+        const logoutUrl = jupyterhub.logout_url;
+        if (!logoutUrl) {
+            throw new EmberError('Illegal config');
+        }
+        later(async () => {
+            const resp = await this.currentUser.authenticatedAJAX({
+                url: logoutUrl,
+                type: 'DELETE',
+                xhrFields: { withCredentials: true },
+            });
+            if (!resp || !resp.data) {
+                return;
+            }
+            if (!resp.data.deleted) {
+                return;
+            }
+            const jhLogoutUrl = resp.data.jupyterhub_logout_url;
+            window.open(jhLogoutUrl, '_blank');
+            if (!this.node) {
+                throw new EmberError('Illegal state');
+            }
+            const configCache = this.store.findRecord('binderhub-config', this.node.id);
+            await configCache;
+            this.configCache = configCache;
+            this.notifyPropertyChange('config');
+            this.set('loggedOutDomains', (this.loggedOutDomains || []).concat(jupyterhubUrl));
+        }, 0);
     }
 
-    @computed('defaultStorageProvider.rootFolder.files.[]')
-    get defaultStorage(): FileModel | null {
-        const provider = this.get('defaultStorageProvider');
-        if (!provider) {
-            return null;
+    async ensureConfigFolder() {
+        if (!this.node) {
+            throw new EmberError('Illegal state');
         }
-        return provider.get('rootFolder');
+        const allProviders = await this.node.get('files');
+        const providers = allProviders.filter(f => f.name === 'osfstorage');
+        if (providers.length === 0) {
+            throw new EmberError('Illegal state');
+        }
+        const defaultStorage = await providers[0].get('rootFolder');
+        if (!defaultStorage) {
+            throw new EmberError('Illegal state');
+        }
+        const files = await defaultStorage.get('files');
+        const configFolders = files.filter(file => file.name === '.binder');
+        if (configFolders.length === 0) {
+            const links = providers[0].get('links');
+            const link = links.new_folder;
+            if (!link) {
+                throw new EmberError('Illegal state');
+            }
+            await this.currentUser.authenticatedAJAX({
+                url: `${getHref(link)}&name=.binder`,
+                type: 'PUT',
+                xhrFields: { withCredentials: true },
+            });
+            await defaultStorage.reload();
+            const filesUpdated = await defaultStorage.get('files');
+            const configFoldersUpdated = filesUpdated.filter(file => file.name === '.binder');
+            if (configFoldersUpdated.length === 0) {
+                throw new EmberError('Illegal state');
+            }
+            this.set('configFolder', configFoldersUpdated[0]);
+            return;
+        }
+        this.set('configFolder', configFolders[0]);
     }
 
     async generatePersonalToken() {
