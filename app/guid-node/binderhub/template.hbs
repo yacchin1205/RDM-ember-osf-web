@@ -23,7 +23,9 @@
                 <GuidNode::Binderhub::-Components::JupyterServersList
                     @node={{this.node}}
                     @binderHubConfig={{this.config}}
+                    @loggedOutDomains={{this.loggedOutDomains}}
                     @renewToken={{action this.renewJupyterHubToken}}
+                    @logout={{action this.logoutJupyterHub}}
                     @buildPhase={{this.buildPhase}}
                     @onError={{action this.requestError}}
                 />
@@ -48,8 +50,7 @@
                         <GuidNode::Binderhub::-Components::ProjectEditor
                             @node={{this.node}}
                             @binderHubConfig={{this.config}}
-                            @configFolder={{this.defaultStorage}}
-                            @configStorageProvider={{this.defaultStorageProvider}}
+                            @configFolder={{this.configFolder}}
                             @onError={{action this.projectError}}
                         />
                     </div>
