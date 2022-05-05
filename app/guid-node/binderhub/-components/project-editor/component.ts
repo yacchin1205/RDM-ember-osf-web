@@ -7,7 +7,7 @@ import { inject as service } from '@ember/service';
 import DS from 'ember-data';
 import Intl from 'ember-intl/services/intl';
 import { requiredAction } from 'ember-osf-web/decorators/component';
-import BinderHubConfigModel from 'ember-osf-web/models/binderhub-config';
+import BinderHubConfigModel, { Image } from 'ember-osf-web/models/binderhub-config';
 import FileModel from 'ember-osf-web/models/file';
 import Node from 'ember-osf-web/models/node';
 import CurrentUser from 'ember-osf-web/services/current-user';
@@ -483,14 +483,14 @@ export default class ProjectEditor extends Component {
         if (!deployment) {
             return [];
         }
-        const image = this.get('selectedImage');
+        const image: Image | null = this.get('selectedImage');
         if (image === null) {
-            return deployment.images;
+            return this.modifyImagesForLocale(deployment.images);
         }
         if (this.get('imageSelectable')) {
-            return deployment.images;
+            return this.modifyImagesForLocale(deployment.images);
         }
-        return [image];
+        return [this.modifyImageForLocale(image)];
     }
 
     @computed('selectedImageUrl', 'deployment')
@@ -1204,5 +1204,22 @@ export default class ProjectEditor extends Component {
                 this.onError(exception, this.intl.t('binderhub.error.modify_files_error'));
             }
         }, 0);
+    }
+
+    modifyImagesForLocale(images: Image[]) {
+        return images.map(image => this.modifyImageForLocale(image));
+    }
+
+    modifyImageForLocale(baseImage: Image) {
+        if (!baseImage.description_en && !baseImage.description_ja) {
+            return baseImage;
+        }
+        const image: Image = { ...baseImage };
+        if (this.intl.locale.includes('ja')) {
+            image.description = image.description_ja;
+        } else {
+            image.description = image.description_en;
+        }
+        return image;
     }
 }

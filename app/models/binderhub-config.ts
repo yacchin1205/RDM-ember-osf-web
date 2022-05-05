@@ -36,7 +36,9 @@ export interface JupyterHub {
 export interface Image {
     url: string;
     name: string;
-    description: string;
+    description?: string;
+    description_en?: string;
+    description_ja?: string;
     packages?: string[];
 }
 
