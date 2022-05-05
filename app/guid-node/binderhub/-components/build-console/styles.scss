@@ -55,7 +55,11 @@
 }
 
 .build_launcher {
-    text-align: right;
+    display: flex;
+}
+
+.build_dropdown {
+    margin-left: auto;
 }
 
 .build_launch_button {
@@ -71,6 +75,7 @@
 .dropdown_menu {
     background-color: #f8f8f8;
     border-radius: 2px;
+    left: auto;
 
     & > li > button {
         color: #000;

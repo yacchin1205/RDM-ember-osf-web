@@ -1,23 +1,14 @@
 <div local-class='build_console'>
-    <BsAlert
-        @type='danger'
-        @dismissible={{false}}
-        @visible={{this.notAuthorized}}
-        local-class='BinderHub__connection_alert'
-    >
-        {{t 'binderhub.error.binderhub_auth_error'}}
-        <button
-            data-test-authorize-binderhub
-            type='button'
-            class='btn btn-danger'
-            {{action this.authorize}}
-        >
-            {{t 'binderhub.error.reconnect_binderhub'}}
-        </button>
-    </BsAlert>
+    <h3>
+        {{t 'binderhub.deployment.header'}}
+    </h3>
     <div local-class='build_launcher'>
+        <div>
+            {{t 'binderhub.deployment.description'}}
+        </div>
         <BsDropdown
             data-test-binderhub-list
+            local-class='build_dropdown'
             data-analytics-scope='BinderHub dropdown'
             as |dropdown|
         >
@@ -90,4 +81,20 @@
             </div>
         {{/if}}
     {{/if}}
+    <BsAlert
+        @type='danger'
+        @dismissible={{false}}
+        @visible={{this.notAuthorized}}
+        local-class='BinderHub__connection_alert'
+    >
+        {{t 'binderhub.error.binderhub_auth_error'}}
+        <button
+            data-test-authorize-binderhub
+            type='button'
+            class='btn btn-danger'
+            {{action this.authorize}}
+        >
+            {{t 'binderhub.error.reconnect_binderhub'}}
+        </button>
+    </BsAlert>
 </div>

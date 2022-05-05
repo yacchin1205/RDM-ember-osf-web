@@ -1784,6 +1784,8 @@ binderhub:
         delete: 'Delete'
         no_servers: 'No Servers'
     deployment:
+        header: 'Creating an Environment'
+        description: 'The contents of the default storage in this project will be copied.'
         launch: 'Launch'
         environment: 'Environment'
         additionalpackages: 'Additional Packages'

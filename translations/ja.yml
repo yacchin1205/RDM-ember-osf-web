@@ -1784,6 +1784,8 @@ binderhub:
         delete: '削除'
         no_servers: '解析環境はありません'
     deployment:
+        header: '環境作成'
+        description: 'このプロジェクトのデフォルトストレージの内容がコピーされます。'
         launch: '起動'
         environment: '環境'
         additionalpackages: '追加パッケージ'

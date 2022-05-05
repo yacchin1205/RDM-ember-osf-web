@@ -65,6 +65,13 @@
                     </div>
                 </tab.pane>
             </BsTab>
+            <GuidNode::Binderhub::-Components::BuildConsole
+                @binderHubConfig={{this.config}}
+                @renewToken={{action this.renewBinderHubToken}}
+                @requestBuild={{action this.build}}
+                @buildLog={{this.buildLog}}
+                @buildPhase={{this.buildPhase}}
+              />
             <BsAlert
                 @type='danger'
                 @dismissible={{false}}
@@ -73,13 +80,6 @@
             >
                 {{t 'binderhub.error.binderhub_build_error'}}
             </BsAlert>
-            <GuidNode::Binderhub::-Components::BuildConsole
-                @binderHubConfig={{this.config}}
-                @renewToken={{action this.renewBinderHubToken}}
-                @requestBuild={{action this.build}}
-                @buildLog={{this.buildLog}}
-                @buildPhase={{this.buildPhase}}
-              />
         </div>
     {{/if}}
 </div>
