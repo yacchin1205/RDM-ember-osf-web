@@ -1767,8 +1767,6 @@ binderhub:
         delete_confirm_dialog_body: 'Do you want to delete the server?'
     project_editor:
         header: 'New environment'
-        tab_editproject: 'From This Project'
-        tab_externalrepo: 'From External Repository'
     loading: 'Loading BinderHub config...'
     servers:
         host: 'Host: '
@@ -1788,7 +1786,7 @@ binderhub:
         header: 'Creating an Environment'
         description: 'The contents of the default storage in this project will be copied.'
         launch: 'Launch'
-        environment: 'Environment'
+        environment: 'Base Image'
         additionalpackages: 'Additional Packages'
         postinstallscript: 'Auto-Execution Script'
         select_environment: 'Select'

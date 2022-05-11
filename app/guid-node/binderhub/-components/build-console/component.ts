@@ -155,7 +155,11 @@ export default class BuildConsole extends Component {
             throw new EmberError('Insufficient parameters');
         }
         this.set('notAuthorized', false);
-        this.performBuild(path);
+        const defaultPath = {
+            path: 'lab/',
+            pathType: 'url',
+        } as BootstrapPath;
+        this.performBuild(path || defaultPath);
     }
 
     @action

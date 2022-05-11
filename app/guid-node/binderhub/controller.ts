@@ -8,7 +8,6 @@ import { inject as service } from '@ember/service';
 import DS from 'ember-data';
 
 import Intl from 'ember-intl/services/intl';
-import { BuildFormValues } from 'ember-osf-web/guid-node/binderhub/-components/external-repository/component';
 import { getContext } from 'ember-osf-web/guid-node/binderhub/-components/jupyter-servers-list/component';
 import BinderHubConfigModel from 'ember-osf-web/models/binderhub-config';
 import FileModel from 'ember-osf-web/models/file';
@@ -19,6 +18,12 @@ import StatusMessages from 'ember-osf-web/services/status-messages';
 import getHref from 'ember-osf-web/utils/get-href';
 import { addPathSegment } from 'ember-osf-web/utils/url-parts';
 import Toast from 'ember-toastr/services/toast';
+
+export interface BuildFormValues {
+    providerPrefix: string;
+    repo: string;
+    ref: string;
+}
 
 /* eslint-disable camelcase */
 export interface BuildMessage {
@@ -44,8 +49,6 @@ export default class GuidNodeBinderHub extends Controller {
     @service analytics!: Analytics;
     @service currentUser!: CurrentUser;
 
-    tab?: string;
-
     @reads('model.taskInstance.value')
     node?: Node;
 
@@ -56,8 +59,6 @@ export default class GuidNodeBinderHub extends Controller {
     configCache?: DS.PromiseObject<BinderHubConfigModel>;
 
     buildLog: BuildMessage[] | null = null;
-
-    externalRepoBuildFormValues: BuildFormValues | null = null;
 
     jupyterHubAPIError = false;
 
@@ -76,17 +77,6 @@ export default class GuidNodeBinderHub extends Controller {
     @computed('config.isFulfilled')
     get loading(): boolean {
         return !this.config || !this.config.get('isFulfilled');
-    }
-
-    @computed('tab')
-    get activeTab() {
-        return this.tab ? this.tab : 'editproject';
-    }
-
-    @action
-    changeTab(activeId: string) {
-        this.set('tab', activeId === 'editproject' ? undefined : activeId);
-        this.analytics.click('tab', `BinderHub tab - Change tab to: ${activeId}`);
     }
 
     @action
@@ -295,9 +285,6 @@ export default class GuidNodeBinderHub extends Controller {
     }
 
     get buildFormValues(): BuildFormValues | null {
-        if (this.activeTab === 'externalrepo') {
-            return this.externalRepoBuildFormValues;
-        }
         if (!this.node) {
             throw new EmberError('Illegal config');
         }
@@ -351,11 +338,6 @@ export default class GuidNodeBinderHub extends Controller {
         }
         this.configCache = this.store.findRecord('binderhub-config', this.node.id);
         return this.configCache!;
-    }
-
-    @action
-    externalRepoChanged(this: GuidNodeBinderHub, buildFormValues: BuildFormValues) {
-        this.externalRepoBuildFormValues = buildFormValues;
     }
 
     @action

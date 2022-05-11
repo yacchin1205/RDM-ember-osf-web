@@ -329,13 +329,13 @@ export default class ProjectEditor extends Component {
             content += rGitHubPackages.map(pid => getRGitHubScript(pid)).join(' \\\n\t&& ');
             content += '\n\n';
         }
+        if (superuser) {
+            content += 'USER $NB_USER\n';
+        }
         if (hasPostBuild === true) {
             content += 'COPY postBuild /\n';
             content += 'RUN chmod +x /postBuild && /postBuild\n';
             content += '\n';
-        }
-        if (superuser) {
-            content += 'USER $NB_USER\n';
         }
         content += 'COPY * ./\n';
         const checksum = md5(content.trim());
@@ -355,7 +355,10 @@ export default class ProjectEditor extends Component {
             ? value.split(/\s/).filter(item => item.length > 0)
             : baseCondaPackages.map(pkg => getCondaPackageId(pkg));
         if (imageURL.params) {
-            condaPackages = condaPackages.concat(imageURL.params.map(pkg => getCondaPackageId(pkg)));
+            const baseParams = imageURL.params;
+            const userPackageNames = condaPackages.map(pkg => parseCondaPackageId(pkg)[0]);
+            const params = baseParams.filter(pkgName => !userPackageNames.includes(pkgName[0]));
+            condaPackages = condaPackages.concat(params.map(pkg => getCondaPackageId(pkg)));
         }
         let content = `name: "${imageURL.fullurl}"\n`;
         if (condaPackages.length > 0) {
@@ -600,8 +603,8 @@ export default class ProjectEditor extends Component {
             if (!imageURL.params) {
                 return packages;
             }
-            const packageNames = imageURL.params.map(param => param[0]);
-            return packages.filter(pkg => !packageNames.includes(pkg[0]));
+            const systemPackages = imageURL.params.map(param => getCondaPackageId(param));
+            return packages.filter(pkg => !systemPackages.includes(getCondaPackageId(pkg)));
         }
         const dockerfileStatements = this.get('dockerfileStatements');
         if (dockerfileStatements === null) {
