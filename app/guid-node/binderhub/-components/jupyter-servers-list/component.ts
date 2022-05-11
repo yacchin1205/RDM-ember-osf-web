@@ -278,8 +278,11 @@ export default class JupyterServersList extends Component {
         return nodeCands.concat(userCands);
     }
 
-    @computed('binderHubConfig', 'requestNotAuthorized', 'defaultJupyterhubUrl', 'loggedOutDomains')
+    @computed('binderHubConfig', 'requestNotAuthorized', 'defaultJupyterhubUrl', 'loggedOutDomains', 'initialized')
     get notAuthorized(): boolean {
+        if (!this.initialized) {
+            return false;
+        }
         if (!this.binderHubConfig || !this.binderHubConfig.get('isFulfilled')) {
             return false;
         }
