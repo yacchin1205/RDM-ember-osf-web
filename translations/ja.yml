@@ -1825,6 +1825,11 @@ metadata:
     file-metadata-input:
         no_metadata: 'ファイルはありません'
         no_metadata_editable: 'ファイルメタデータは登録されていません。プロジェクトページでファイルのメタデータを編集し、この下書きに登録することができます:'
+        columns:
+            title: 'タイトル'
+            path: 'パス'
+            manager: '管理者'
+        no_manager: '-'
     draft-registration-card:
         export: 'エクスポート'
     registration-card:

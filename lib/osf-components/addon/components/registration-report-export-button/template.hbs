@@ -26,12 +26,14 @@
     </modal.body>
     <modal.footer data-analytics-scope='RegistrationReport modal footer'>
         <OsfButton
+            data-test-registration-report-cancel
             data-analytics-name='Cancel'
             @onClick={{action modal.close}}
         >
             {{t 'general.cancel'}}
         </OsfButton>
         <OsfButton
+            data-test-registration-report-submit
             data-analytics-name='Submit'
             @type='success'
             @onClick={{action modal.submit}}
@@ -42,6 +44,7 @@
 </BsModal>
 
 <OsfButton
+    data-test-registration-card-export
     data-analytics-name='Export'
     @type='success'
     @disabled={{this.hasNoFormats}}
