@@ -1722,7 +1722,8 @@ iqbrims:
     publish_date: 出版日
     volume: 巻（号）
     page_number: ページ番号
-    directly_submit_data: データを直接提出する
+    directly_submit_data: データZIPファイルを直接提出する
+    raw_drive_link: データZIPファイルをGoogle Driveでアップロード
     workflow_overall_state: 審査状況
     submit_manuscripts: 審査状況
     submit_data: 審査状況
