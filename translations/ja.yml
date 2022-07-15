@@ -636,7 +636,7 @@ node:
     metadata:
         new_report_modal:
             title: メタデータ様式を選択
-            info: '新規に作成したいメタデータの様式を以下から選択してください。<ul><li>メタデータ作成では、様式で定義された各項目を入力することができます。</li><li>メタデータ作成では、このプロジェクトに含まれるファイルのメタデータを登録することができます。</li><li>メタデータ作成から報告書様式に準拠したファイルをダウンロードし、報告書等の提出に利用することができます。</li></ul>'
+            info: '新規に作成したいプロジェクト メタデータの様式を以下から選択してください。<ul><li>メタデータ作成では、様式で定義された各項目を入力することができます。</li><li>メタデータ作成では、このプロジェクトに含まれるファイルのメタデータを登録することができます。</li><li>メタデータ作成から報告書様式に準拠したファイルをダウンロードし、報告書等の提出に利用することができます。</li></ul>'
             note: ＊今後、対応する事業や機関の増加に合わせて、メタデータの様式は随時追加されていきます。
             create: メタデータを作成
         page_title: '{nodeTitle} メタデータ'
@@ -775,8 +775,8 @@ app_components:
         field_license_placeholder: ""
         field_tags_label: 'タグ:'
         field_tags_placeholder: タグを追加
-        save_success: プロジェクトメタデータが保存されました。
-        save_error: プロジェクトメタデータを保存できません。
+        save_success: プロジェクト メタデータが保存されました。
+        save_error: プロジェクト メタデータを保存できません。
     query_syntax:
         allDatesIn: 全ての日付
         allFieldsSearched: デフォルトでは、使用可能なすべてのフィールドが検索されますが、代わりに特定のフィールドを検索することを選択できます
@@ -1015,11 +1015,11 @@ registries:
                 title: 登録フォームに記入
                 next: 次へ
                 back: 戻る
-                save_draft: 'Save draft'
-                new_registration: 'New registration'
+                save_draft: 'ドラフトを保存'
+                new_registration: '新規プロジェクト メタデータ'
                 last_saved: '自動保存済み: '
-                save_failed: 'Save failed. Unsaved changes present.'
-                failed_auto_save: 'Failed to auto-save draft registration form'
+                save_failed: '保存に失敗しました。保存できていない変更があります。'
+                failed_auto_save: '下書きの自動保存に失敗しました。'
             review:
                 title: 送信前に登録を確認する
                 page_label: 内容確認
@@ -1822,7 +1822,7 @@ binderhub:
 metadata:
     file-metadata-input:
         no_metadata: 'ファイルはありません'
-        no_metadata_editable: 'ファイルメタデータは登録されていません。プロジェクトページでファイルのメタデータを編集し、この下書きに登録することができます:'
+        no_metadata_editable: 'ファイル メタデータは登録されていません。プロジェクトページでファイルのメタデータを編集し、この下書きに登録することができます:'
         columns:
             title: 'タイトル'
             path: 'パス'
