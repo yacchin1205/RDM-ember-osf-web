@@ -40,6 +40,7 @@ export function getSchemaBlockGroups(blocks: SchemaBlock[] | undefined) {
             case 'multi-select-input':
             case 'e-rad-award-funder-input':
             case 'e-rad-award-number-input':
+            case 'e-rad-award-sys-number-input':
             case 'e-rad-award-title-ja-input':
             case 'e-rad-award-title-en-input':
             case 'e-rad-award-field-input':

@@ -14,6 +14,7 @@ export type SchemaBlockType =
     'select-other-option' |
     'e-rad-award-funder-input' |
     'e-rad-award-number-input' |
+    'e-rad-award-sys-number-input' |
     'e-rad-award-title-ja-input' |
     'e-rad-award-title-en-input' |
     'e-rad-award-field-input' |
