@@ -248,7 +248,7 @@ var wayf_idps = {
 		type:"tohoku",
 		name:"Miyagi University",
 		search:["https://idp.myu.ac.jp/idp/shibboleth", "Tohoku", "Miyagi University", "Miyagi University", "宮城大学"],
-		SAML1SSOurl:"https://no.saml1.sso.url.defined.com/error"
+		SAML1SSOurl:"https://idp.myu.ac.jp/idp/profile/Shibboleth/SSO"
 		},
 	"https://idp.isu.ac.jp/idp/shibboleth":{
 		type:"tohoku",
@@ -760,6 +760,12 @@ var wayf_idps = {
 		search:["https://niph.ex-tic.com/auth/gakunin/saml2/assertions", "Kanto", "National Institute of Public Health", "National Institute of Public Health", "国立保健医療科学院"],
 		SAML1SSOurl:"https://no.saml1.sso.url.defined.com/error"
 		},
+	"https://nipr.ex-tic.com/auth/gakunin/saml2/assertions":{
+		type:"kanto",
+		name:"National Institute of Polar Research",
+		search:["https://nipr.ex-tic.com/auth/gakunin/saml2/assertions", "Kanto", "National Institute of Polar Research", "National Institute of Polar Research", "国立極地研究所"],
+		SAML1SSOurl:"https://no.saml1.sso.url.defined.com/error"
+		},
 	"https://kokugakuin.ex-tic.com/auth/gakunin/saml2/assertions":{
 		type:"kanto",
 		name:"Kokugakuin University",
@@ -770,6 +776,36 @@ var wayf_idps = {
 		type:"kanto",
 		name:"Surugadai University",
 		search:["https://suidp.ex-tic.com/auth/gakunin/saml2/assertions", "Kanto", "Surugadai University", "Surugadai University", "駿河台大学"],
+		SAML1SSOurl:"https://no.saml1.sso.url.defined.com/error"
+		},
+	"https://twmu.ex-tic.com/auth/gakunin/saml2/assertions":{
+		type:"kanto",
+		name:"Tokyo Women\'s Medical University",
+		search:["https://twmu.ex-tic.com/auth/gakunin/saml2/assertions", "Kanto", "Tokyo Women\'s Medical University", "Tokyo Women\'s Medical University", "東京女子医科大学"],
+		SAML1SSOurl:"https://no.saml1.sso.url.defined.com/error"
+		},
+	"https://libidp.kuhs.ac.jp/idp/shibboleth":{
+		type:"kanto",
+		name:"Kanagawa University of Human Services",
+		search:["https://libidp.kuhs.ac.jp/idp/shibboleth", "Kanto", "Kanagawa University of Human Services", "Kanagawa University of Human Services", "神奈川県立保健福祉大学"],
+		SAML1SSOurl:"https://libidp.kuhs.ac.jp/idp/profile/Shibboleth/SSO"
+		},
+	"https://nijl.ex-tic.com/auth/gakunin/saml2/assertions":{
+		type:"kanto",
+		name:"National Institute of Japanese Literature",
+		search:["https://nijl.ex-tic.com/auth/gakunin/saml2/assertions", "Kanto", "National Institute of Japanese Literature", "National Institute of Japanese Literature", "国文学研究資料館"],
+		SAML1SSOurl:"https://no.saml1.sso.url.defined.com/error"
+		},
+	"https://slink.secioss.com/aist.go.jp":{
+		type:"kanto",
+		name:"National Institute of Advanced Industrial Science and Technology",
+		search:["https://slink.secioss.com/aist.go.jp", "Kanto", "National Institute of Advanced Industrial Science and Technology", "National Institute of Advanced Industrial Science and Technology", "産業技術総合研究所"],
+		SAML1SSOurl:"https://slink.secioss.com/saml/shib13/idp/SSOService.php/aist.go.jp"
+		},
+	"https://ush.ex-tic.com/auth/gakunin/saml2/assertions":{
+		type:"kanto",
+		name:"University of the Sacred Heart, Tokyo",
+		search:["https://ush.ex-tic.com/auth/gakunin/saml2/assertions", "Kanto", "University of the Sacred Heart, Tokyo", "University of the Sacred Heart, Tokyo", "聖心女子大学"],
 		SAML1SSOurl:"https://no.saml1.sso.url.defined.com/error"
 		},
 	"https://fed.mie-u.ac.jp/idp":{
@@ -1336,6 +1372,18 @@ var wayf_idps = {
 		search:["https://bukkyouniv.ex-tic.com/auth/gakunin/saml2/assertions", "Kinki", "Bukkyo University", "Bukkyo University", "佛教大学"],
 		SAML1SSOurl:"https://no.saml1.sso.url.defined.com/error"
 		},
+	"https://idp.osaka-dent.ac.jp/idp/shibboleth":{
+		type:"kinki",
+		name:"Osaka Dental University",
+		search:["https://idp.osaka-dent.ac.jp/idp/shibboleth", "Kinki", "Osaka Dental University", "Osaka Dental University", "大阪歯科大学"],
+		SAML1SSOurl:"https://idp.osaka-dent.ac.jp/idp/profile/Shibboleth/SSO"
+		},
+	"https://bpm.dwc.doshisha.ac.jp/starfield-idp":{
+		type:"kinki",
+		name:"Doshisha Women\'s College of Liberal Arts",
+		search:["https://bpm.dwc.doshisha.ac.jp/starfield-idp", "Kinki", "Doshisha Women\'s College of Liberal Arts", "Doshisha Women\'s College of Liberal Arts", "同志社女子大学"],
+		SAML1SSOurl:"https://bpm.dwc.doshisha.ac.jp/idp/profile/Shibboleth/SSO"
+		},
 	"https://idp.hiroshima-u.ac.jp/idp/shibboleth":{
 		type:"chugoku",
 		name:"Hiroshima University",
@@ -1815,12 +1863,6 @@ var wayf_idps = {
 		name:"KAGRA",
 		search:["https://shibbi.pki.itc.u-tokyo.ac.jp/idp/shibboleth", "Others", "KAGRA", "KAGRA", "KAGRA"],
 		SAML1SSOurl:"https://shibbi.pki.itc.u-tokyo.ac.jp/idp/profile/Shibboleth/SSO"
-		},
-	"https://nipr.ex-tic.com/auth/gakunin/saml2/assertions":{
-		type:"others",
-		name:"National Institute of Polar Research",
-		search:["https://nipr.ex-tic.com/auth/gakunin/saml2/assertions", "Others", "National Institute of Polar Research", "National Institute of Polar Research", "国立極地研究所"],
-		SAML1SSOurl:"https://no.saml1.sso.url.defined.com/error"
 		} };
 var wayf_hint_list = [  ];
 var inc_search_list = [];
@@ -2410,7 +2452,7 @@ function decodeBase64(input) {
 			+ '&amp;shire=' + encodeURIComponent(wayf_sp_samlACURL)
 			+ '&amp;target=' + encodeURIComponent(wayf_return_url);
 			
-			form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" onSubmit="return submitForm()" action="' + wayf_authReq_URL + '&amp;time=1686705660'
+			form_start = '<form id="IdPList" name="IdPList" method="post" target="_parent" onSubmit="return submitForm()" action="' + wayf_authReq_URL + '&amp;time=1693941486'
 			+ '">';
 		}
 		
@@ -3757,6 +3799,17 @@ function decodeBase64(input) {
 				dispDefault = 'National Institute of Public Health';
 			}
 			pushIncSearchList('https://niph.ex-tic.com/auth/gakunin/saml2/assertions');
+		}		if (last_idp == 'https://nipr.ex-tic.com/auth/gakunin/saml2/assertions'){
+			dispDefault = 'National Institute of Polar Research';
+		}		if (isAllowedType('https://nipr.ex-tic.com/auth/gakunin/saml2/assertions','kanto') && isAllowedIdP('https://nipr.ex-tic.com/auth/gakunin/saml2/assertions')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://nipr.ex-tic.com/auth/gakunin/saml2/assertions"
+				){
+				dispDefault = 'National Institute of Polar Research';
+			}
+			pushIncSearchList('https://nipr.ex-tic.com/auth/gakunin/saml2/assertions');
 		}		if (last_idp == 'https://kokugakuin.ex-tic.com/auth/gakunin/saml2/assertions'){
 			dispDefault = 'Kokugakuin University';
 		}		if (isAllowedType('https://kokugakuin.ex-tic.com/auth/gakunin/saml2/assertions','kanto') && isAllowedIdP('https://kokugakuin.ex-tic.com/auth/gakunin/saml2/assertions')){
@@ -3779,6 +3832,61 @@ function decodeBase64(input) {
 				dispDefault = 'Surugadai University';
 			}
 			pushIncSearchList('https://suidp.ex-tic.com/auth/gakunin/saml2/assertions');
+		}		if (last_idp == 'https://twmu.ex-tic.com/auth/gakunin/saml2/assertions'){
+			dispDefault = 'Tokyo Women\'s Medical University';
+		}		if (isAllowedType('https://twmu.ex-tic.com/auth/gakunin/saml2/assertions','kanto') && isAllowedIdP('https://twmu.ex-tic.com/auth/gakunin/saml2/assertions')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://twmu.ex-tic.com/auth/gakunin/saml2/assertions"
+				){
+				dispDefault = 'Tokyo Women\'s Medical University';
+			}
+			pushIncSearchList('https://twmu.ex-tic.com/auth/gakunin/saml2/assertions');
+		}		if (last_idp == 'https://libidp.kuhs.ac.jp/idp/shibboleth'){
+			dispDefault = 'Kanagawa University of Human Services';
+		}		if (isAllowedType('https://libidp.kuhs.ac.jp/idp/shibboleth','kanto') && isAllowedIdP('https://libidp.kuhs.ac.jp/idp/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://libidp.kuhs.ac.jp/idp/shibboleth"
+				){
+				dispDefault = 'Kanagawa University of Human Services';
+			}
+			pushIncSearchList('https://libidp.kuhs.ac.jp/idp/shibboleth');
+		}		if (last_idp == 'https://nijl.ex-tic.com/auth/gakunin/saml2/assertions'){
+			dispDefault = 'National Institute of Japanese Literature';
+		}		if (isAllowedType('https://nijl.ex-tic.com/auth/gakunin/saml2/assertions','kanto') && isAllowedIdP('https://nijl.ex-tic.com/auth/gakunin/saml2/assertions')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://nijl.ex-tic.com/auth/gakunin/saml2/assertions"
+				){
+				dispDefault = 'National Institute of Japanese Literature';
+			}
+			pushIncSearchList('https://nijl.ex-tic.com/auth/gakunin/saml2/assertions');
+		}		if (last_idp == 'https://slink.secioss.com/aist.go.jp'){
+			dispDefault = 'National Institute of Advanced Industrial Science and Technology';
+		}		if (isAllowedType('https://slink.secioss.com/aist.go.jp','kanto') && isAllowedIdP('https://slink.secioss.com/aist.go.jp')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://slink.secioss.com/aist.go.jp"
+				){
+				dispDefault = 'National Institute of Advanced Industrial Science and Technology';
+			}
+			pushIncSearchList('https://slink.secioss.com/aist.go.jp');
+		}		if (last_idp == 'https://ush.ex-tic.com/auth/gakunin/saml2/assertions'){
+			dispDefault = 'University of the Sacred Heart, Tokyo';
+		}		if (isAllowedType('https://ush.ex-tic.com/auth/gakunin/saml2/assertions','kanto') && isAllowedIdP('https://ush.ex-tic.com/auth/gakunin/saml2/assertions')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://ush.ex-tic.com/auth/gakunin/saml2/assertions"
+				){
+				dispDefault = 'University of the Sacred Heart, Tokyo';
+			}
+			pushIncSearchList('https://ush.ex-tic.com/auth/gakunin/saml2/assertions');
 		}		if (last_idp == 'https://fed.mie-u.ac.jp/idp'){
 			dispDefault = 'Mie University';
 		}		if (isAllowedType('https://fed.mie-u.ac.jp/idp','chubu') && isAllowedIdP('https://fed.mie-u.ac.jp/idp')){
@@ -4813,6 +4921,28 @@ function decodeBase64(input) {
 				dispDefault = 'Bukkyo University';
 			}
 			pushIncSearchList('https://bukkyouniv.ex-tic.com/auth/gakunin/saml2/assertions');
+		}		if (last_idp == 'https://idp.osaka-dent.ac.jp/idp/shibboleth'){
+			dispDefault = 'Osaka Dental University';
+		}		if (isAllowedType('https://idp.osaka-dent.ac.jp/idp/shibboleth','kinki') && isAllowedIdP('https://idp.osaka-dent.ac.jp/idp/shibboleth')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://idp.osaka-dent.ac.jp/idp/shibboleth"
+				){
+				dispDefault = 'Osaka Dental University';
+			}
+			pushIncSearchList('https://idp.osaka-dent.ac.jp/idp/shibboleth');
+		}		if (last_idp == 'https://bpm.dwc.doshisha.ac.jp/starfield-idp'){
+			dispDefault = 'Doshisha Women\'s College of Liberal Arts';
+		}		if (isAllowedType('https://bpm.dwc.doshisha.ac.jp/starfield-idp','kinki') && isAllowedIdP('https://bpm.dwc.doshisha.ac.jp/starfield-idp')){
+			if (
+				"-" == "-" 
+				&& typeof(wayf_default_idp) != "undefined"
+				&& wayf_default_idp == "https://bpm.dwc.doshisha.ac.jp/starfield-idp"
+				){
+				dispDefault = 'Doshisha Women\'s College of Liberal Arts';
+			}
+			pushIncSearchList('https://bpm.dwc.doshisha.ac.jp/starfield-idp');
 		}		if (last_idp == 'https://idp.hiroshima-u.ac.jp/idp/shibboleth'){
 			dispDefault = 'Hiroshima University';
 		}		if (isAllowedType('https://idp.hiroshima-u.ac.jp/idp/shibboleth','chugoku') && isAllowedIdP('https://idp.hiroshima-u.ac.jp/idp/shibboleth')){
@@ -5693,17 +5823,6 @@ function decodeBase64(input) {
 				dispDefault = 'KAGRA';
 			}
 			pushIncSearchList('https://shibbi.pki.itc.u-tokyo.ac.jp/idp/shibboleth');
-		}		if (last_idp == 'https://nipr.ex-tic.com/auth/gakunin/saml2/assertions'){
-			dispDefault = 'National Institute of Polar Research';
-		}		if (isAllowedType('https://nipr.ex-tic.com/auth/gakunin/saml2/assertions','others') && isAllowedIdP('https://nipr.ex-tic.com/auth/gakunin/saml2/assertions')){
-			if (
-				"-" == "-" 
-				&& typeof(wayf_default_idp) != "undefined"
-				&& wayf_default_idp == "https://nipr.ex-tic.com/auth/gakunin/saml2/assertions"
-				){
-				dispDefault = 'National Institute of Polar Research';
-			}
-			pushIncSearchList('https://nipr.ex-tic.com/auth/gakunin/saml2/assertions');
 		}		if (wayf_additional_idps.length > 0){
 			var listcnt = inc_search_list.length;
 			
