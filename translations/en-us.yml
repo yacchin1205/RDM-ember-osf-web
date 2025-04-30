@@ -240,6 +240,7 @@ new_project:
     creating: 'Saving your project...'
     create_failed_header: 'Couldn''t create your project'
     create_failed_msg: 'There was an unknown error. Please try again later.'
+    limited: 'The new project cannot be created due to the created project number is greater than or equal the project number can create.'
 banners:
     prereg:
         description: 'Improve your next study. Enter the Prereg Challenge and you could win $1,000.'
@@ -644,7 +645,7 @@ node:
             note: '*Metadata forms will be constantly added as the number of corresponding projects and institutions grows in the future.'
             create: 'Create Metadata'
         page_title: '{nodeTitle} Metadata'
-        only_admins_can_initiate: 'Only project administrators can initiate metadata.'
+        only_contributors_with_write_permission_can_initiate: 'Only contributors with write permission can initiate metadata.'
         no_reports: 'There are no metadata of this project.'
         no_drafts: 'There are no draft metadata of this project.'
         start_new: 'Start to edit a new metadata by clicking the “Create new metadata” button. Once created, metadata cannot be edited or deleted.'
