@@ -77,7 +77,7 @@ const {
     OAUTH_SCOPES: scope,
     OSF_STATUS_COOKIE: statusCookie = 'osf_status',
     OSF_COOKIE_DOMAIN: cookieDomain = 'localhost',
-    OSF_URL: url = 'http://localhost:5000/',
+    OSF_URL: url = 'http://localhost:5001/',
     OSF_API_URL: apiUrl = 'http://localhost:8000',
     OSF_API_VERSION: apiVersion = '2.20',
     OSF_RENDER_URL: renderUrl = 'http://localhost:7778/render',
