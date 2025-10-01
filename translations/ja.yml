@@ -1939,3 +1939,128 @@ metadata:
             log: '操作ログ'
         export_target:
             description: 'エクスポート先を選択してください。'
+
+workflow:
+    console:
+        heading: ワークフローコンソール
+        description: このプロジェクトに登録されたワークフローを起動し、実行を管理します。
+        startSectionTitle: ワークフローを開始
+        workflowLabel: ワークフロー
+        selectPrompt: ワークフローを選択してください…
+        definitionLabel: 定義
+        descriptionLabel: 説明
+        runLabel: 実行ラベル
+        runLabelPlaceholder: この実行の任意のラベル
+        targetGuid: 対象GUID
+        targetGuidPlaceholder: 関連アイテムのGUID（任意）
+        parametersLabel: パラメータ(JSON)
+        parametersPlaceholder: 任意のJSONペイロード
+        parametersHint: ワークフロー開始時に送信する任意のJSONペイロードです。
+        starting: 起動中
+        startButton: ワークフローを開始
+        noActiveWorkflows: 利用可能なワークフローはありません。
+        startPermissionDenied: ワークフローを開始するには、このプロジェクトへの書き込み権限が必要です。
+        loadError: ワークフローレジストレーションを読み込めませんでした。
+        invalidParameters: パラメータは正しいJSON形式で入力してください。
+        startSuccess: ワークフローを開始しました。
+        startFailed: ワークフローを開始できませんでした。
+        refresh: 更新
+        close: 閉じる
+        tab:
+            start: 実行
+            runs: 実行履歴
+            tasks: タスク
+        status:
+            queued: 待機中
+            running: 実行中
+            completed: 完了
+            failed: 失敗
+            cancelled: 取消済み
+        runs:
+            heading: 直近の実行
+            loading: 実行を読み込み中...
+            loadError: ワークフロー実行を読み込めませんでした。
+            empty: 実行履歴はまだありません。
+            hideCompleted: 完了した実行を非表示
+            noMatches: 条件に一致する実行はありません。
+            cancelDialogTitle: ワークフロー実行のキャンセル
+            confirmCancel: '本当にワークフロー実行「{label}」をキャンセルしますか？'
+            cancelReasonLabel: 理由（任意）
+            cancelReasonPlaceholder: キャンセル理由を入力してください
+            cancelReasonHint: 入力した理由はキャンセル記録に保存されます。
+            cancelConfirmButton: キャンセルを実行
+            cancelError: ワークフロー実行をキャンセルできませんでした。
+            columns:
+                label: 実行
+                project: プロジェクト
+                thisProject: このプロジェクト
+                status: 状態
+                started: 開始
+                completed: 完了
+                actions: 操作
+            actions:
+                cancel: キャンセル
+                cancelling: キャンセル中...
+        tasks:
+            heading: 直近のタスク
+            hideCompleted: 完了したタスクを非表示
+            loading: タスクを読み込み中...
+            loadError: タスクを読み込めませんでした。
+            empty: 現在のタスクはありません。
+            notAssigned: あなたに割り当てられていません
+            assignee:
+                executor: ワークフロー起動者
+                creator: 登録プロジェクトの書き込み権限者
+                manager: プロジェクト管理者
+                contributor: プロジェクト共同研究者
+            columns:
+                task: タスク
+                project: プロジェクト
+                thisProject: このプロジェクト
+                assignee: 担当
+                created: 作成
+                due: 期限
+                status: 状態
+                actions: 操作
+            statuses:
+                pending: 未処理
+                completed: 完了
+                cancelled: キャンセル済み
+            actions:
+                open: 開く
+            detailLoadError: タスク詳細を読み込めませんでした。
+            submitFailed: タスクを送信できませんでした。
+            submitSuccess: タスクを完了しました。
+            dialog:
+                titleFallback: タスク
+                untitled: 無題のタスク
+                unassigned: 未割り当て
+                notAvailable: 該当なし
+                startedAt: 開始
+                dueAt: 締切
+                loading: タスク詳細を読み込み中...
+                notAssigned: このタスクはあなたに割り当てられていません。
+                validationError: 必須項目を入力してください。
+                formSection: フォーム
+                booleanYes: はい
+                selectPlaceholder: 選択してください
+                fieldRequired: この項目は必須です
+                commentLabel: コメント
+                noForm: このタスクにはフォームが設定されていません。コメントのみで完了できます。
+                noTask: タスクの詳細を取得できませんでした。
+                submit: 送信
+                submitting: 送信中...
+                projectMetadataSelector:
+                    loading: メタデータレコードを読み込み中...
+                    refresh: 更新
+                    noRecords: スキーマに一致するメタデータレコードが見つかりません
+                    created: 作成日
+                    modified: 更新日
+                    statusDraft: ドラフト
+                    statusRegistered: 登録済み
+                fileMetadataSelector:
+                    loading: ファイルメタデータを読み込み中...
+                    refresh: 更新
+                    noRecordsPrefix: ファイルメタデータは登録されていません。プロジェクトページでファイルのメタデータを編集し、このフォームに登録することができます
+                    path: パス
+                    manager: 管理者
