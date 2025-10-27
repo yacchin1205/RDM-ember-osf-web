@@ -1,3 +1,4 @@
+{{#let (unique-id "file-metadata-selector") as |radioGroupName|}}
 <div class="clearfix m-b-sm">
     <button
         type="button"
@@ -35,7 +36,7 @@
                         <div local-class="FileMetadataSelector__radio">
                             <input
                                 type="radio"
-                                name="file-metadata-selector"
+                                name={{radioGroupName}}
                                 checked={{eq this.selectedPath entry.path}}
                                 disabled={{@disabled}}
                             />
@@ -97,3 +98,4 @@
         {{/each}}
     </div>
 {{/if}}
+{{/let}}

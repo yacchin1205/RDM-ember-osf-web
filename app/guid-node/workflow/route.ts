@@ -83,7 +83,7 @@ export default class GuidNodeWorkflowRoute extends Route {
 
         try {
             const response = await this.currentUser.authenticatedAJAX({
-                url: `${apiBaseUrl}registrations/`,
+                url: `${apiBaseUrl}activations/`,
                 type: 'GET',
             });
             const data = (response && (response as any).data) || [];

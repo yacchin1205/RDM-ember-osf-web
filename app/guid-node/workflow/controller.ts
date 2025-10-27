@@ -59,41 +59,36 @@ export function normalizeRegistrations(raw: unknown): WorkflowRegistration[] {
         return [];
     }
     return raw.map((entry: any) => {
-        if (!entry) {
-            return null;
-        }
-        const id = entry.id ?? entry._id;
-        if (id === undefined || id === null) {
-            return null;
-        }
+        const registration = entry.registration;
+        const id = registration.id;
         const labelParts: string[] = [];
-        if (entry.label) {
-            labelParts.push(String(entry.label));
-        } else if (entry.definition_name) {
-            labelParts.push(String(entry.definition_name));
-        } else if (entry.definition_key) {
-            labelParts.push(String(entry.definition_key));
-        } else if (entry.definition_id) {
-            labelParts.push(String(entry.definition_id));
+        if (registration.label) {
+            labelParts.push(String(registration.label));
+        } else if (registration.definition_name) {
+            labelParts.push(String(registration.definition_name));
+        } else if (registration.definition_key) {
+            labelParts.push(String(registration.definition_key));
+        } else if (registration.definition_id) {
+            labelParts.push(String(registration.definition_id));
         }
-        if (!entry.is_local && entry.node_title) {
-            labelParts.push(`[${String(entry.node_title)}]`);
+        if (!registration.is_local && registration.node_title) {
+            labelParts.push(`[${String(registration.node_title)}]`);
         }
         return {
             id: String(id),
-            label: entry.label ? String(entry.label) : undefined,
+            label: registration.label ? String(registration.label) : undefined,
             displayLabel: labelParts.join(' ') || String(id),
-            definitionId: entry.definition_id ? String(entry.definition_id) : undefined,
-            definitionKey: entry.definition_key ? String(entry.definition_key) : undefined,
-            definitionName: entry.definition_name ? String(entry.definition_name) : undefined,
-            description: entry.description ? String(entry.description) : undefined,
-            nodeTitle: entry.node_title ? String(entry.node_title) : undefined,
-            isLocal: Boolean(entry.is_local),
-            isActive: entry.is_active !== false,
+            definitionId: registration.definition_id ? String(registration.definition_id) : undefined,
+            definitionKey: registration.definition_key ? String(registration.definition_key) : undefined,
+            definitionName: registration.definition_name ? String(registration.definition_name) : undefined,
+            description: registration.description ? String(registration.description) : undefined,
+            nodeTitle: registration.node_title ? String(registration.node_title) : undefined,
+            isLocal: Boolean(registration.is_local),
+            isActive: registration.is_active !== false,
             isEnabled: entry.is_enabled !== false,
-            definitionFormSchema: entry.definition_form_schema,
+            definitionFormSchema: registration.definition_form_schema,
         } as WorkflowRegistration;
-    }).filter((entry): entry is WorkflowRegistration => Boolean(entry));
+    });
 }
 
 export default class GuidNodeWorkflowController extends Controller {
@@ -594,7 +589,7 @@ export default class GuidNodeWorkflowController extends Controller {
         this.registrationsError = null;
         try {
             const response = await this.currentUser.authenticatedAJAX({
-                url: `${this.apiBaseUrl}registrations/`,
+                url: `${this.apiBaseUrl}activations/`,
                 type: 'GET',
             });
             const data = (response && (response as any).data) || [];
