@@ -4,9 +4,36 @@ import {
     WorkflowTaskFieldOption,
 } from './-components/flowable-form/types';
 
+export interface WorkflowActivationApiResponse {
+    id: string;
+    node_id: string;
+    node_title: string;
+    registration_id: string;
+    registration: WorkflowRegistrationApiResponse;
+    is_enabled: boolean;
+    activated_by: string;
+}
+
+export interface WorkflowRegistrationApiResponse {
+    id: string;
+    label?: string;
+    definition_id?: string;
+    definition_key?: string;
+    definition_name?: string;
+    description?: string;
+    node_title?: string;
+    is_local: boolean;
+    is_active: boolean;
+    definition_form_schema: {
+        fields: WorkflowTaskField[];
+        data?: unknown;
+    };
+}
+
 export interface WorkflowRegistration {
     id: string;
     label?: string;
+    shortLabel: string;
     displayLabel: string;
     definitionId?: string;
     definitionKey?: string;
@@ -16,8 +43,8 @@ export interface WorkflowRegistration {
     isLocal: boolean;
     isActive: boolean;
     isEnabled: boolean;
-    definitionFormSchema?: {
-        fields?: WorkflowTaskField[];
+    definitionFormSchema: {
+        fields: WorkflowTaskField[];
         data?: unknown;
     };
 }

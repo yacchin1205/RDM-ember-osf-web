@@ -2,12 +2,19 @@ import Component from '@ember/component';
 import { action, computed } from '@ember/object';
 import { later } from '@ember/runloop';
 import { inject as service } from '@ember/service';
+import { task } from 'ember-concurrency-decorators';
 import $ from 'jquery';
+import RouterService from '@ember/routing/router-service';
 
 import { layout } from 'ember-osf-web/decorators/component';
+import Node from 'ember-osf-web/models/node';
 import MetadataNodeSchemaModel, { Destination, Format, MetadataType } from 'ember-osf-web/models/metadata-node-schema';
 import CurrentUser from 'ember-osf-web/services/current-user';
 import Toast from 'ember-toastr/services/toast';
+import Intl from 'ember-intl/services/intl';
+import { extractProjectMetadata } from 'ember-osf-web/guid-node/workflow/-components/flowable-form/utils';
+import { WorkflowActivationApiResponse } from 'ember-osf-web/guid-node/workflow/types';
+import { normalizeRegistrations, WorkflowRegistration } from 'ember-osf-web/guid-node/workflow/controller';
 
 import styles from './styles';
 import template from './template';
@@ -36,6 +43,10 @@ export default class RegistrationReportExportButton extends Component {
 
     @service toast!: Toast;
 
+    @service router!: RouterService;
+
+    @service intl!: Intl;
+
     buttonClass?: string;
 
     exportCsvUrl?: string;
@@ -53,6 +64,30 @@ export default class RegistrationReportExportButton extends Component {
     metadataId: string | null = null;
 
     isUploading: boolean = false;
+
+    node?: Node;
+
+    schemaName?: string;
+
+    workflowRegistrations: WorkflowRegistration[] = [];
+
+    selectedWorkflowId: string | null = null;
+
+    @computed('selectedWorkflowId', 'workflowRegistrations')
+    get selectedWorkflow(): WorkflowRegistration | null {
+        if (!this.selectedWorkflowId) {
+            return null;
+        }
+        return this.workflowRegistrations.find(w => w.id === this.selectedWorkflowId) || null;
+    }
+
+    @computed('selectedWorkflow')
+    get buttonLabel(): string {
+        if (!this.selectedWorkflow) {
+            return this.intl.t('metadata.registration-card.export');
+        }
+        return this.selectedWorkflow.shortLabel;
+    }
 
     @computed('metadataSchema')
     get metadataFormats(): Format[] {
@@ -92,6 +127,15 @@ export default class RegistrationReportExportButton extends Component {
     @computed('metadataSchemaLoading', 'hasNoFormats', 'hasNoDestinations')
     get isDisabled(): boolean {
         return this.metadataSchemaLoading || (this.hasNoFormats && this.hasNoDestinations);
+    }
+
+    @action
+    primaryAction() {
+        if (this.selectedWorkflowId) {
+            this.startWorkflow(this.selectedWorkflowId);
+        } else {
+            this.export();
+        }
     }
 
     @action
@@ -195,5 +239,59 @@ export default class RegistrationReportExportButton extends Component {
         later(async () => {
             await this.checkProgress(progressApiUrl);
         }, 500);
+    }
+
+    didReceiveAttrs() {
+        super.didReceiveAttrs();
+        if (this.node && this.schemaName) {
+            this.loadWorkflows.perform();
+        }
+    }
+
+    @task
+    loadWorkflows = task(function *(this: RegistrationReportExportButton) {
+        const response: Response = yield fetch(`/api/v1/project/${this.node!.get('id')}/workflow/activations/`);
+        if (!response.ok) {
+            throw new Error(`Failed to fetch workflows: ${response.statusText}`);
+        }
+        const json: { data: WorkflowActivationApiResponse[] } = yield response.json();
+        const allRegistrations = normalizeRegistrations(json.data);
+        const filtered = allRegistrations.filter(registration =>
+            registration.definitionFormSchema.fields.some(field => {
+                const metadata = extractProjectMetadata(field);
+                return metadata !== null && metadata.schemaName === this.schemaName;
+            })
+        );
+        this.set('workflowRegistrations', filtered);
+    });
+
+    @action
+    selectWorkflow(workflowId: string) {
+        this.set('selectedWorkflowId', workflowId);
+    }
+
+    @action
+    selectExport() {
+        this.set('selectedWorkflowId', null);
+    }
+
+    startWorkflow(workflowId: string) {
+        const workflow = this.workflowRegistrations.find(w => w.id === workflowId);
+        if (!workflow) {
+            throw new Error(`Workflow ${workflowId} not found`);
+        }
+
+        const targetField = workflow.definitionFormSchema.fields.find(field => {
+            const metadata = extractProjectMetadata(field);
+            return metadata !== null && metadata.schemaName === this.schemaName;
+        });
+
+        if (!targetField) {
+            throw new Error(`No matching field found for schema ${this.schemaName}`);
+        }
+
+        const hash = `#start=${encodeURIComponent(workflowId)}&field_${encodeURIComponent(targetField.id)}=${encodeURIComponent(this.metadataId!)}`;
+        const url = this.router.urlFor('guid-node.workflow', this.node!.get('id'));
+        window.location.href = `${url}${hash}`;
     }
 }

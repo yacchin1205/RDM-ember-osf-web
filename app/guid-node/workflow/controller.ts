@@ -11,6 +11,7 @@ import Node from 'ember-osf-web/models/node';
 import pathJoin from 'ember-osf-web/utils/path-join';
 import {
     WorkflowRegistration,
+    WorkflowActivationApiResponse,
     WorkflowRouteModel,
     WorkflowRunSummary,
     WorkflowTaskSummary,
@@ -54,30 +55,19 @@ function extractMessage(error: unknown, fallback: string): string {
     return fallback;
 }
 
-export function normalizeRegistrations(raw: unknown): WorkflowRegistration[] {
-    if (!Array.isArray(raw)) {
-        return [];
-    }
-    return raw.map((entry: any) => {
+export function normalizeRegistrations(activations: WorkflowActivationApiResponse[]): WorkflowRegistration[] {
+    return activations.map(entry => {
         const registration = entry.registration;
         const id = registration.id;
-        const labelParts: string[] = [];
-        if (registration.label) {
-            labelParts.push(String(registration.label));
-        } else if (registration.definition_name) {
-            labelParts.push(String(registration.definition_name));
-        } else if (registration.definition_key) {
-            labelParts.push(String(registration.definition_key));
-        } else if (registration.definition_id) {
-            labelParts.push(String(registration.definition_id));
-        }
-        if (!registration.is_local && registration.node_title) {
-            labelParts.push(`[${String(registration.node_title)}]`);
-        }
+        const shortLabel = registration.label || registration.definition_name || registration.definition_key || registration.definition_id || id;
+        const displayLabel = !registration.is_local && registration.node_title
+            ? `${shortLabel} [${registration.node_title}]`
+            : shortLabel;
         return {
             id: String(id),
             label: registration.label ? String(registration.label) : undefined,
-            displayLabel: labelParts.join(' ') || String(id),
+            shortLabel,
+            displayLabel,
             definitionId: registration.definition_id ? String(registration.definition_id) : undefined,
             definitionKey: registration.definition_key ? String(registration.definition_key) : undefined,
             definitionName: registration.definition_name ? String(registration.definition_name) : undefined,
@@ -102,6 +92,7 @@ export default class GuidNodeWorkflowController extends Controller {
     @tracked selectedRegistrationId = '';
     @tracked runLabel = '';
     @tracked startFormVariables: WorkflowVariable[] = [];
+    @tracked prefilledStartFormVariables: WorkflowVariable[] = [];
     @tracked isStartFormValid = true;
 
     @tracked isSubmitting = false;
@@ -228,32 +219,27 @@ export default class GuidNodeWorkflowController extends Controller {
         if (!hash) {
             return false;
         }
-        const fragment = hash.replace(/^#/, '');
-        if (!fragment) {
+        const params = new URLSearchParams(hash.replace(/^#/, ''));
+        const startValue = params.get('start');
+        if (!startValue) {
             return false;
         }
-        const segments = fragment.split('&');
-        let rawValue: string | null = null;
-        for (const segment of segments) {
-            if (!segment) {
-                continue;
-            }
-            const [rawKey, ...rest] = segment.split('=');
-            if (!rawKey) {
-                continue;
-            }
-            if (decodeURIComponent(rawKey) !== 'start') {
-                continue;
-            }
-            rawValue = rest.length ? rest.join('=') : '';
-            break;
-        }
-        if (rawValue === null) {
-            return false;
-        }
-        const decoded = decodeURIComponent(rawValue);
-        if (this.activeRegistrations.some(entry => String(entry.id) === decoded)) {
-            this.selectedRegistrationId = decoded;
+        if (this.activeRegistrations.some(entry => String(entry.id) === startValue)) {
+            this.selectedRegistrationId = startValue;
+
+            const variables: WorkflowVariable[] = [];
+            params.forEach((value, key) => {
+                if (key.startsWith('field_')) {
+                    const fieldId = key.substring(6);
+                    variables.push({
+                        name: fieldId,
+                        value,
+                        type: 'string',
+                    });
+                }
+            });
+            this.prefilledStartFormVariables = variables;
+
             return true;
         }
         return false;
@@ -295,6 +281,7 @@ export default class GuidNodeWorkflowController extends Controller {
         this.submitError = null;
         this.submitSuccess = null;
         this.startFormVariables = [];
+        this.prefilledStartFormVariables = [];
         if (value) {
             window.location.hash = `start=${encodeURIComponent(value)}`;
         } else {
@@ -588,12 +575,11 @@ export default class GuidNodeWorkflowController extends Controller {
         this.isRefreshing = true;
         this.registrationsError = null;
         try {
-            const response = await this.currentUser.authenticatedAJAX({
+            const response: { data: WorkflowActivationApiResponse[] } = await this.currentUser.authenticatedAJAX({
                 url: `${this.apiBaseUrl}activations/`,
                 type: 'GET',
             });
-            const data = (response && (response as any).data) || [];
-            this.registrations = normalizeRegistrations(data);
+            this.registrations = normalizeRegistrations(response.data);
             if (this.selectedRegistrationId && !this.activeRegistrations.some(entry => entry.id === this.selectedRegistrationId)) {
                 this.selectedRegistrationId = '';
             }

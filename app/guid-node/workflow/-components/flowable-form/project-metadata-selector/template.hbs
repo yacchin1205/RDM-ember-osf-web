@@ -1,5 +1,5 @@
 {{#let (unique-id "project-metadata-selector") as |radioGroupName|}}
-<div class="clearfix m-b-sm">
+<div class="clearfix m-b-sm" {{did-insert this.initialize}} {{did-update this.updateValue @value}}>
     <button
         type="button"
         class="btn btn-default btn-xs pull-right"

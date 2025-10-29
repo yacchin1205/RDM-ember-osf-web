@@ -33,8 +33,12 @@
     }
 }
 
-.DraftRegistrationCard__export button {
-    float: right;
+.DraftRegistrationCard__export {
+    text-align: right;
+
+    button, :global(.btn-group) {
+        float: right;
+    }
 }
 
 :global(.delete_draft_registration) {

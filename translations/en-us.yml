@@ -1916,6 +1916,9 @@ metadata:
     registration-card:
         export: 'Export'
         exporting: 'Exporting'
+        export-header: 'Export'
+        start-workflow-header: 'Start Workflow'
+        toggle-actions: 'Toggle actions'
         export-dialog:
             title: 'Select the export format'
             description: 'Select the export format you want to output.'

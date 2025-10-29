@@ -1916,6 +1916,9 @@ metadata:
     registration-card:
         export: 'エクスポート'
         exporting: 'エクスポート中'
+        export-header: 'エクスポート'
+        start-workflow-header: 'ワークフロー起動'
+        toggle-actions: 'アクション切り替え'
         export-dialog:
             title: 'エクスポート形式の選択'
             description: '出力したいエクスポート形式を選択してください。'

@@ -37,18 +37,29 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
     @tracked draftRegistrations: DraftRegistration[] = [];
     @tracked registrations: Registration[] = [];
     @tracked selectedGuid: string | null = null;
+    @tracked isInitialized: boolean = false;
 
-    constructor(owner: unknown, args: ProjectMetadataSelectorArgs) {
-        super(owner, args);
-        if (args.value) {
-            if (args.value.type === 'json') {
-                const parsed = args.value.value as ProjectMetadataValue;
+    @action
+    initialize() {
+        if (!this.isInitialized) {
+            this.isInitialized = true;
+            this.loadMetadataRecords.perform();
+        }
+    }
+
+    @action
+    updateValue() {
+        if (this.args.value && !this.selectedGuid) {
+            if (this.args.value.type === 'json') {
+                const parsed = this.args.value.value as ProjectMetadataValue;
                 this.selectedGuid = parsed.id;
             } else {
-                this.selectedGuid = toStringValue(args.value);
+                this.selectedGuid = toStringValue(this.args.value);
+            }
+            if (this.selectedGuid) {
+                this.notifyRecordSelected(this.selectedGuid);
             }
         }
-        this.loadMetadataRecords.perform();
     }
 
     @task
@@ -80,14 +91,7 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
         );
     });
 
-    @action
-    selectRecord(guid: string): void {
-        if (this.args.disabled) {
-            return;
-        }
-        this.selectedGuid = guid;
-
-        // Find the selected record and extract metadata
+    private notifyRecordSelected(guid: string): void {
         const draft = this.draftRegistrations.find(d => d.id === guid);
         const registration = this.registrations.find(r => r.id === guid);
 
@@ -100,6 +104,15 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
             value,
             type: 'json',
         });
+    }
+
+    @action
+    selectRecord(guid: string): void {
+        if (this.args.disabled) {
+            return;
+        }
+        this.selectedGuid = guid;
+        this.notifyRecordSelected(guid);
     }
 
     @action

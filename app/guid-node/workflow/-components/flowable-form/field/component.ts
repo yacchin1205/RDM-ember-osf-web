@@ -4,6 +4,7 @@ import { action } from '@ember/object';
 import { WorkflowTaskField, WorkflowTaskFieldOption, FieldValueWithType } from '../types';
 import { WorkflowVariable } from '../../../types';
 import { resolveFlowableType } from '../component';
+import { extractProjectMetadata, extractFileMetadata } from '../utils';
 
 function getOptionValue(option: WorkflowTaskFieldOption): string | undefined {
     return option.id ?? option.name;
@@ -195,43 +196,21 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
     }
 
     get isProjectMetadataSelector(): boolean {
-        if (this.type !== 'multi-line-text') {
-            return false;
-        }
-        const placeholder = this.placeholder;
-        if (!placeholder) {
-            return false;
-        }
-        return placeholder.startsWith('_PROJECT_METADATA(') && placeholder.endsWith(')');
+        return extractProjectMetadata(this.args.field) !== null;
     }
 
     get projectMetadataSchemaName(): string | null {
-        if (!this.isProjectMetadataSelector) {
-            return null;
-        }
-        const placeholder = this.placeholder || '';
-        const match = placeholder.match(/^_PROJECT_METADATA\((.+)\)$/);
-        return match ? match[1] : null;
+        const metadata = extractProjectMetadata(this.args.field);
+        return metadata ? metadata.schemaName : null;
     }
 
     get isFileMetadataSelector(): boolean {
-        if (this.type !== 'multi-line-text') {
-            return false;
-        }
-        const placeholder = this.placeholder;
-        if (!placeholder) {
-            return false;
-        }
-        return placeholder.startsWith('_FILE_METADATA(') && placeholder.endsWith(')');
+        return extractFileMetadata(this.args.field) !== null;
     }
 
     get fileMetadataSchemaName(): string | null {
-        if (!this.isFileMetadataSelector) {
-            return null;
-        }
-        const placeholder = this.placeholder || '';
-        const match = placeholder.match(/^_FILE_METADATA\((.+)\)$/);
-        return match ? match[1] : null;
+        const metadata = extractFileMetadata(this.args.field);
+        return metadata ? metadata.schemaName : null;
     }
 
     get isPassword(): boolean {

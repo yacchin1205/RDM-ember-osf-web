@@ -8,6 +8,7 @@ import GuidNodeWorkflowController, {
     normalizeRegistrations,
     WorkflowRegistration,
 } from 'ember-osf-web/guid-node/workflow/controller';
+import { WorkflowActivationApiResponse } from 'ember-osf-web/guid-node/workflow/types';
 import Node from 'ember-osf-web/models/node';
 import { GuidRouteModel } from 'ember-osf-web/resolve-guid/guid-route';
 import CurrentUser from 'ember-osf-web/services/current-user';
@@ -82,12 +83,11 @@ export default class GuidNodeWorkflowRoute extends Route {
         let registrationsError: string | null = null;
 
         try {
-            const response = await this.currentUser.authenticatedAJAX({
+            const response: { data: WorkflowActivationApiResponse[] } = await this.currentUser.authenticatedAJAX({
                 url: `${apiBaseUrl}activations/`,
                 type: 'GET',
             });
-            const data = (response && (response as any).data) || [];
-            registrations = normalizeRegistrations(data);
+            registrations = normalizeRegistrations(response.data);
         } catch (error) {
             registrationsError = extractErrorMessage(error);
         }
