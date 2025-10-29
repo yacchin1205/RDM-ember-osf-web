@@ -75,7 +75,7 @@ export interface WorkflowTaskForm {
 export interface WorkflowVariable {
     name: string;
     value: unknown;
-    type?: string;
+    type: string;
 }
 
 export interface WorkflowTaskDetail extends WorkflowTaskSummary {

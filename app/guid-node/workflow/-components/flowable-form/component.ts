@@ -39,7 +39,7 @@ export function resolveFlowableType(fieldType: string | undefined): string {
 }
 
 export default class FlowableForm extends Component<FlowableFormArgs> {
-    @tracked fieldValues: Record<string, unknown> = {};
+    @tracked fieldValues: Record<string, FieldValueWithType> = {};
     @tracked updatedFieldValues: Record<string, FieldValueWithType> = {};
 
     get fields(): WorkflowTaskField[] {
@@ -76,15 +76,27 @@ export default class FlowableForm extends Component<FlowableFormArgs> {
 
     @action
     initialize(_element?: Element): void {
-        const nextValues: Record<string, unknown> = {};
+        const variables: WorkflowVariable[] = this.args.variables || [];
+        const nextValues: Record<string, FieldValueWithType> = {};
         const nextUpdatedValues: Record<string, FieldValueWithType> = {};
         this.fields.forEach(field => {
-            const initial = field.value ?? field.defaultValue ?? null;
-            nextValues[field.id] = initial;
-            nextUpdatedValues[field.id] = {
-                value: initial,
-                type: resolveFlowableType(field.type),
-            };
+            const variable = variables.find(v => v.name === field.id);
+            let fieldValue: FieldValueWithType;
+
+            if (variable) {
+                fieldValue = {
+                    ...variable,
+                };
+            } else {
+                const initial = field.value ?? field.defaultValue ?? null;
+                fieldValue = {
+                    value: initial,
+                    type: resolveFlowableType(field.type),
+                };
+            }
+
+            nextValues[field.id] = fieldValue;
+            nextUpdatedValues[field.id] = fieldValue;
         });
         this.fieldValues = nextValues;
         this.updatedFieldValues = nextUpdatedValues;

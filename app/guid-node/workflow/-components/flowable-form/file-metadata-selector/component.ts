@@ -11,6 +11,7 @@ import MetadataNodeProject, { FileEntry, MetadataValue, MetadataItem } from 'emb
 import MetadataNodeSchema from 'ember-osf-web/models/metadata-node-schema';
 import RegistrationSchema from 'ember-osf-web/models/registration-schema';
 import { FieldValueWithType } from '../types';
+import { toStringValue } from '../field/component';
 import pathJoin from 'ember-osf-web/utils/path-join';
 
 const { OSF: { url: baseURL } } = config;
@@ -39,7 +40,7 @@ interface FileMetadataEntry {
 interface FileMetadataSelectorArgs {
     node: Node;
     schemaName: string;
-    value: string | null;
+    value: FieldValueWithType | undefined;
     onChange: (valueWithType: FieldValueWithType) => void;
     disabled: boolean;
 }
@@ -56,8 +57,12 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
     constructor(owner: unknown, args: FileMetadataSelectorArgs) {
         super(owner, args);
         if (args.value) {
-            const parsed = JSON.parse(args.value) as FileMetadataValue;
-            this.selectedPath = parsed.id;
+            if (args.value.type === 'json') {
+                const parsed = args.value.value as FileMetadataValue;
+                this.selectedPath = parsed.id;
+            } else {
+                this.selectedPath = toStringValue(args.value);
+            }
         }
         this.loadFileMetadata.perform();
     }

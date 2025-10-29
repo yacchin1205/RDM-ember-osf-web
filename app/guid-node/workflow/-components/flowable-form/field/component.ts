@@ -27,11 +27,33 @@ function isValidFieldValue(field: WorkflowTaskField, value: unknown): boolean {
     return true;
 }
 
-export { isValidFieldValue, getOptionValue };
+function toStringValue(fieldValue: FieldValueWithType): string {
+    if (fieldValue.type === 'string') {
+        return fieldValue.value as string;
+    }
+    const val = fieldValue.value;
+    if (val === null || val === undefined) {
+        return '';
+    }
+    return String(val);
+}
+
+function toBooleanValue(fieldValue: FieldValueWithType): boolean {
+    if (fieldValue.type === 'boolean') {
+        return fieldValue.value as boolean;
+    }
+    if (fieldValue.type === 'string') {
+        const val = fieldValue.value as string;
+        return val.toLowerCase() === 'true';
+    }
+    return false;
+}
+
+export { isValidFieldValue, getOptionValue, toStringValue, toBooleanValue };
 
 interface TaskFormFieldArgs {
     field: WorkflowTaskField;
-    fieldValues: Record<string, unknown>;
+    fieldValues: Record<string, FieldValueWithType>;
     variables: WorkflowVariable[];
     node?: any;
     onChange: (fieldId: string, valueWithType: FieldValueWithType) => void;
@@ -126,27 +148,24 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
         return this.args.field.name || this.args.field.id;
     }
 
-    get currentValue(): unknown {
+    get currentValue(): FieldValueWithType | undefined {
         return this.args.fieldValues[this.args.field.id];
     }
 
     get stringValue(): string {
-        const val = this.currentValue;
-        if (val === null || val === undefined) {
+        const current = this.currentValue;
+        if (!current) {
             return '';
         }
-        return String(val);
+        return toStringValue(current);
     }
 
     get booleanValue(): boolean {
-        const val = this.currentValue;
-        if (typeof val === 'boolean') {
-            return val;
+        const current = this.currentValue;
+        if (!current) {
+            return false;
         }
-        if (typeof val === 'string') {
-            return val.toLowerCase() === 'true';
-        }
-        return Boolean(val);
+        return toBooleanValue(current);
     }
 
     get options(): WorkflowTaskFieldOption[] {
@@ -273,13 +292,13 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
 
         return expression.replace(/\$\{([^}]+)\}/g, (_match, varName) => {
             const trimmed = varName.trim();
-            const fieldValue = this.args.fieldValues[trimmed];
-            if (fieldValue !== null && fieldValue !== undefined) {
-                return String(fieldValue);
-            }
             const variable = this.args.variables.find(v => v.name === trimmed);
-            if (variable && variable.value !== null && variable.value !== undefined) {
-                return String(variable.value);
+            if (variable) {
+                return toStringValue(variable);
+            }
+            const fieldValue = this.args.fieldValues[trimmed];
+            if (fieldValue) {
+                return toStringValue(fieldValue);
             }
             return '';
         });

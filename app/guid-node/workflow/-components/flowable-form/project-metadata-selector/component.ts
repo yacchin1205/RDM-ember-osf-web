@@ -11,6 +11,7 @@ import DraftRegistration from 'ember-osf-web/models/draft-registration';
 import Registration from 'ember-osf-web/models/registration';
 import { Answer } from 'ember-osf-web/models/registration-schema';
 import { FieldValueWithType } from '../types';
+import { toStringValue } from '../field/component';
 import pathJoin from 'ember-osf-web/utils/path-join';
 
 const { OSF: { url: baseURL } } = config;
@@ -25,7 +26,7 @@ interface ProjectMetadataValue {
 interface ProjectMetadataSelectorArgs {
     node: Node;
     schemaName: string;
-    value: string | null;
+    value: FieldValueWithType | undefined;
     onChange: (valueWithType: FieldValueWithType) => void;
     disabled: boolean;
 }
@@ -40,8 +41,12 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
     constructor(owner: unknown, args: ProjectMetadataSelectorArgs) {
         super(owner, args);
         if (args.value) {
-            const parsed = JSON.parse(args.value) as ProjectMetadataValue;
-            this.selectedGuid = parsed.id;
+            if (args.value.type === 'json') {
+                const parsed = args.value.value as ProjectMetadataValue;
+                this.selectedGuid = parsed.id;
+            } else {
+                this.selectedGuid = toStringValue(args.value);
+            }
         }
         this.loadMetadataRecords.perform();
     }

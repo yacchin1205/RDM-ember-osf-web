@@ -129,7 +129,7 @@ export default class CedarForm extends Component<CedarFormArgs> {
                 });
                 continue;
             }
-            variables.push({ name: key, value: entry });
+            variables.push({ name: key, value: entry, type: 'json' });
         }
         return variables;
     }
