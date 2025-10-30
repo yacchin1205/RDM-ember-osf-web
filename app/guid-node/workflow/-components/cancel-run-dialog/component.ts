@@ -6,7 +6,6 @@ interface WorkflowCancelRunDialogArgs {
     open: boolean;
     run: {
         id: string;
-        label?: string;
         status?: string;
         statusRaw?: string;
         started_at?: string;

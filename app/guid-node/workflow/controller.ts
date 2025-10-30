@@ -90,7 +90,6 @@ export default class GuidNodeWorkflowController extends Controller {
     @tracked isRefreshing = false;
 
     @tracked selectedRegistrationId = '';
-    @tracked runLabel = '';
     @tracked startFormVariables: WorkflowVariable[] = [];
     @tracked prefilledStartFormVariables: WorkflowVariable[] = [];
     @tracked isStartFormValid = true;
@@ -563,11 +562,6 @@ export default class GuidNodeWorkflowController extends Controller {
     }
 
     @action
-    updateRunLabel(event: Event): void {
-        this.runLabel = (event.target as HTMLInputElement).value;
-    }
-
-    @action
     async refreshRegistrations(): Promise<void> {
         if (!this.apiBaseUrl) {
             return;
@@ -611,10 +605,6 @@ export default class GuidNodeWorkflowController extends Controller {
         }
 
         const payload: Record<string, unknown> = {};
-        const trimmedLabel = this.runLabel.trim();
-        if (trimmedLabel) {
-            payload.label = trimmedLabel;
-        }
 
         if (this.startFormVariables.length > 0) {
             payload.variables = this.startFormVariables;
@@ -632,7 +622,6 @@ export default class GuidNodeWorkflowController extends Controller {
                 data: JSON.stringify(payload),
             });
             this.submitSuccess = this.intl.t('workflow.console.startSuccess') as string;
-            this.runLabel = '';
             this.startFormVariables = [];
         } catch (error) {
             const fallback = this.intl.t('workflow.console.startFailed') as string;

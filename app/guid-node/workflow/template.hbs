@@ -94,23 +94,6 @@
                                 {{/if}}
                             {{/if}}
 
-                            <div class="form-group">
-                                <label class="control-label col-sm-3" for="workflow-run-label">
-                                    {{t 'workflow.console.runLabel'}}
-                                </label>
-                                <div class="col-sm-9">
-                                    <input
-                                        id="workflow-run-label"
-                                        type="text"
-                                        class="form-control"
-                                        value={{this.runLabel}}
-                                        {{on "input" this.updateRunLabel}}
-                                        maxlength="255"
-                                        placeholder={{t 'workflow.console.runLabelPlaceholder'}}
-                                    />
-                                </div>
-                            </div>
-
                             {{#if this.selectedRegistration.definitionFormSchema}}
                                 <div style="margin-left: 15px; margin-right: 15px;">
                                     <GuidNode::Workflow::-Components::TaskForm
@@ -205,7 +188,7 @@
                             <table class="table table-condensed table-hover">
                                 <thead>
                                     <tr>
-                                        <th>{{t 'workflow.console.runs.columns.label'}}</th>
+                                        <th>{{t 'workflow.console.runs.columns.processId'}}</th>
                                         <th>{{t 'workflow.console.runs.columns.project'}}</th>
                                         <th>{{t 'workflow.console.runs.columns.status'}}</th>
                                         <th>{{t 'workflow.console.runs.columns.started'}}</th>
@@ -217,7 +200,6 @@
                                     {{#each this.runsWithActions as |run|}}
                                         <tr>
                                             <td>
-                                                <strong>{{run.label}}</strong><br>
                                                 <span class="text-muted">{{run.engine_process_id}}</span>
                                             </td>
                                             <td>

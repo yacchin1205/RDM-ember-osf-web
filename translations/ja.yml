@@ -1988,14 +1988,14 @@ workflow:
             hideCompleted: 完了した実行を非表示
             noMatches: 条件に一致する実行はありません。
             cancelDialogTitle: ワークフロー実行のキャンセル
-            confirmCancel: '本当にワークフロー実行「{label}」をキャンセルしますか？'
+            confirmCancel: '本当にワークフロー実行「{processId}」をキャンセルしますか？'
             cancelReasonLabel: 理由（任意）
             cancelReasonPlaceholder: キャンセル理由を入力してください
             cancelReasonHint: 入力した理由はキャンセル記録に保存されます。
             cancelConfirmButton: キャンセルを実行
             cancelError: ワークフロー実行をキャンセルできませんでした。
             columns:
-                label: 実行
+                processId: プロセスID
                 project: プロジェクト
                 thisProject: このプロジェクト
                 status: 状態
