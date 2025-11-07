@@ -54,37 +54,7 @@
     </modal.footer>
 </BsModal>
 
-{{#if (gt this.workflowRegistrations.length 0)}}
-    <div class="btn-group btn-group-sm" local-class="ExportButton__dropdown">
-        <OsfButton
-            data-test-registration-card-export
-            data-analytics-name='Export'
-            @type='success'
-            @disabled={{this.isDisabled}}
-            @onClick={{action this.primaryAction}}
-        >
-            {{this.buttonLabel}}
-        </OsfButton>
-        <BsDropdown as |dd|>
-            <dd.button @type="success" @disabled={{this.isDisabled}} class="btn-sm dropdown-toggle">
-                <span class="caret"></span>
-                <span class="sr-only">{{t 'metadata.registration-card.toggle-actions'}}</span>
-            </dd.button>
-            <dd.menu @align='right' as |menu|>
-                <menu.item role='menuitem'>
-                    <a href="#" {{on "click" this.selectExport}}>{{t 'metadata.registration-card.export'}}</a>
-                </menu.item>
-                <menu.divider />
-                <li class="dropdown-header">{{t 'metadata.registration-card.start-workflow-header'}}</li>
-                {{#each this.workflowRegistrations as |workflow|}}
-                    <menu.item role='menuitem'>
-                        <a href="#" {{on "click" (fn this.selectWorkflow workflow.id)}}>{{workflow.displayLabel}}</a>
-                    </menu.item>
-                {{/each}}
-            </dd.menu>
-        </BsDropdown>
-    </div>
-{{else}}
+<div class='{{if this.vertical styles.ButtonGroupVertical styles.ButtonGroup}}'>
     <OsfButton
         data-test-registration-card-export
         data-analytics-name='Export'
@@ -95,4 +65,61 @@
     >
         {{t 'metadata.registration-card.export'}}
     </OsfButton>
-{{/if}}
+
+    {{#if (gt this.workflowRegistrations.length 0)}}
+        <OsfButton
+            data-test-registration-card-start-workflow
+            data-analytics-name='StartWorkflow'
+            class={{this.buttonClass}}
+            @type='success'
+            @disabled={{this.isDisabled}}
+            @onClick={{action this.openWorkflowDialog}}
+        >
+            {{t 'metadata.registration-card.start-workflow'}}
+        </OsfButton>
+    {{/if}}
+</div>
+
+<BsModal
+    data-test-workflow-start-modal
+    local-class='Modal'
+    @open={{this.workflowDialogOpen}}
+    @onSubmit={{action this.submitWorkflow}}
+    @onHidden={{action (mut this.workflowDialogOpen) false}}
+    as |modal|
+>
+    <modal.body data-analytics-scope='Workflow start modal'>
+        <div>
+            <h4 local-class='Modal__title'>{{t 'metadata.registration-card.workflow-dialog.title'}}</h4>
+        </div>
+        <div local-class='Export__description'>
+            {{t 'metadata.registration-card.workflow-dialog.description'}}
+        </div>
+        <div class='form-group'>
+            <select id='workflow-selection'>
+                {{#each this.workflowRegistrations as |workflow|}}
+                    <option value='{{workflow.id}}'>
+                        {{workflow.displayLabel}}
+                    </option>
+                {{/each}}
+            </select>
+        </div>
+    </modal.body>
+    <modal.footer data-analytics-scope='Workflow start modal footer'>
+        <OsfButton
+            data-test-workflow-cancel
+            data-analytics-name='Cancel'
+            @onClick={{action modal.close}}
+        >
+            {{t 'general.cancel'}}
+        </OsfButton>
+        <OsfButton
+            data-test-workflow-submit
+            data-analytics-name='Submit'
+            @type='success'
+            @onClick={{action modal.submit}}
+        >
+            {{t 'metadata.registration-card.workflow-dialog.submit'}}
+        </OsfButton>
+    </modal.footer>
+</BsModal>

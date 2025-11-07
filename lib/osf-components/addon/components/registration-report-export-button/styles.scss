@@ -13,25 +13,17 @@
     margin: 1em 0;
 }
 
-.ExportButton__dropdown {
-    :global(.dropdown-menu) {
-        background-color: $color-bg-gray-light;
+.ButtonGroup {
+    display: inline-flex;
+    gap: 5px;
+}
 
-        :global(a) {
-            color: $color-link-black;
-        }
+.ButtonGroupVertical {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 
-        :global(.dropdown-header) {
-            color: $color-text-gray;
-        }
-
-        :global(li) {
-            :global(a):hover,
-            :global(a):focus {
-                cursor: pointer;
-                background-image: none;
-                background-color: $color-bg-gray-dark;
-            }
-        }
+    > :global(.btn) {
+        width: 100%;
     }
 }

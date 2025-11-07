@@ -160,6 +160,10 @@ export default class GuidNodeWorkflowController extends Controller {
         }));
     }
 
+    get assignedTaskCount(): number {
+        return this.tasksWithActions.filter(task => task.canComplete).length;
+    }
+
     @tracked selectedTask: WorkflowTaskDetail | null = null;
     @tracked isTaskDialogOpen = false;
     @tracked isLoadingTaskDetail = false;
@@ -209,9 +213,23 @@ export default class GuidNodeWorkflowController extends Controller {
             cancelled: this.intl.t('workflow.console.status.cancelled') as string,
         };
 
-        this.updateSelectionFromHash(hash);
+        const hasStartHash = this.updateSelectionFromHash(hash);
+        const taskToOpen = this.extractTaskFromHash(hash);
         this.refreshRuns();
-        this.refreshTasks();
+        this.refreshTasks().then(() => {
+            if (taskToOpen) {
+                this.activeTab = 'tasks';
+                const task = this.tasks.find(t => t.id === taskToOpen.taskId && t.engine_id === taskToOpen.engineId);
+                if (task) {
+                    this.openTask(task);
+                }
+            } else if (!hasStartHash) {
+                const hasAssignedTasks = this.tasksWithActions.some(task => task.canComplete);
+                if (hasAssignedTasks) {
+                    this.activeTab = 'tasks';
+                }
+            }
+        });
     }
 
     applyHash(hash?: string): boolean {
@@ -244,21 +262,23 @@ export default class GuidNodeWorkflowController extends Controller {
         return false;
     }
 
-    updateSelectionFromHash(hash?: string): void {
+    updateSelectionFromHash(hash?: string): boolean {
         const candidate = hash ?? window.location.hash;
-        const applied = this.applyHash(candidate);
-        if (!applied) {
-            this.ensureDefaultSelection();
-        }
+        return this.applyHash(candidate);
     }
 
-    ensureDefaultSelection(): void {
-        if (this.selectedRegistrationId) {
-            return;
+    extractTaskFromHash(hash?: string): { taskId: string; engineId: string } | null {
+        const candidate = hash ?? window.location.hash;
+        if (!candidate) {
+            return null;
         }
-        if (this.activeRegistrations.length === 1) {
-            this.selectedRegistrationId = this.activeRegistrations[0].id;
+        const params = new URLSearchParams(candidate.replace(/^#/, ''));
+        const taskId = params.get('taskId');
+        const engineId = params.get('engineId');
+        if (taskId && engineId) {
+            return { taskId, engineId };
         }
+        return null;
     }
 
     formatDate(value?: string | null): string {
@@ -475,12 +495,6 @@ export default class GuidNodeWorkflowController extends Controller {
 
     @action
     async openTask(task: WorkflowTaskSummary): Promise<void> {
-        const engineId = task?.engine_id;
-        const taskId = task?.id;
-        if (!this.apiBaseUrl || !taskId || !engineId) {
-            return;
-        }
-
         this.taskDetailError = null;
         this.selectedTask = null;
         this.isTaskDialogOpen = true;
@@ -490,7 +504,7 @@ export default class GuidNodeWorkflowController extends Controller {
 
         try {
             const response = await this.currentUser.authenticatedAJAX({
-                url: `${this.apiBaseUrl}engines/${encodeURIComponent(engineId)}/tasks/${encodeURIComponent(taskId)}/`,
+                url: `${this.apiBaseUrl}engines/${encodeURIComponent(task.engine_id)}/tasks/${encodeURIComponent(task.id)}/`,
                 type: 'GET',
                 data: { include_form: 'true' },
             });
@@ -525,17 +539,17 @@ export default class GuidNodeWorkflowController extends Controller {
 
     @action
     async handleTaskSubmit(submission: TaskDialogSubmission): Promise<void> {
-        const engineId = this.selectedTask?.engine_id;
-        const taskId = this.selectedTask?.id;
-        if (!this.apiBaseUrl || !taskId || !engineId) {
-            return;
+        if (!this.selectedTask) {
+            throw new Error('No task selected');
         }
+
+        const processInstanceId = this.selectedTask.process_instance_id;
 
         this.isSubmittingTaskAction = true;
         this.taskActionError = null;
         try {
             await this.currentUser.authenticatedAJAX({
-                url: `${this.apiBaseUrl}engines/${encodeURIComponent(engineId)}/tasks/${encodeURIComponent(taskId)}/actions/`,
+                url: `${this.apiBaseUrl}engines/${encodeURIComponent(this.selectedTask.engine_id)}/tasks/${encodeURIComponent(this.selectedTask.id)}/actions/`,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
@@ -545,8 +559,17 @@ export default class GuidNodeWorkflowController extends Controller {
                 }),
             });
             this.taskActionSuccess = this.intl.t('workflow.console.tasks.submitSuccess') as string;
-            this.closeTaskDialog();
             await this.refreshTasks();
+
+            const nextTask = this.tasksWithActions.find(task =>
+                task.process_instance_id === processInstanceId && task.canComplete
+            );
+
+            if (nextTask) {
+                this.openTask(nextTask);
+            } else {
+                this.closeTaskDialog();
+            }
         } catch (error) {
             if (isAjaxError(error)) {
                 this.taskActionError = extractMessage(
@@ -623,6 +646,11 @@ export default class GuidNodeWorkflowController extends Controller {
             });
             this.submitSuccess = this.intl.t('workflow.console.startSuccess') as string;
             this.startFormVariables = [];
+            await this.refreshTasks();
+            const hasAssignedTasks = this.tasksWithActions.some(task => task.canComplete);
+            if (hasAssignedTasks) {
+                this.activeTab = 'tasks';
+            }
         } catch (error) {
             const fallback = this.intl.t('workflow.console.startFailed') as string;
             if (isAjaxError(error)) {

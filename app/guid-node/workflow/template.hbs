@@ -28,6 +28,9 @@
         <li role="presentation" class={{if (eq this.activeTab "tasks") "active"}}>
             <a role="tab" href="#" {{on "click" (fn this.setActiveTab 'tasks')}}>
                 {{t 'workflow.console.tab.tasks'}}
+                {{#if (gt this.assignedTaskCount 0)}}
+                    <span class="badge" style="background-color: #d9534f;">{{this.assignedTaskCount}}</span>
+                {{/if}}
             </a>
         </li>
     </ul>

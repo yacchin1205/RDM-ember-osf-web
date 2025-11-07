@@ -53,18 +53,44 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
     @tracked registrationSchema: RegistrationSchema | null = null;
     @tracked selectedPath: string | null = null;
     @tracked folderExpands: {[key: string]: boolean} = {};
+    @tracked isInitialized: boolean = false;
 
-    constructor(owner: unknown, args: FileMetadataSelectorArgs) {
-        super(owner, args);
-        if (args.value) {
-            if (args.value.type === 'json') {
-                const parsed = args.value.value as FileMetadataValue;
+    @action
+    initialize() {
+        if (!this.isInitialized) {
+            this.isInitialized = true;
+            this.loadFileMetadata.perform();
+        }
+    }
+
+    @action
+    updateValue() {
+        if (this.args.value && !this.selectedPath) {
+            if (this.args.value.type === 'json') {
+                const parsed = this.args.value.value as FileMetadataValue;
                 this.selectedPath = parsed.id;
             } else {
-                this.selectedPath = toStringValue(args.value);
+                this.selectedPath = toStringValue(this.args.value);
+            }
+            if (this.selectedPath) {
+                this.notifyFileSelected(this.selectedPath);
             }
         }
-        this.loadFileMetadata.perform();
+    }
+
+    private notifyFileSelected(path: string): void {
+        const entry = this.metadataNodeProject?.files.find((f: FileEntry) => f.path === path);
+        const item = entry?.items.find((it: MetadataItem) => it.schema === this.schemaId);
+
+        const value: FileMetadataValue = {
+            id: path,
+            data: item ? item.data : {},
+        };
+
+        this.args.onChange({
+            value,
+            type: 'json',
+        });
     }
 
     @task
@@ -91,20 +117,7 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
             return;
         }
         this.selectedPath = path;
-
-        // Find the selected file/folder metadata
-        const entry = this.metadataNodeProject?.files.find((f: FileEntry) => f.path === path);
-        const item = entry?.items.find((it: MetadataItem) => it.schema === this.schemaId);
-
-        const value: FileMetadataValue = {
-            id: path,
-            data: item ? item.data : {},
-        };
-
-        this.args.onChange({
-            value,
-            type: 'json',
-        });
+        this.notifyFileSelected(path);
     }
 
     @action

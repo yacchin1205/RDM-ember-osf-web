@@ -49,6 +49,8 @@ export default class RegistrationReportExportButton extends Component {
 
     buttonClass?: string;
 
+    vertical?: boolean;
+
     exportCsvUrl?: string;
 
     metadataSchema?: MetadataNodeSchemaModel;
@@ -71,23 +73,7 @@ export default class RegistrationReportExportButton extends Component {
 
     workflowRegistrations: WorkflowRegistration[] = [];
 
-    selectedWorkflowId: string | null = null;
-
-    @computed('selectedWorkflowId', 'workflowRegistrations')
-    get selectedWorkflow(): WorkflowRegistration | null {
-        if (!this.selectedWorkflowId) {
-            return null;
-        }
-        return this.workflowRegistrations.find(w => w.id === this.selectedWorkflowId) || null;
-    }
-
-    @computed('selectedWorkflow')
-    get buttonLabel(): string {
-        if (!this.selectedWorkflow) {
-            return this.intl.t('metadata.registration-card.export');
-        }
-        return this.selectedWorkflow.shortLabel;
-    }
+    workflowDialogOpen: boolean = false;
 
     @computed('metadataSchema')
     get metadataFormats(): Format[] {
@@ -130,12 +116,8 @@ export default class RegistrationReportExportButton extends Component {
     }
 
     @action
-    primaryAction() {
-        if (this.selectedWorkflowId) {
-            this.startWorkflow(this.selectedWorkflowId);
-        } else {
-            this.export();
-        }
+    openWorkflowDialog() {
+        this.set('workflowDialogOpen', true);
     }
 
     @action
@@ -266,16 +248,13 @@ export default class RegistrationReportExportButton extends Component {
     });
 
     @action
-    selectWorkflow(workflowId: string) {
-        this.set('selectedWorkflowId', workflowId);
-    }
-
-    @action
-    selectExport() {
-        this.set('selectedWorkflowId', null);
+    submitWorkflow() {
+        const workflowId = $('#workflow-selection').val() as string;
+        this.startWorkflow(workflowId);
     }
 
     startWorkflow(workflowId: string) {
+        this.set('workflowDialogOpen', false);
         const workflow = this.workflowRegistrations.find(w => w.id === workflowId);
         if (!workflow) {
             throw new Error(`Workflow ${workflowId} not found`);

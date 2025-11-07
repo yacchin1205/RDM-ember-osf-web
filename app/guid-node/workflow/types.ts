@@ -82,8 +82,8 @@ export interface WorkflowTaskSummary {
     due?: string;
     business_key?: string;
     process_definition_id?: string;
-    process_instance_id?: string;
-    engine_id?: string;
+    process_instance_id: string;
+    engine_id: string;
     form_key?: string;
     has_form?: boolean;
     can_complete?: boolean;
@@ -109,11 +109,8 @@ export interface WorkflowTaskDetail extends WorkflowTaskSummary {
     description?: string;
     priority?: number;
     category?: string;
-    engine_id?: string;
-    process_instance_id?: string;
     status?: string;
     form?: WorkflowTaskForm | null;
-    can_complete?: boolean;
     variables: WorkflowVariable[];
 }
 

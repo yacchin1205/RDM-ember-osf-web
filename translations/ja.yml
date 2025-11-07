@@ -1918,6 +1918,7 @@ metadata:
         export: 'エクスポート'
         exporting: 'エクスポート中'
         export-header: 'エクスポート'
+        start-workflow: 'ワークフローを開始'
         start-workflow-header: 'ワークフロー起動'
         toggle-actions: 'アクション切り替え'
         export-dialog:
@@ -1925,6 +1926,10 @@ metadata:
             description: '出力したいエクスポート形式を選択してください。'
             addons:
                 weko: 'リポジトリ (JAIRO Cloud)に登録 - {folder}'
+        workflow-dialog:
+            title: 'ワークフローの選択'
+            description: 'ワークフローを選んでください。'
+            submit: 'ワークフローフォーム入力'
     array-input:
         add-item: 'アイテム追加'
         remove-item: 'アイテム削除'
