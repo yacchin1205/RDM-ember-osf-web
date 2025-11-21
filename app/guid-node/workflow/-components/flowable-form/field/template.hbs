@@ -106,6 +106,7 @@
             <GuidNode::Workflow::-Components::FlowableForm::ProjectMetadataSelector
                 @node={{@node}}
                 @schemaName={{this.projectMetadataSchemaName}}
+                @multiSelect={{this.projectMetadataMultiSelect}}
                 @value={{this.currentValue}}
                 @onChange={{this.handleProjectMetadataSelection}}
                 @disabled={{this.isReadOnly}}
@@ -114,6 +115,7 @@
             <GuidNode::Workflow::-Components::FlowableForm::FileMetadataSelector
                 @node={{@node}}
                 @schemaName={{this.fileMetadataSchemaName}}
+                @multiSelect={{this.fileMetadataMultiSelect}}
                 @value={{this.currentValue}}
                 @onChange={{this.handleFileMetadataSelection}}
                 @disabled={{this.isReadOnly}}

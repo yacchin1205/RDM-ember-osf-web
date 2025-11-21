@@ -28,16 +28,16 @@
         {{#each this.fileEntries as |entry|}}
             {{#if entry.visible}}
                 <div
-                    local-class="FileMetadataSelector__card {{if (eq this.selectedPath entry.path) 'FileMetadataSelector__card--selected'}}"
+                    local-class="FileMetadataSelector__card {{if entry.isSelected 'FileMetadataSelector__card--selected'}}"
                     role="button"
                     {{on "click" (fn this.selectFile entry.path)}}
                 >
                     <div local-class="FileMetadataSelector__row">
                         <div local-class="FileMetadataSelector__radio">
                             <input
-                                type="radio"
+                                type={{if this.isMultiSelect "checkbox" "radio"}}
                                 name={{radioGroupName}}
-                                checked={{eq this.selectedPath entry.path}}
+                                checked={{entry.isSelected}}
                                 disabled={{@disabled}}
                             />
                         </div>

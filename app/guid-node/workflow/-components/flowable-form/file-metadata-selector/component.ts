@@ -35,11 +35,13 @@ interface FileMetadataEntry {
     style: string;
     visible: boolean;
     folderExpanded: boolean;
+    isSelected: boolean;
 }
 
 interface FileMetadataSelectorArgs {
     node: Node;
     schemaName: string;
+    multiSelect: boolean;
     value: FieldValueWithType | undefined;
     onChange: (valueWithType: FieldValueWithType) => void;
     disabled: boolean;
@@ -52,6 +54,7 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
     @tracked metadataNodeSchema: MetadataNodeSchema | null = null;
     @tracked registrationSchema: RegistrationSchema | null = null;
     @tracked selectedPath: string | null = null;
+    @tracked selectedPaths: string[] = [];
     @tracked folderExpands: {[key: string]: boolean} = {};
     @tracked isInitialized: boolean = false;
 
@@ -65,32 +68,58 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
 
     @action
     updateValue() {
-        if (this.args.value && !this.selectedPath) {
-            if (this.args.value.type === 'json') {
-                const parsed = this.args.value.value as FileMetadataValue;
-                this.selectedPath = parsed.id;
-            } else {
-                this.selectedPath = toStringValue(this.args.value);
+        if (!this.args.value) {
+            return;
+        }
+        if (this.isMultiSelect) {
+            if (this.selectedPaths.length > 0) {
+                return;
             }
-            if (this.selectedPath) {
-                this.notifyFileSelected(this.selectedPath);
+            const paths = this.extractPathsFromValue(this.args.value);
+            if (paths.length > 0) {
+                this.selectedPaths = paths;
+                this.notifyFilesSelected(paths);
+            }
+        } else if (!this.selectedPath) {
+            const path = this.extractPathsFromValue(this.args.value)[0];
+            if (path) {
+                this.selectedPath = path;
+                this.notifyFileSelected(path);
             }
         }
     }
 
     private notifyFileSelected(path: string): void {
-        const entry = this.metadataNodeProject?.files.find((f: FileEntry) => f.path === path);
-        const item = entry?.items.find((it: MetadataItem) => it.schema === this.schemaId);
-
-        const value: FileMetadataValue = {
-            id: path,
-            data: item ? item.data : {},
-        };
-
+        const value = this.buildValueForPath(path);
         this.args.onChange({
             value,
             type: 'json',
         });
+    }
+
+    private notifyFilesSelected(paths: string[]): void {
+        if (paths.length === 0) {
+            this.args.onChange({
+                value: null,
+                type: 'json',
+            });
+            return;
+        }
+        const values = paths.map(path => this.buildValueForPath(path));
+        this.args.onChange({
+            value: values,
+            type: 'json',
+        });
+    }
+
+    private buildValueForPath(path: string): FileMetadataValue {
+        const entry = this.metadataNodeProject?.files.find((f: FileEntry) => f.path === path);
+        const item = entry?.items.find((it: MetadataItem) => it.schema === this.schemaId);
+
+        return {
+            id: path,
+            data: item ? item.data : {},
+        };
     }
 
     @task
@@ -116,8 +145,16 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
         if (this.args.disabled) {
             return;
         }
-        this.selectedPath = path;
-        this.notifyFileSelected(path);
+        if (this.isMultiSelect) {
+            const hasPath = this.selectedPaths.includes(path);
+            this.selectedPaths = hasPath
+                ? this.selectedPaths.filter(existing => existing !== path)
+                : [...this.selectedPaths, path];
+            this.notifyFilesSelected(this.selectedPaths);
+        } else {
+            this.selectedPath = path;
+            this.notifyFileSelected(path);
+        }
     }
 
     @action
@@ -128,6 +165,28 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
     @action
     preventPropagation(event: Event): void {
         event.stopPropagation();
+    }
+
+    private extractPathsFromValue(valueWithType: FieldValueWithType): string[] {
+        if (valueWithType.type === 'json') {
+            const raw = valueWithType.value;
+            if (Array.isArray(raw)) {
+                return raw
+                    .map((item: FileMetadataValue) => item?.id)
+                    .filter((id): id is string => Boolean(id));
+            }
+            if (raw && typeof raw === 'object') {
+                const single = raw as FileMetadataValue;
+                return single.id ? [single.id] : [];
+            }
+            return [];
+        }
+        const path = toStringValue(valueWithType);
+        return path ? [path] : [];
+    }
+
+    get isMultiSelect(): boolean {
+        return this.args.multiSelect;
     }
 
     @action
@@ -221,7 +280,7 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
                 this.folderExpands[path] = true;
             }
 
-            return {
+            const entry: FileMetadataEntry = {
                 path,
                 parts,
                 lastPart: parts[parts.length - 1],
@@ -234,7 +293,13 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
                 visible: [...parts.slice(0, parts.length - 1).keys()]
                     .every(i => this.folderExpands[`${parts.slice(0, i + 1).join('/')}/`]),
                 folderExpanded: this.folderExpands[path] || false,
-            } as FileMetadataEntry;
+                isSelected: false,
+            };
+
+            entry.isSelected = this.isMultiSelect
+                ? this.selectedPaths.includes(path)
+                : this.selectedPath === path;
+            return entry;
         });
     }
 }

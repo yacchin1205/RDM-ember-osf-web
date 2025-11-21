@@ -14,6 +14,9 @@ function isValidFieldValue(field: WorkflowTaskField, value: unknown): boolean {
     if (value === null || value === undefined) {
         return false;
     }
+    if (Array.isArray(value)) {
+        return value.length > 0;
+    }
     if (typeof value === 'string' && value.trim() === '') {
         return false;
     }
@@ -195,22 +198,36 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
         return this.type === 'multi-line-text' || this.type === 'textarea';
     }
 
+    get projectMetadataPlaceholder() {
+        return extractProjectMetadata(this.args.field);
+    }
+
     get isProjectMetadataSelector(): boolean {
-        return extractProjectMetadata(this.args.field) !== null;
+        return this.projectMetadataPlaceholder !== null;
     }
 
     get projectMetadataSchemaName(): string | null {
-        const metadata = extractProjectMetadata(this.args.field);
-        return metadata ? metadata.schemaName : null;
+        return this.projectMetadataPlaceholder ? this.projectMetadataPlaceholder.schemaName : null;
+    }
+
+    get projectMetadataMultiSelect(): boolean {
+        return this.projectMetadataPlaceholder?.multiSelect ?? false;
+    }
+
+    get fileMetadataPlaceholder() {
+        return extractFileMetadata(this.args.field);
     }
 
     get isFileMetadataSelector(): boolean {
-        return extractFileMetadata(this.args.field) !== null;
+        return this.fileMetadataPlaceholder !== null;
     }
 
     get fileMetadataSchemaName(): string | null {
-        const metadata = extractFileMetadata(this.args.field);
-        return metadata ? metadata.schemaName : null;
+        return this.fileMetadataPlaceholder ? this.fileMetadataPlaceholder.schemaName : null;
+    }
+
+    get fileMetadataMultiSelect(): boolean {
+        return this.fileMetadataPlaceholder?.multiSelect ?? false;
     }
 
     get isPassword(): boolean {

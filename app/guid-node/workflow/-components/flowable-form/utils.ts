@@ -1,33 +1,47 @@
 import { WorkflowTaskField } from './types';
 
-export interface ProjectMetadataPlaceholder {
+interface MetadataPlaceholder {
     schemaName: string;
+    options: string[];
+    multiSelect: boolean;
 }
 
-export interface FileMetadataPlaceholder {
-    schemaName: string;
+export interface ProjectMetadataPlaceholder extends MetadataPlaceholder {}
+
+export interface FileMetadataPlaceholder extends MetadataPlaceholder {}
+
+function extractMetadataPlaceholder(field: WorkflowTaskField, token: '_PROJECT_METADATA' | '_FILE_METADATA'):
+MetadataPlaceholder | null {
+    if (field.type !== 'multi-line-text') {
+        return null;
+    }
+    const placeholder = field.placeholder;
+    if (!placeholder) {
+        return null;
+    }
+    const pattern = new RegExp(`^${token}\\((.+)\\)$`);
+    const match = placeholder.match(pattern);
+    if (!match) {
+        return null;
+    }
+    const raw = match[1];
+    const segments = raw.split(',').map(part => part.trim()).filter(part => part.length > 0);
+    if (segments.length === 0) {
+        return null;
+    }
+    const [schemaName, ...options] = segments;
+    const normalizedOptions = options.map(option => option.toUpperCase());
+    return {
+        schemaName,
+        options,
+        multiSelect: normalizedOptions.includes('MULTISELECT'),
+    };
 }
 
 export function extractProjectMetadata(field: WorkflowTaskField): ProjectMetadataPlaceholder | null {
-    if (field.type !== 'multi-line-text') {
-        return null;
-    }
-    const placeholder = field.placeholder;
-    if (!placeholder) {
-        return null;
-    }
-    const match = placeholder.match(/^_PROJECT_METADATA\((.+)\)$/);
-    return match ? { schemaName: match[1] } : null;
+    return extractMetadataPlaceholder(field, '_PROJECT_METADATA');
 }
 
 export function extractFileMetadata(field: WorkflowTaskField): FileMetadataPlaceholder | null {
-    if (field.type !== 'multi-line-text') {
-        return null;
-    }
-    const placeholder = field.placeholder;
-    if (!placeholder) {
-        return null;
-    }
-    const match = placeholder.match(/^_FILE_METADATA\((.+)\)$/);
-    return match ? { schemaName: match[1] } : null;
+    return extractMetadataPlaceholder(field, '_FILE_METADATA');
 }

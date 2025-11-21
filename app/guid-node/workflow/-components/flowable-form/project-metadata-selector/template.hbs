@@ -24,15 +24,15 @@
     <div local-class="ProjectMetadataSelector__list">
         {{#each this.allRecords as |record|}}
             <div
-                local-class="ProjectMetadataSelector__card {{if (eq this.selectedGuid record.guid) 'ProjectMetadataSelector__card--selected'}}"
+                local-class="ProjectMetadataSelector__card {{if record.isSelected 'ProjectMetadataSelector__card--selected'}}"
                 role="button"
                 {{on "click" (fn this.selectRecord record.guid)}}
             >
                 <div local-class="ProjectMetadataSelector__header">
                     <input
-                        type="radio"
+                        type={{if this.isMultiSelect "checkbox" "radio"}}
                         name={{radioGroupName}}
-                        checked={{eq this.selectedGuid record.guid}}
+                        checked={{record.isSelected}}
                         disabled={{@disabled}}
                     />
                     <strong>{{record.title}}</strong>

@@ -26,6 +26,7 @@ interface ProjectMetadataValue {
 interface ProjectMetadataSelectorArgs {
     node: Node;
     schemaName: string;
+    multiSelect: boolean;
     value: FieldValueWithType | undefined;
     onChange: (valueWithType: FieldValueWithType) => void;
     disabled: boolean;
@@ -37,6 +38,7 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
     @tracked draftRegistrations: DraftRegistration[] = [];
     @tracked registrations: Registration[] = [];
     @tracked selectedGuid: string | null = null;
+    @tracked selectedGuids: string[] = [];
     @tracked isInitialized: boolean = false;
 
     @action
@@ -49,15 +51,23 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
 
     @action
     updateValue() {
-        if (this.args.value && !this.selectedGuid) {
-            if (this.args.value.type === 'json') {
-                const parsed = this.args.value.value as ProjectMetadataValue;
-                this.selectedGuid = parsed.id;
-            } else {
-                this.selectedGuid = toStringValue(this.args.value);
+        if (!this.args.value) {
+            return;
+        }
+        if (this.isMultiSelect) {
+            if (this.selectedGuids.length > 0) {
+                return;
             }
-            if (this.selectedGuid) {
-                this.notifyRecordSelected(this.selectedGuid);
+            const guids = this.extractGuidsFromValue(this.args.value);
+            if (guids.length > 0) {
+                this.selectedGuids = guids;
+                this.notifyRecordsSelected(guids);
+            }
+        } else if (!this.selectedGuid) {
+            const guid = this.extractGuidsFromValue(this.args.value)[0];
+            if (guid) {
+                this.selectedGuid = guid;
+                this.notifyRecordSelected(guid);
             }
         }
     }
@@ -92,18 +102,36 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
     });
 
     private notifyRecordSelected(guid: string): void {
-        const draft = this.draftRegistrations.find(d => d.id === guid);
-        const registration = this.registrations.find(r => r.id === guid);
-
-        const value: ProjectMetadataValue = {
-            id: guid,
-            data: draft ? draft.registrationMetadata : (registration ? registration.registeredMeta : {}),
-        };
-
+        const value = this.buildValueForGuid(guid);
         this.args.onChange({
             value,
             type: 'json',
         });
+    }
+
+    private notifyRecordsSelected(guids: string[]): void {
+        if (guids.length === 0) {
+            this.args.onChange({
+                value: null,
+                type: 'json',
+            });
+            return;
+        }
+        const values = guids.map(guid => this.buildValueForGuid(guid));
+        this.args.onChange({
+            value: values,
+            type: 'json',
+        });
+    }
+
+    private buildValueForGuid(guid: string): ProjectMetadataValue {
+        const draft = this.draftRegistrations.find(d => d.id === guid);
+        const registration = this.registrations.find(r => r.id === guid);
+
+        return {
+            id: guid,
+            data: draft ? draft.registrationMetadata : (registration ? registration.registeredMeta : {}),
+        };
     }
 
     @action
@@ -111,8 +139,16 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
         if (this.args.disabled) {
             return;
         }
-        this.selectedGuid = guid;
-        this.notifyRecordSelected(guid);
+        if (this.isMultiSelect) {
+            const hasGuid = this.selectedGuids.includes(guid);
+            this.selectedGuids = hasGuid
+                ? this.selectedGuids.filter(id => id !== guid)
+                : [...this.selectedGuids, guid];
+            this.notifyRecordsSelected(this.selectedGuids);
+        } else {
+            this.selectedGuid = guid;
+            this.notifyRecordSelected(guid);
+        }
     }
 
     @action
@@ -125,8 +161,30 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
         event.stopPropagation();
     }
 
+    private extractGuidsFromValue(valueWithType: FieldValueWithType): string[] {
+        if (valueWithType.type === 'json') {
+            const raw = valueWithType.value;
+            if (Array.isArray(raw)) {
+                return raw
+                    .map((item: ProjectMetadataValue) => item?.id)
+                    .filter((id): id is string => Boolean(id));
+            }
+            if (raw && typeof raw === 'object') {
+                const single = raw as ProjectMetadataValue;
+                return single.id ? [single.id] : [];
+            }
+            return [];
+        }
+        const guid = toStringValue(valueWithType);
+        return guid ? [guid] : [];
+    }
+
+    get isMultiSelect(): boolean {
+        return this.args.multiSelect;
+    }
+
     get allRecords() {
-        return [
+        const records = [
             ...this.draftRegistrations.map(draft => ({
                 guid: draft.id,
                 title: draft.title,
@@ -144,5 +202,11 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
                 url: null,
             })),
         ];
+        return records.map(record => ({
+            ...record,
+            isSelected: this.isMultiSelect
+                ? this.selectedGuids.includes(record.guid)
+                : this.selectedGuid === record.guid,
+        }));
     }
 }
