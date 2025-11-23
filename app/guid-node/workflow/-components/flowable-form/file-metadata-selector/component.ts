@@ -16,11 +16,17 @@ import pathJoin from 'ember-osf-web/utils/path-join';
 
 const { OSF: { url: baseURL } } = config;
 
+interface SchemaInfo {
+    id: string;
+    name: string;
+}
+
 interface FileMetadataValue {
     id: string;
     data: {
         [key: string]: MetadataValue;
     };
+    schema: SchemaInfo;
 }
 
 interface FileMetadataEntry {
@@ -119,6 +125,7 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
         return {
             id: path,
             data: item ? item.data : {},
+            schema: this.schemaInfo,
         };
     }
 
@@ -204,6 +211,25 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
             return null;
         }
         return this.registrationSchema.id;
+    }
+
+    private get schemaInfo(): SchemaInfo {
+        const schema = this.registrationSchema;
+        if (!schema) {
+            throw new Error('Registration schema is not loaded for the selected file metadata');
+        }
+        const schemaId = schema.get('id');
+        if (!schemaId) {
+            throw new Error('Registration schema id is missing for the selected file metadata');
+        }
+        const schemaName = schema.get('name');
+        if (!schemaName) {
+            throw new Error('Registration schema name is missing for the selected file metadata');
+        }
+        return {
+            id: schemaId,
+            name: schemaName,
+        };
     }
 
     get projectFilePaths(): string[] {

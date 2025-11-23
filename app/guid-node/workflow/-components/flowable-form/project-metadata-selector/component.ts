@@ -13,14 +13,21 @@ import { Answer } from 'ember-osf-web/models/registration-schema';
 import { FieldValueWithType } from '../types';
 import { toStringValue } from '../field/component';
 import pathJoin from 'ember-osf-web/utils/path-join';
+import { getMetadataDisplayTitle } from 'ember-osf-web/utils/metadata-title-field-priority';
 
 const { OSF: { url: baseURL } } = config;
+
+interface SchemaInfo {
+    id: string;
+    name: string;
+}
 
 interface ProjectMetadataValue {
     id: string;
     data: {
         [qid: string]: Answer<unknown>;
     };
+    schema: SchemaInfo;
 }
 
 interface ProjectMetadataSelectorArgs {
@@ -127,10 +134,38 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
     private buildValueForGuid(guid: string): ProjectMetadataValue {
         const draft = this.draftRegistrations.find(d => d.id === guid);
         const registration = this.registrations.find(r => r.id === guid);
+        const schemaInfo = this.getSchemaInfoForRecord(draft, registration);
 
         return {
             id: guid,
             data: draft ? draft.registrationMetadata : (registration ? registration.registeredMeta : {}),
+            schema: schemaInfo,
+        };
+    }
+
+    private getSchemaInfoForRecord(
+        draft: DraftRegistration | undefined,
+        registration: Registration | undefined,
+    ): SchemaInfo {
+        const record = draft || registration;
+        if (!record) {
+            throw new Error('Unable to locate the selected project metadata record');
+        }
+        const schema = record.registrationSchema;
+        if (!schema) {
+            throw new Error('Registration schema is not loaded for the selected project metadata');
+        }
+        const schemaId = schema.get('id');
+        if (!schemaId) {
+            throw new Error('Registration schema id is missing for the selected project metadata');
+        }
+        const schemaName = schema.get('name');
+        if (!schemaName) {
+            throw new Error('Registration schema name is missing for the selected project metadata');
+        }
+        return {
+            id: schemaId,
+            name: schemaName,
         };
     }
 
@@ -187,7 +222,7 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
         const records = [
             ...this.draftRegistrations.map(draft => ({
                 guid: draft.id,
-                title: draft.title,
+                title: getMetadataDisplayTitle(draft.registrationResponses, draft.title),
                 dateCreated: draft.datetimeInitiated,
                 dateModified: draft.datetimeUpdated,
                 isDraft: true,
@@ -195,7 +230,7 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
             })),
             ...this.registrations.map(reg => ({
                 guid: reg.id,
-                title: reg.title,
+                title: getMetadataDisplayTitle(reg.registrationResponses, reg.title),
                 dateCreated: reg.dateCreated,
                 dateModified: reg.dateModified,
                 isDraft: false,
