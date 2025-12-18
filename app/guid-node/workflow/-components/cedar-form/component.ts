@@ -25,7 +25,7 @@ function ensureCedarEditorScript(): Promise<void> {
     if (typeof window === 'undefined') {
         return Promise.resolve();
     }
-    if (window.customElements?.get?.('cedar-embeddable-editor')) {
+    if (window.customElements && window.customElements.get('cedar-embeddable-editor')) {
         return Promise.resolve();
     }
     if (cedarLoader) {
@@ -48,7 +48,8 @@ export default class CedarForm extends Component<CedarFormArgs> {
     private cedarEditor: CedarEditorElement | null = null;
 
     get cedarTemplate(): unknown {
-        return this.args.form.data ?? null;
+        const { data } = this.args.form;
+        return data !== undefined ? data : null;
     }
 
     get cedarTemplateObject(): Record<string, unknown> | null {
@@ -60,7 +61,8 @@ export default class CedarForm extends Component<CedarFormArgs> {
             try {
                 return JSON.parse(template) as Record<string, unknown>;
             } catch (error) {
-                this.cedarError = (error as Error)?.message || String(error);
+                const err = error as Error;
+                this.cedarError = (err && err.message) || String(error);
                 return null;
             }
         }
@@ -75,7 +77,7 @@ export default class CedarForm extends Component<CedarFormArgs> {
         if (!element) {
             return;
         }
-        element.innerHTML = '';
+        element.innerHTML = ''; // eslint-disable-line no-param-reassign
         this.cedarEditor = null;
         this.cedarError = null;
         if (!this.cedarTemplateObject) {
@@ -96,7 +98,8 @@ export default class CedarForm extends Component<CedarFormArgs> {
             this.cedarEditor = editor;
             this.notifyChange();
         } catch (error) {
-            this.cedarError = (error as Error)?.message || String(error);
+            const err = error as Error;
+            this.cedarError = (err && err.message) || String(error);
         }
     }
 
@@ -106,7 +109,7 @@ export default class CedarForm extends Component<CedarFormArgs> {
             this.cedarEditor.templateObject = template;
             this.notifyChange();
         } else if (template && !this.cedarEditor) {
-            void this.setupCedarHost(element);
+            this.setupCedarHost(element);
         }
     }
 

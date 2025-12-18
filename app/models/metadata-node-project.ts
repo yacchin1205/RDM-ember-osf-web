@@ -3,7 +3,6 @@ import OsfModel from './osf-model';
 
 const { attr } = DS;
 
-/* eslint-disable camelcase */
 export interface MetadataValue {
     comments?: any[];
     extra?: any[];
@@ -24,7 +23,6 @@ export interface FileEntry {
     urlpath: string;
     items: MetadataItem[];
 }
-/* eslint-enable camelcase */
 
 export default class MetadataNodeProjectModel extends OsfModel {
     @attr('array') files!: FileEntry[];

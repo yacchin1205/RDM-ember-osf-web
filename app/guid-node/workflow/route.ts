@@ -22,18 +22,19 @@ function buildProjectWorkflowBase(guid: string): string {
 }
 
 function extractErrorMessage(error: unknown): string {
-    const response: any = (error as any)?.responseJSON ?? (error as any)?.payload?.responseJSON;
-    if (response?.message) {
+    const err = error as any;
+    const response: any = (err && err.responseJSON) || (err && err.payload && err.payload.responseJSON);
+    if (response && response.message) {
         return response.message as string;
     }
-    if (response?.data?.message) {
+    if (response && response.data && response.data.message) {
         return response.data.message as string;
     }
-    const text = (error as any)?.responseText ?? (error as any)?.payload?.responseText;
+    const text = (err && err.responseText) || (err && err.payload && err.payload.responseText);
     if (typeof text === 'string' && text.trim()) {
         return text;
     }
-    const message = (error as any)?.message;
+    const message = err && err.message;
     if (typeof message === 'string' && message.trim()) {
         return message;
     }

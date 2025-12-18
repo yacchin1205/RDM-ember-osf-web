@@ -238,12 +238,10 @@ export default class RegistrationReportExportButton extends Component {
         }
         const json: { data: WorkflowActivationApiResponse[] } = yield response.json();
         const allTemplates = normalizeTemplates(json.data);
-        const filtered = allTemplates.filter(template =>
-            template.definitionFormSchema.fields.some(field => {
-                const metadata = extractProjectMetadata(field);
-                return metadata !== null && metadata.schemaName === this.schemaName;
-            })
-        );
+        const filtered = allTemplates.filter(tpl => tpl.definitionFormSchema.fields.some(field => {
+            const metadata = extractProjectMetadata(field);
+            return metadata !== null && metadata.schemaName === this.schemaName;
+        }));
         this.set('workflowTemplates', filtered);
     });
 
@@ -269,7 +267,8 @@ export default class RegistrationReportExportButton extends Component {
             throw new Error(`No matching field found for schema ${this.schemaName}`);
         }
 
-        const hash = `#start=${encodeURIComponent(workflowId)}&field_${encodeURIComponent(targetField.id)}=${encodeURIComponent(this.metadataId!)}`;
+        const fieldKey = `field_${encodeURIComponent(targetField.id)}`;
+        const hash = `#start=${encodeURIComponent(workflowId)}&${fieldKey}=${encodeURIComponent(this.metadataId!)}`;
         const url = this.router.urlFor('guid-node.workflow', this.node!.get('id'));
         window.location.href = `${url}${hash}`;
     }

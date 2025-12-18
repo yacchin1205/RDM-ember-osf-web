@@ -29,7 +29,12 @@ export {
     TaskDialogSubmission,
 };
 
-function isAjaxError(error: unknown): error is { responseJSON?: { message?: string; data?: { message?: string } }; payload?: unknown } {
+interface AjaxErrorShape {
+    responseJSON?: { message?: string; data?: { message?: string } };
+    payload?: unknown;
+}
+
+function isAjaxError(error: unknown): error is AjaxErrorShape {
     if (!error || typeof error !== 'object') {
         return false;
     }
@@ -45,11 +50,12 @@ function ensureTrailingSlash(value: string): string {
 }
 
 function extractMessage(error: unknown, fallback: string): string {
-    const response: any = (error as any)?.responseJSON ?? (error as any)?.payload?.responseJSON;
-    if (response?.message) {
+    const err = error as any;
+    const response: any = (err && err.responseJSON) || (err && err.payload && err.payload.responseJSON);
+    if (response && response.message) {
         return response.message as string;
     }
-    if (response?.data?.message) {
+    if (response && response.data && response.data.message) {
         return response.data.message as string;
     }
     return fallback;
@@ -57,9 +63,10 @@ function extractMessage(error: unknown, fallback: string): string {
 
 export function normalizeTemplates(activations: WorkflowActivationApiResponse[]): WorkflowTemplate[] {
     return activations.map(entry => {
-        const template = entry.template;
-        const id = template.id;
-        const shortLabel = template.label || template.definition_name || template.definition_key || template.definition_id || id;
+        const { template } = entry;
+        const { id } = template;
+        const shortLabel = template.label || template.definition_name
+            || template.definition_key || template.definition_id || id;
         const displayLabel = !template.is_local && template.node_title
             ? `${shortLabel} [${template.node_title}]`
             : shortLabel;
@@ -116,12 +123,14 @@ export default class GuidNodeWorkflowController extends Controller {
         return this.runs.filter(run => run.status === 'running');
     }
 
-    get runsWithActions(): Array<WorkflowRunSummary & { projectUrl: string; isCurrentProject: boolean; canCancel: boolean }> {
+    get runsWithActions(): Array<
+        WorkflowRunSummary & { projectUrl: string; isCurrentProject: boolean; canCancel: boolean }
+        > {
         if (!this.node) {
             return [];
         }
         const currentNodeId = this.node.id;
-        const hasAdminPermission = Boolean(this.node?.userHasAdminPermission);
+        const hasAdminPermission = Boolean(this.node && this.node.userHasAdminPermission);
         const filtered = this.hideCompletedRuns
             ? this.runs.filter(run => run.status === 'running')
             : this.runs;
@@ -143,7 +152,11 @@ export default class GuidNodeWorkflowController extends Controller {
     @tracked tasksLoaded = false;
     @tracked hideCompletedTasks = true;
 
-    get tasksWithActions(): Array<WorkflowTaskSummary & { canComplete: boolean; assigneeDisplay: string; projectUrl: string; isCurrentProject: boolean }> {
+    get tasksWithActions(): Array<
+        WorkflowTaskSummary & {
+            canComplete: boolean; assigneeDisplay: string; projectUrl: string; isCurrentProject: boolean;
+        }
+        > {
         if (!this.node) {
             return [];
         }
@@ -184,7 +197,7 @@ export default class GuidNodeWorkflowController extends Controller {
     }
 
     get canStartWorkflow(): boolean {
-        return Boolean(this.node?.userHasWritePermission);
+        return Boolean(this.node && this.node.userHasWritePermission);
     }
 
     get selectedTemplate(): WorkflowTemplate | undefined {
@@ -196,7 +209,7 @@ export default class GuidNodeWorkflowController extends Controller {
     }
 
     get nodeTitle(): string {
-        return this.node?.title || this.intl.t('workflow.console.heading') as string;
+        return (this.node && this.node.title) || this.intl.t('workflow.console.heading') as string;
     }
 
     initialize(model: WorkflowRouteModel, hash: string): void {
@@ -263,12 +276,12 @@ export default class GuidNodeWorkflowController extends Controller {
     }
 
     updateSelectionFromHash(hash?: string): boolean {
-        const candidate = hash ?? window.location.hash;
+        const candidate = hash !== undefined ? hash : window.location.hash;
         return this.applyHash(candidate);
     }
 
     extractTaskFromHash(hash?: string): { taskId: string; engineId: string } | null {
-        const candidate = hash ?? window.location.hash;
+        const candidate = hash !== undefined ? hash : window.location.hash;
         if (!candidate) {
             return null;
         }
@@ -295,7 +308,7 @@ export default class GuidNodeWorkflowController extends Controller {
     @action
     selectTemplate(event: Event): void {
         const target = event.target as HTMLSelectElement | null;
-        const value = target?.value ?? '';
+        const value = (target && target.value) || '';
         this.selectedTemplateId = value;
         this.submitError = null;
         this.submitSuccess = null;
@@ -363,13 +376,13 @@ export default class GuidNodeWorkflowController extends Controller {
     @action
     toggleHideCompletedRuns(event: Event): void {
         const target = event.target as HTMLInputElement | null;
-        this.hideCompletedRuns = Boolean(target?.checked);
+        this.hideCompletedRuns = Boolean(target && target.checked);
     }
 
     @action
     toggleHideCompletedTasks(event: Event): void {
         const target = event.target as HTMLInputElement | null;
-        this.hideCompletedTasks = Boolean(target?.checked);
+        this.hideCompletedTasks = Boolean(target && target.checked);
     }
 
     @action
@@ -436,9 +449,7 @@ export default class GuidNodeWorkflowController extends Controller {
         this.cancelRunError = null;
 
         // Mark as cancelling in the list
-        this.runs = this.runs.map(r =>
-            r.id === runId ? { ...r, isCancelling: true } : r
-        );
+        this.runs = this.runs.map(r => (r.id === runId ? { ...r, isCancelling: true } : r));
 
         try {
             await this.currentUser.authenticatedAJAX({
@@ -456,9 +467,7 @@ export default class GuidNodeWorkflowController extends Controller {
             );
 
             // Remove cancelling flag on error
-            this.runs = this.runs.map(r =>
-                r.id === runId ? { ...r, isCancelling: false } : r
-            );
+            this.runs = this.runs.map(r => (r.id === runId ? { ...r, isCancelling: false } : r));
         } finally {
             this.isCancellingRun = false;
         }
@@ -503,8 +512,10 @@ export default class GuidNodeWorkflowController extends Controller {
         this.taskActionSuccess = null;
 
         try {
+            const taskUrl = `${this.apiBaseUrl}engines/${encodeURIComponent(task.engine_id)}`
+                + `/tasks/${encodeURIComponent(task.id)}/`;
             const response = await this.currentUser.authenticatedAJAX({
-                url: `${this.apiBaseUrl}engines/${encodeURIComponent(task.engine_id)}/tasks/${encodeURIComponent(task.id)}/`,
+                url: taskUrl,
                 type: 'GET',
                 data: { include_form: 'true' },
             });
@@ -520,7 +531,8 @@ export default class GuidNodeWorkflowController extends Controller {
                     this.intl.t('workflow.console.tasks.detailLoadError') as string,
                 );
             } else {
-                this.taskDetailError = (error as Error)?.message || String(error);
+                const err = error as Error;
+                this.taskDetailError = (err && err.message) || String(error);
             }
         } finally {
             this.isLoadingTaskDetail = false;
@@ -548,8 +560,10 @@ export default class GuidNodeWorkflowController extends Controller {
         this.isSubmittingTaskAction = true;
         this.taskActionError = null;
         try {
+            const actionUrl = `${this.apiBaseUrl}engines/${encodeURIComponent(this.selectedTask.engine_id)}`
+                + `/tasks/${encodeURIComponent(this.selectedTask.id)}/actions/`;
             await this.currentUser.authenticatedAJAX({
-                url: `${this.apiBaseUrl}engines/${encodeURIComponent(this.selectedTask.engine_id)}/tasks/${encodeURIComponent(this.selectedTask.id)}/actions/`,
+                url: actionUrl,
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
@@ -561,8 +575,8 @@ export default class GuidNodeWorkflowController extends Controller {
             this.taskActionSuccess = this.intl.t('workflow.console.tasks.submitSuccess') as string;
             await this.refreshTasks();
 
-            const nextTask = this.tasksWithActions.find(task =>
-                task.process_instance_id === processInstanceId && task.canComplete
+            const nextTask = this.tasksWithActions.find(
+                task => task.process_instance_id === processInstanceId && task.canComplete,
             );
 
             if (nextTask) {
@@ -577,7 +591,8 @@ export default class GuidNodeWorkflowController extends Controller {
                     this.intl.t('workflow.console.tasks.submitFailed') as string,
                 );
             } else {
-                this.taskActionError = (error as Error)?.message || String(error);
+                const err = error as Error;
+                this.taskActionError = (err && err.message) || String(error);
             }
         } finally {
             this.isSubmittingTaskAction = false;
@@ -662,7 +677,6 @@ export default class GuidNodeWorkflowController extends Controller {
             this.isSubmitting = false;
         }
     }
-
 }
 
 declare module '@ember/controller' {

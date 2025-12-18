@@ -7,12 +7,14 @@ import { task } from 'ember-concurrency-decorators';
 import config from 'ember-get-config';
 
 import Node from 'ember-osf-web/models/node';
-import MetadataNodeProject, { FileEntry, MetadataValue, MetadataItem } from 'ember-osf-web/models/metadata-node-project';
+import MetadataNodeProject, {
+    FileEntry, MetadataValue, MetadataItem,
+} from 'ember-osf-web/models/metadata-node-project';
 import MetadataNodeSchema from 'ember-osf-web/models/metadata-node-schema';
 import RegistrationSchema from 'ember-osf-web/models/registration-schema';
+import pathJoin from 'ember-osf-web/utils/path-join';
 import { FieldValueWithType } from '../types';
 import { toStringValue } from '../field/component';
-import pathJoin from 'ember-osf-web/utils/path-join';
 
 const { OSF: { url: baseURL } } = config;
 
@@ -119,8 +121,9 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
     }
 
     private buildValueForPath(path: string): FileMetadataValue {
-        const entry = this.metadataNodeProject?.files.find((f: FileEntry) => f.path === path);
-        const item = entry?.items.find((it: MetadataItem) => it.schema === this.schemaId);
+        const project = this.metadataNodeProject;
+        const entry = project && project.files.find((f: FileEntry) => f.path === path);
+        const item = entry && entry.items.find((it: MetadataItem) => it.schema === this.schemaId);
 
         return {
             id: path,
@@ -131,7 +134,7 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
 
     @task
     loadFileMetadata = task(function *(this: FileMetadataSelector) {
-        const node = this.args.node;
+        const { node } = this.args;
         this.metadataNodeProject = yield this.store.findRecord('metadata-node-project', node.id);
         this.metadataNodeSchema = yield this.store.findRecord('metadata-node-schema', node.id);
 
@@ -179,7 +182,7 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
             const raw = valueWithType.value;
             if (Array.isArray(raw)) {
                 return raw
-                    .map((item: FileMetadataValue) => item?.id)
+                    .map((item: FileMetadataValue) => item && item.id)
                     .filter((id): id is string => Boolean(id));
             }
             if (raw && typeof raw === 'object') {
@@ -274,16 +277,16 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
                 const managerEn = item.data['grdm-file:data-man-name-en'];
 
                 let title = null;
-                if (titleJa?.value) {
+                if (titleJa && titleJa.value) {
                     title = titleJa.value;
-                } else if (titleEn?.value) {
+                } else if (titleEn && titleEn.value) {
                     title = titleEn.value;
                 }
 
                 let manager = null;
-                if (managerJa?.value) {
+                if (managerJa && managerJa.value) {
                     manager = managerJa.value;
-                } else if (managerEn?.value) {
+                } else if (managerEn && managerEn.value) {
                     manager = managerEn.value;
                 }
 

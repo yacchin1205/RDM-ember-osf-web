@@ -15,7 +15,7 @@ MetadataPlaceholder | null {
     if (field.type !== 'multi-line-text') {
         return null;
     }
-    const placeholder = field.placeholder;
+    const { placeholder } = field;
     if (!placeholder) {
         return null;
     }

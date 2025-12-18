@@ -9,23 +9,35 @@
     </div>
 
     {{#if this.templatesError}}
-        <div class="alert alert-danger" role="alert">
+        <div class="alert alert-danger" role="alert" data-test-workflow-templates-error>
             {{this.templatesError}}
         </div>
     {{/if}}
 
     <ul class="nav nav-tabs m-b-md" role="tablist">
-        <li role="presentation" class={{if (eq this.activeTab "start") "active"}}>
+        <li
+            role="presentation"
+            class={{if (eq this.activeTab "start") "active"}}
+            data-test-workflow-tab-start
+        >
             <a role="tab" href="#" {{on "click" (fn this.setActiveTab 'start')}}>
                 {{t 'workflow.console.tab.start'}}
             </a>
         </li>
-        <li role="presentation" class={{if (eq this.activeTab "runs") "active"}}>
+        <li
+            role="presentation"
+            class={{if (eq this.activeTab "runs") "active"}}
+            data-test-workflow-tab-runs
+        >
             <a role="tab" href="#" {{on "click" (fn this.setActiveTab 'runs')}}>
                 {{t 'workflow.console.tab.runs'}}
             </a>
         </li>
-        <li role="presentation" class={{if (eq this.activeTab "tasks") "active"}}>
+        <li
+            role="presentation"
+            class={{if (eq this.activeTab "tasks") "active"}}
+            data-test-workflow-tab-tasks
+        >
             <a role="tab" href="#" {{on "click" (fn this.setActiveTab 'tasks')}}>
                 {{t 'workflow.console.tab.tasks'}}
                 {{#if (gt this.assignedTaskCount 0)}}
@@ -36,7 +48,7 @@
     </ul>
 
     {{#if (eq this.activeTab 'start')}}
-        <div class="panel panel-default">
+        <div class="panel panel-default" data-test-workflow-start-panel>
             <div class="panel-heading clearfix">
                 <strong>{{t 'workflow.console.startSectionTitle'}}</strong>
                 <button
@@ -44,6 +56,7 @@
                     class="btn btn-default btn-xs pull-right"
                     {{on "click" this.refreshTemplates}}
                     disabled={{this.isRefreshing}}
+                    data-test-workflow-refresh-templates
                 >
                     <i class="fa fa-refresh {{if this.isRefreshing 'fa-spin'}}"></i>
                     {{t 'workflow.console.refresh'}}
@@ -62,6 +75,7 @@
                                         id="workflow-template-select"
                                         class="form-control"
                                         {{on "change" this.selectTemplate}}
+                                        data-test-workflow-template-select
                                     >
                                         <option value="">{{t 'workflow.console.selectPrompt'}}</option>
                                         {{#each this.activeTemplates as |template|}}
@@ -110,7 +124,13 @@
 
                             <div class="form-group">
                                 <div class="col-sm-offset-3 col-sm-9">
-                                    <button type="button" class="btn btn-primary" disabled={{this.startDisabled}} {{on "click" this.handleStartFormSubmit}}>
+                                    <button
+                                        type="button"
+                                        class="btn btn-primary"
+                                        disabled={{this.startDisabled}}
+                                        {{on "click" this.handleStartFormSubmit}}
+                                        data-test-workflow-start-button
+                                    >
                                         {{#if this.isSubmitting}}
                                             <i class="fa fa-spinner fa-spin"></i>
                                             {{t 'workflow.console.starting'}}
@@ -122,24 +142,24 @@
                             </div>
 
                             {{#if this.submitError}}
-                                <div class="alert alert-danger" role="alert">
+                                <div class="alert alert-danger" role="alert" data-test-workflow-submit-error>
                                     {{this.submitError}}
                                 </div>
                             {{/if}}
 
                             {{#if this.submitSuccess}}
-                                <div class="alert alert-success" role="alert">
+                                <div class="alert alert-success" role="alert" data-test-workflow-submit-success>
                                     {{this.submitSuccess}}
                                 </div>
                             {{/if}}
                         </div>
                     {{else}}
-                        <p class="text-muted">
+                        <p class="text-muted" data-test-workflow-start-permission>
                             {{t 'workflow.console.startPermissionDenied'}}
                         </p>
                     {{/if}}
                 {{else}}
-                    <p class="text-muted">
+                    <p class="text-muted" data-test-workflow-no-templates-message>
                         {{t 'workflow.console.noActiveWorkflows'}}
                     </p>
                 {{/if}}
@@ -148,7 +168,7 @@
     {{/if}}
 
     {{#if (eq this.activeTab 'runs')}}
-        <div class="panel panel-default">
+        <div class="panel panel-default" data-test-workflow-runs-panel>
             <div class="panel-heading clearfix">
                 <strong>{{t 'workflow.console.runs.heading'}}</strong>
                 <div class="pull-right m-r-sm">
@@ -157,6 +177,7 @@
                             type="checkbox"
                             checked={{this.hideCompletedRuns}}
                             {{on "change" this.toggleHideCompletedRuns}}
+                            data-test-workflow-hide-completed-runs
                         >
                         {{t 'workflow.console.runs.hideCompleted'}}
                     </label>
@@ -173,7 +194,7 @@
             </div>
             <div class="panel-body">
                 {{#if this.runsError}}
-                    <div class="alert alert-danger" role="alert">
+                    <div class="alert alert-danger" role="alert" data-test-workflow-runs-error>
                         {{this.runsError}}
                     </div>
                 {{/if}}
@@ -188,7 +209,7 @@
                 {{#if this.runs.length}}
                     {{#if this.runsWithActions.length}}
                         <div class="table-responsive">
-                            <table class="table table-condensed table-hover">
+                            <table class="table table-condensed table-hover" data-test-workflow-runs-table>
                                 <thead>
                                     <tr>
                                         <th>{{t 'workflow.console.runs.columns.processId'}}</th>
@@ -201,7 +222,7 @@
                                 </thead>
                                 <tbody>
                                     {{#each this.runsWithActions as |run|}}
-                                        <tr>
+                                        <tr data-test-workflow-run-row>
                                             <td>
                                                 <span class="text-muted">{{run.engine_process_id}}</span>
                                             </td>
@@ -233,6 +254,7 @@
                                                             type="button"
                                                             class="btn btn-danger btn-xs"
                                                             {{on "click" (fn this.openCancelDialog run)}}
+                                                            data-test-workflow-run-cancel
                                                         >
                                                             <i class="fa fa-times"></i>
                                                             {{t 'workflow.console.runs.actions.cancel'}}
@@ -264,7 +286,7 @@
     {{/if}}
 
     {{#if (eq this.activeTab 'tasks')}}
-        <div class="panel panel-default">
+        <div class="panel panel-default" data-test-workflow-tasks-panel>
             <div class="panel-heading clearfix">
                 <strong>{{t 'workflow.console.tasks.heading'}}</strong>
                 <div class="pull-right m-r-sm">
@@ -273,6 +295,7 @@
                             type="checkbox"
                             checked={{this.hideCompletedTasks}}
                             {{on "change" this.toggleHideCompletedTasks}}
+                            data-test-workflow-hide-completed-tasks
                         >
                         {{t 'workflow.console.tasks.hideCompleted'}}
                     </label>
@@ -289,19 +312,19 @@
             </div>
             <div class="panel-body">
                 {{#if this.tasksError}}
-                    <div class="alert alert-danger" role="alert">
+                    <div class="alert alert-danger" role="alert" data-test-workflow-tasks-error>
                         {{this.tasksError}}
                     </div>
                 {{/if}}
 
                 {{#if this.taskActionSuccess}}
-                    <div class="alert alert-success" role="alert">
+                    <div class="alert alert-success" role="alert" data-test-workflow-task-success>
                         {{this.taskActionSuccess}}
                     </div>
                 {{/if}}
 
                 {{#if this.taskActionError}}
-                    <div class="alert alert-danger" role="alert">
+                    <div class="alert alert-danger" role="alert" data-test-workflow-task-error>
                         {{this.taskActionError}}
                     </div>
                 {{/if}}
@@ -314,8 +337,8 @@
                 {{/if}}
 
                 {{#if this.tasksWithActions.length}}
-                    <div class="table-responsive">
-                        <table class="table table-condensed table-hover">
+                        <div class="table-responsive">
+                            <table class="table table-condensed table-hover" data-test-workflow-tasks-table>
                             <thead>
                                 <tr>
                                     <th>{{t 'workflow.console.tasks.columns.task'}}</th>
@@ -329,7 +352,7 @@
                             </thead>
                             <tbody>
                                 {{#each this.tasksWithActions as |task|}}
-                                    <tr>
+                                    <tr data-test-workflow-task-row>
                                         <td>
                                             <strong>{{task.name}}</strong><br>
                                             <span class="text-muted">{{task.business_key}}</span>
@@ -362,6 +385,7 @@
                                                     class="btn btn-primary btn-xs"
                                                     {{on "click" (fn this.openTask task)}}
                                                     disabled={{this.isLoadingTaskDetail}}
+                                                    data-test-workflow-task-open
                                                 >
                                                     <i class="fa fa-pencil"></i>
                                                     {{t 'workflow.console.tasks.actions.open'}}

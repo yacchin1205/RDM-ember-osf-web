@@ -10,10 +10,10 @@ import Node from 'ember-osf-web/models/node';
 import DraftRegistration from 'ember-osf-web/models/draft-registration';
 import Registration from 'ember-osf-web/models/registration';
 import { Answer } from 'ember-osf-web/models/registration-schema';
-import { FieldValueWithType } from '../types';
-import { toStringValue } from '../field/component';
 import pathJoin from 'ember-osf-web/utils/path-join';
 import { getMetadataDisplayTitle } from 'ember-osf-web/utils/metadata-title-field-priority';
+import { FieldValueWithType } from '../types';
+import { toStringValue } from '../field/component';
 
 const { OSF: { url: baseURL } } = config;
 
@@ -81,7 +81,7 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
 
     @task
     loadMetadataRecords = task(function *(this: ProjectMetadataSelector) {
-        const node = this.args.node;
+        const { node } = this.args;
 
         // Load draft registrations
         const drafts: DraftRegistration[] = yield node.loadAll('draftRegistrations');
@@ -92,7 +92,7 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
         }
 
         this.draftRegistrations = drafts.filter(
-            draft => draft.registrationSchema.get('name') === this.args.schemaName
+            draft => draft.registrationSchema.get('name') === this.args.schemaName,
         );
 
         // Load registrations
@@ -104,7 +104,7 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
         }
 
         this.registrations = regs.filter(
-            reg => reg.registrationSchema.get('name') === this.args.schemaName
+            reg => reg.registrationSchema.get('name') === this.args.schemaName,
         );
     });
 
@@ -136,9 +136,16 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
         const registration = this.registrations.find(r => r.id === guid);
         const schemaInfo = this.getSchemaInfoForRecord(draft, registration);
 
+        let data = {};
+        if (draft) {
+            data = draft.registrationMetadata;
+        } else if (registration) {
+            data = registration.registeredMeta;
+        }
+
         return {
             id: guid,
-            data: draft ? draft.registrationMetadata : (registration ? registration.registeredMeta : {}),
+            data,
             schema: schemaInfo,
         };
     }
@@ -201,7 +208,7 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
             const raw = valueWithType.value;
             if (Array.isArray(raw)) {
                 return raw
-                    .map((item: ProjectMetadataValue) => item?.id)
+                    .map((item: ProjectMetadataValue) => item && item.id)
                     .filter((id): id is string => Boolean(id));
             }
             if (raw && typeof raw === 'object') {

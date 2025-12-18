@@ -7,7 +7,7 @@ import { resolveFlowableType } from '../component';
 import { extractProjectMetadata, extractFileMetadata } from '../utils';
 
 function getOptionValue(option: WorkflowTaskFieldOption): string | undefined {
-    return option.id ?? option.name;
+    return option.id !== undefined ? option.id : option.name;
 }
 
 function isValidFieldValue(field: WorkflowTaskField, value: unknown): boolean {
@@ -97,7 +97,7 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
         }
 
         const valueWithType: FieldValueWithType = {
-            value: value ?? null,
+            value: value !== undefined ? value : null,
             type: resolveFlowableType(this.args.field.type),
         };
         this.updatedValue = valueWithType;
@@ -211,7 +211,8 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
     }
 
     get projectMetadataMultiSelect(): boolean {
-        return this.projectMetadataPlaceholder?.multiSelect ?? false;
+        const placeholder = this.projectMetadataPlaceholder;
+        return placeholder ? placeholder.multiSelect : false;
     }
 
     get fileMetadataPlaceholder() {
@@ -227,7 +228,8 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
     }
 
     get fileMetadataMultiSelect(): boolean {
-        return this.fileMetadataPlaceholder?.multiSelect ?? false;
+        const placeholder = this.fileMetadataPlaceholder;
+        return placeholder ? placeholder.multiSelect : false;
     }
 
     get isPassword(): boolean {
@@ -267,7 +269,11 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
     }
 
     get isHeadline(): boolean {
-        return this.type === 'headline' || this.type === 'headline-with-line';
+        return this.type === 'headline';
+    }
+
+    get isHeadlineWithLine(): boolean {
+        return this.type === 'headline-with-line';
     }
 
     get isSpacer(): boolean {
@@ -279,7 +285,8 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
     }
 
     get isDisplayOnly(): boolean {
-        return this.isExpression || this.isHyperlink || this.isHeadline || this.isSpacer || this.isHorizontalLine;
+        return this.isExpression || this.isHyperlink || this.isHeadline
+            || this.isHeadlineWithLine || this.isSpacer || this.isHorizontalLine;
     }
 
     get expressionText(): string {
@@ -302,6 +309,6 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
 
     get hyperlinkUrl(): string {
         const field = this.args.field as unknown as { params?: { hyperlinkUrl?: string } };
-        return field.params?.hyperlinkUrl || '#';
+        return (field.params && field.params.hyperlinkUrl) || '#';
     }
 }

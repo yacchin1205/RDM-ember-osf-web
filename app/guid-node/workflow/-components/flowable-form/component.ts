@@ -43,7 +43,7 @@ export default class FlowableForm extends Component<FlowableFormArgs> {
     @tracked updatedFieldValues: Record<string, FieldValueWithType> = {};
 
     get fields(): WorkflowTaskField[] {
-        return this.args.form.fields ?? [];
+        return this.args.form.fields || [];
     }
 
     get hasFields(): boolean {
@@ -52,7 +52,10 @@ export default class FlowableForm extends Component<FlowableFormArgs> {
 
     private isSubmittableField(field: WorkflowTaskField): boolean {
         const type = field.type.toLowerCase();
-        if (['expression', 'hyperlink', 'link', 'headline', 'headline-with-line', 'spacer', 'horizontal-line'].includes(type)) {
+        const displayOnlyTypes = [
+            'expression', 'hyperlink', 'link', 'headline', 'headline-with-line', 'spacer', 'horizontal-line',
+        ];
+        if (displayOnlyTypes.includes(type)) {
             return false;
         }
         if (field.readOnly) {
@@ -69,7 +72,7 @@ export default class FlowableForm extends Component<FlowableFormArgs> {
                     return true;
                 }
                 const fieldValue = this.updatedFieldValues[field.id];
-                const value = fieldValue?.value;
+                const value = fieldValue && fieldValue.value;
                 return isValidFieldValue(field, value);
             });
     }
@@ -88,7 +91,12 @@ export default class FlowableForm extends Component<FlowableFormArgs> {
                     ...variable,
                 };
             } else {
-                const initial = field.value ?? field.defaultValue ?? null;
+                let initial = null;
+                if (field.value !== undefined) {
+                    initial = field.value;
+                } else if (field.defaultValue !== undefined) {
+                    initial = field.defaultValue;
+                }
                 fieldValue = {
                     value: initial,
                     type: resolveFlowableType(field.type),

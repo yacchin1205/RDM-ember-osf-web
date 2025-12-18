@@ -6,16 +6,15 @@
             {{this.fieldLabel}}
         </a>
     {{else if this.isHeadline}}
-        <h4>{{this.fieldLabel}}</h4>
+        <h4 style="font-weight: 600;">{{this.fieldLabel}}</h4>
+    {{else if this.isHeadlineWithLine}}
+        <h4 style="font-weight: 600; border-bottom: 1px solid #ccc; padding-bottom: 0.5em;">{{this.fieldLabel}}</h4>
     {{else if this.isHorizontalLine}}
         <hr />
-        {{#if this.fieldLabel}}
-            <label class="control-label">{{this.fieldLabel}}</label>
-        {{/if}}
     {{else if this.isSpacer}}
         <div style="height: 20px;"></div>
     {{else}}
-        <label for={{this.fieldId}} class="control-label">
+        <label for={{this.fieldId}} class="control-label" style="font-weight: normal;">
             {{this.fieldLabel}}
             {{#if this.isRequired}}
                 <span class="text-danger">*</span>

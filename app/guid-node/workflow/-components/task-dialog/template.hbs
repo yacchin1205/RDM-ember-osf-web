@@ -58,7 +58,13 @@
                 </div>
                 <div class="modal-footer">
                     {{#if this.hasTask}}
-                        <button type="button" class="btn btn-primary" disabled={{or (not this.canComplete) (not this.isFormValid)}} {{on "click" this.handleSubmit}}>
+                        <button
+                            type="button"
+                            class="btn btn-primary"
+                            disabled={{or (not this.canComplete) (not this.isFormValid)}}
+                            {{on "click" this.handleSubmit}}
+                            data-test-task-dialog-submit
+                        >
                             {{#if @isSubmitting}}
                                 <i class="fa fa-spinner fa-spin"></i>
                                 {{t 'workflow.console.tasks.dialog.submitting'}}

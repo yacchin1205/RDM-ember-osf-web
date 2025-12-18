@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import Node from 'ember-osf-web/models/node';
 import {
     WorkflowTaskField,
@@ -125,3 +126,4 @@ export {
     WorkflowTaskField,
     WorkflowTaskFieldOption,
 };
+/* eslint-enable camelcase */

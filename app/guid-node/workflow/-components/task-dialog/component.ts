@@ -34,7 +34,7 @@ export default class WorkflowTaskDialog extends Component<WorkflowTaskDialogArgs
     }
 
     get taskTitle(): string {
-        const task = this.args.task;
+        const { task } = this.args;
         if (task && task.name) {
             return task.name;
         }
@@ -42,7 +42,8 @@ export default class WorkflowTaskDialog extends Component<WorkflowTaskDialogArgs
     }
 
     get assigneeLabel(): string {
-        const assignee = this.args.task?.assignee;
+        const { task } = this.args;
+        const assignee = task && task.assignee;
         if (!assignee) {
             return this.intl.t('workflow.console.tasks.dialog.unassigned') as string;
         }
@@ -63,7 +64,8 @@ export default class WorkflowTaskDialog extends Component<WorkflowTaskDialogArgs
     }
 
     get canComplete(): boolean {
-        return this.args.task?.can_complete !== false;
+        const { task } = this.args;
+        return !task || task.can_complete !== false;
     }
 
     @action

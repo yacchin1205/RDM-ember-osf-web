@@ -8,7 +8,7 @@ interface WorkflowCancelRunDialogArgs {
         id: string;
         status?: string;
         statusRaw?: string;
-        started_at?: string;
+        started_at?: string; // eslint-disable-line camelcase
         created?: string;
     } | null;
     isSubmitting: boolean;
@@ -35,5 +35,5 @@ export default class WorkflowCancelRunDialog extends Component<WorkflowCancelRun
 declare module '@glimmer/component' {
     export default interface Registry {
         'Workflow::CancelRunDialog': typeof WorkflowCancelRunDialog;
-    }
+    } // eslint-disable-line semi
 }
