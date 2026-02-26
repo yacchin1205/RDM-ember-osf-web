@@ -10,6 +10,7 @@ import MetadataNodeSchemaModel from 'ember-osf-web/models/metadata-node-schema';
 import Analytics from 'ember-osf-web/services/analytics';
 import { getMetadataDisplayTitle } from 'ember-osf-web/utils/metadata-title-field-priority';
 import pathJoin from 'ember-osf-web/utils/path-join';
+import { getWekoItemId, getWekoLabelKey } from 'ember-osf-web/utils/weko-item';
 
 import styles from './styles';
 import template from './template';
@@ -64,23 +65,12 @@ export default class DraftRegistrationCard extends Component {
 
     @computed('draftRegistration.registrationResponses')
     get wekoItemId(): string | null {
-        const { draftRegistration } = this;
-        if (!draftRegistration) {
-            return null;
-        }
-        const { registrationResponses: responses } = draftRegistration;
-        if (!responses || typeof responses !== 'object') {
-            return null;
-        }
-        const wekoIdKey = 'internal:weko-item-id';
-        const prefixedWekoIdKey = `__responseKey_${wekoIdKey}`;
-        const wekoIdValue = responses[wekoIdKey] || responses[prefixedWekoIdKey];
+        return getWekoItemId(this.draftRegistration?.registrationResponses);
+    }
 
-        if (wekoIdValue && typeof wekoIdValue === 'string' && wekoIdValue.trim()) {
-            return wekoIdValue.trim();
-        }
-
-        return null;
+    @computed('draftRegistration.registrationSchema.name')
+    get wekoLabelKey(): string {
+        return getWekoLabelKey(this.draftRegistration.registrationSchema.get('name'));
     }
 
     @action
