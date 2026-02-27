@@ -1390,6 +1390,7 @@ osf-components:
         form_type: 'Form:'
         started: 'Started:'
         last_updated: 'Last updated:'
+        workflow_submitted: 'Submitted'
         weko_id:
             mebyo: 'Registered: Mebyo DB Catalog (ID:{weko_id})'
             default: 'Registered: JAIRO Cloud (ID:{weko_id})'

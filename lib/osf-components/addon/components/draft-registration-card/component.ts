@@ -10,7 +10,7 @@ import MetadataNodeSchemaModel from 'ember-osf-web/models/metadata-node-schema';
 import Analytics from 'ember-osf-web/services/analytics';
 import { getMetadataDisplayTitle } from 'ember-osf-web/utils/metadata-title-field-priority';
 import pathJoin from 'ember-osf-web/utils/path-join';
-import { getWekoItemId, getWekoLabelKey } from 'ember-osf-web/utils/weko-item';
+import { getWekoItemId, getWekoLabelKey, getWorkflowRunId } from 'ember-osf-web/utils/weko-item';
 
 import styles from './styles';
 import template from './template';
@@ -71,6 +71,20 @@ export default class DraftRegistrationCard extends Component {
     @computed('draftRegistration.registrationSchema.name')
     get wekoLabelKey(): string {
         return getWekoLabelKey(this.draftRegistration.registrationSchema.get('name'));
+    }
+
+    @computed('draftRegistration.registrationResponses')
+    get workflowRunId(): string | null {
+        return getWorkflowRunId(this.draftRegistration?.registrationResponses);
+    }
+
+    @computed('draftRegistration.branchedFrom')
+    get workflowUrl(): string | null {
+        if (!this.workflowRunId) {
+            return null;
+        }
+        const node = this.draftRegistration.get('branchedFrom');
+        return pathJoin(baseURL, node.get('id'), 'workflow');
     }
 
     @action

@@ -1390,6 +1390,7 @@ osf-components:
         form_type: '様式:'
         started: '開始日:'
         last_updated: '最終更新日:'
+        workflow_submitted: 申請済み
         weko_id:
             mebyo: '登録済：未病DBカタログ (ID:{weko_id})'
             default: '登録済：JAIRO Cloud (ID:{weko_id})'
