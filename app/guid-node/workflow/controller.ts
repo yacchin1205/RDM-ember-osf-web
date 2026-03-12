@@ -133,6 +133,8 @@ export default class GuidNodeWorkflowController extends Controller {
     @tracked isRefreshingRuns = false;
     @tracked runsLoaded = false;
     @tracked hideCompletedRuns = true;
+    @tracked runsLimit = 25;
+    runsLimitOptions = [25, 50, 100];
 
     @tracked isCancelDialogOpen = false;
     @tracked cancellingRun: WorkflowRunSummary | null = null;
@@ -140,10 +142,7 @@ export default class GuidNodeWorkflowController extends Controller {
     @tracked cancelRunError: string | null = null;
 
     get visibleRuns(): WorkflowRunSummary[] {
-        if (!this.hideCompletedRuns) {
-            return this.runs;
-        }
-        return this.runs.filter(run => run.status === 'running');
+        return this.runs;
     }
 
     get runsWithActions(): Array<
@@ -174,6 +173,8 @@ export default class GuidNodeWorkflowController extends Controller {
     @tracked isRefreshingTasks = false;
     @tracked tasksLoaded = false;
     @tracked hideCompletedTasks = true;
+    @tracked tasksLimit = 25;
+    tasksLimitOptions = [25, 50, 100];
 
     get tasksWithActions(): Array<
         WorkflowTaskSummary & {
@@ -184,10 +185,7 @@ export default class GuidNodeWorkflowController extends Controller {
             return [];
         }
         const currentNodeId = this.node.id;
-        const filtered = this.hideCompletedTasks
-            ? this.tasks.filter(task => task.task_status === 'running')
-            : this.tasks;
-        return filtered.map(task => ({
+        return this.tasks.map(task => ({
             ...task,
             canComplete: task.can_complete !== false,
             assigneeDisplay: this.assigneeLabel(task.assignee),
@@ -379,12 +377,32 @@ export default class GuidNodeWorkflowController extends Controller {
     toggleHideCompletedRuns(event: Event): void {
         const target = event.target as HTMLInputElement | null;
         this.hideCompletedRuns = Boolean(target && target.checked);
+        this.refreshRuns();
+    }
+
+    @action
+    changeRunsLimit(event: Event): void {
+        const target = event.target as HTMLSelectElement | null;
+        if (target) {
+            this.runsLimit = parseInt(target.value, 10);
+            this.refreshRuns();
+        }
     }
 
     @action
     toggleHideCompletedTasks(event: Event): void {
         const target = event.target as HTMLInputElement | null;
         this.hideCompletedTasks = Boolean(target && target.checked);
+        this.refreshTasks();
+    }
+
+    @action
+    changeTasksLimit(event: Event): void {
+        const target = event.target as HTMLSelectElement | null;
+        if (target) {
+            this.tasksLimit = parseInt(target.value, 10);
+            this.refreshTasks();
+        }
     }
 
     @action
@@ -398,7 +416,10 @@ export default class GuidNodeWorkflowController extends Controller {
             const response = await this.currentUser.authenticatedAJAX({
                 url: `${this.apiBaseUrl}runs/`,
                 type: 'GET',
-                data: { limit: 25 },
+                data: {
+                    limit: this.runsLimit,
+                    ...(this.hideCompletedRuns ? { status: 'running' } : {}),
+                },
             });
             const data = (response && (response as any).data) || [];
             this.runs = data.map((entry: any) => {
@@ -486,7 +507,10 @@ export default class GuidNodeWorkflowController extends Controller {
             const response = await this.currentUser.authenticatedAJAX({
                 url: `${this.apiBaseUrl}tasks/`,
                 type: 'GET',
-                data: { limit: 25 },
+                data: {
+                    limit: this.tasksLimit,
+                    ...(this.hideCompletedTasks ? { status: 'active' } : {}),
+                },
             });
             this.tasks = (response as any).data;
             this.tasksLoaded = true;
@@ -669,8 +693,7 @@ export default class GuidNodeWorkflowController extends Controller {
             await this.pollJobStatus(response.data.status_url);
 
             this.submitSuccess = this.intl.t('workflow.console.startSuccess') as string;
-            this.startFormVariables = [];
-            await this.refreshTasks();
+            await Promise.all([this.refreshTasks(), this.refreshRuns()]);
             const hasAssignedTasks = this.tasksWithActions.some(task => task.canComplete);
             if (hasAssignedTasks) {
                 this.activeTab = 'tasks';

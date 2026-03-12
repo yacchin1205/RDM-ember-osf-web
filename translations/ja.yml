@@ -1990,6 +1990,7 @@ workflow:
         startSuccess: ワークフローを開始しました。
         startFailed: ワークフローを開始できませんでした。
         refresh: 更新
+        displayCount: '表示件数:'
         close: 閉じる
         tab:
             start: 実行

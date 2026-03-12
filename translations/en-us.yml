@@ -1990,6 +1990,7 @@ workflow:
         startSuccess: 'Workflow started.'
         startFailed: 'Could not start the workflow.'
         refresh: 'Refresh'
+        displayCount: 'Show:'
         close: 'Close'
         tab:
             start: 'Start'
