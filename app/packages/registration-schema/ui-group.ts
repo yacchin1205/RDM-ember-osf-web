@@ -1,4 +1,18 @@
-import { SchemaBlockGroup } from 'ember-osf-web/packages/registration-schema';
+import { SchemaBlock, SchemaBlockGroup } from 'ember-osf-web/packages/registration-schema';
+
+// TODO: condition evaluation is not implemented on the Ember side.
+// This only returns the unconditional entry; conditional UI switching
+// (e.g. based on grdm-file:file-type) requires sift or equivalent.
+// See metadata-fields.js resolveUI() for the full implementation.
+function resolveUI(ui: SchemaBlock['ui']): Record<string, any> | undefined {
+    if (!ui) {
+        return undefined;
+    }
+    if (!Array.isArray(ui)) {
+        return ui;
+    }
+    return ui.find((entry: any) => !entry.condition);
+}
 
 export interface UiGroupDef {
     id: string;
@@ -47,7 +61,11 @@ export function buildVisualItems(
 
     for (const group of groups) {
         const inputBlock = group.inputBlock;
-        const ui = inputBlock && inputBlock.ui;
+        if (group.registrationResponseKey && group.registrationResponseKey.match(/^__responseKey_grdm-file:.+$/)) {
+            root.push({ schemaBlockGroup: group });
+            continue;
+        }
+        const ui = resolveUI(inputBlock && inputBlock.ui);
         if (!ui || !ui.group) {
             root.push({ schemaBlockGroup: group });
             continue;
