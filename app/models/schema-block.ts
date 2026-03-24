@@ -32,6 +32,7 @@ export default class SchemaBlockModel extends OsfModel implements SchemaBlock {
     @attr('boolean') readonly?: boolean;
     @attr('boolean') sentence?: boolean;
     @attr('string') rowAdditionCaption?: string;
+    @attr('string') suggestion?: string;
     @attr() ui?: SchemaBlock['ui'];
 
     @belongsTo('registration-schema', { inverse: 'schemaBlocks', async: false })
