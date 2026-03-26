@@ -2098,3 +2098,5 @@ workflow:
                     manager: 'Manager'
                 exportTarget:
                     loading: 'Loading export targets...'
+                arrayInput:
+                    add: 'Add'

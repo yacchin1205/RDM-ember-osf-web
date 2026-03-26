@@ -59,3 +59,23 @@ export function extractExportTarget(field: WorkflowTaskField): boolean {
     }
     return field.placeholder === '_EXPORT_TARGET()';
 }
+
+export interface ArrayInputPlaceholder {
+    fields: WorkflowTaskField[];
+}
+
+export function extractArrayInput(field: WorkflowTaskField): ArrayInputPlaceholder | null {
+    if (field.type !== 'multi-line-text') {
+        return null;
+    }
+    const { placeholder } = field;
+    if (!placeholder) {
+        return null;
+    }
+    const match = placeholder.match(/^_ARRAY_INPUT\((.+)\)$/s);
+    if (!match) {
+        return null;
+    }
+    const fields: WorkflowTaskField[] = JSON.parse(match[1]);
+    return { fields };
+}

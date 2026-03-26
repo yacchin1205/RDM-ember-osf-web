@@ -143,6 +143,14 @@
                 @onChange={{this.handleExportTargetChange}}
                 @disabled={{this.isReadOnly}}
             />
+        {{else if this.isArrayInput}}
+            <GuidNode::Workflow::-Components::FlowableForm::ArrayInput
+                @fields={{this.arrayInputFields}}
+                @value={{this.currentValue}}
+                @node={{@node}}
+                @onChange={{this.handleArrayInputChange}}
+                @disabled={{this.isReadOnly}}
+            />
         {{else if this.isTextarea}}
             <textarea
                 id={{this.fieldId}}

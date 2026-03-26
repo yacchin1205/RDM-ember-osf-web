@@ -6,7 +6,9 @@ import { WorkflowVariable } from '../../../types';
 import { parseProgressSteps, ProgressStep } from '../../progress-sidebar/utils';
 import { resolveFlowableType } from '../component';
 import { FieldValueWithType, WorkflowTaskField, WorkflowTaskFieldOption } from '../types';
-import { extractExportTarget, extractFileMetadata, extractFileSelector, extractProjectMetadata } from '../utils';
+import {
+    extractArrayInput, extractExportTarget, extractFileMetadata, extractFileSelector, extractProjectMetadata,
+} from '../utils';
 
 function getOptionValue(option: WorkflowTaskFieldOption): string | undefined {
     return (option.id !== undefined && option.id !== null) ? option.id : option.name;
@@ -130,6 +132,12 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
         this.args.onChange(this.args.field.id, valueWithType);
     }
 
+    @action
+    handleArrayInputChange(valueWithType: FieldValueWithType): void {
+        this.updatedValue = valueWithType;
+        this.args.onChange(this.args.field.id, valueWithType);
+    }
+
     get displayValue(): unknown {
         return this.updatedValue !== null ? this.updatedValue.value : this.currentValue;
     }
@@ -210,7 +218,7 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
     }
 
     get isTextarea(): boolean {
-        if (this.isProjectMetadataSelector) {
+        if (this.isProjectMetadataSelector || this.isArrayInput) {
             return false;
         }
         if (this.isFileSelector || this.isExportTarget) {
@@ -225,6 +233,18 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
 
     get isExportTarget(): boolean {
         return extractExportTarget(this.args.field);
+    }
+
+    get arrayInputPlaceholder() {
+        return extractArrayInput(this.args.field);
+    }
+
+    get isArrayInput(): boolean {
+        return this.arrayInputPlaceholder !== null;
+    }
+
+    get arrayInputFields() {
+        return this.arrayInputPlaceholder ? this.arrayInputPlaceholder.fields : [];
     }
 
     get projectMetadataPlaceholder() {

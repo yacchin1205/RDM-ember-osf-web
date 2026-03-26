@@ -2098,3 +2098,5 @@ workflow:
                     manager: 管理者
                 exportTarget:
                     loading: エクスポート先を読み込み中...
+                arrayInput:
+                    add: 追加
