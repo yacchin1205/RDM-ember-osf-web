@@ -16,11 +16,30 @@ export interface RdmWizardProgress {
     style?: 'sidebar' | 'steps';
 }
 
+export interface SuggestionConfig {
+    key: string;
+    template?: string;
+    valueField?: string;
+    autofill?: Record<string, string>;
+}
+
+export interface FieldHintUI {
+    width?: 'narrow' | 'half' | 'full';
+    freetext?: boolean;
+    optionMap?: Record<string, string>;
+}
+
+export interface FieldHint {
+    ui?: FieldHintUI;
+    suggestion?: SuggestionConfig[];
+}
+
 export interface RdmWizard {
     pages: RdmWizardPage[];
     alias?: Record<string, string>;
     navigation?: RdmWizardNavigation;
     progress?: RdmWizardProgress;
+    fieldHints?: Record<string, FieldHint>;
 }
 
 import { ProgressStep } from '../progress-sidebar/utils';
@@ -29,6 +48,7 @@ export interface WizardNavigation {
     isFirstPage: boolean;
     isLastPage: boolean;
     allowBack: boolean;
+    canGoNext: boolean;
     progressSteps: ProgressStep[];
     goNext: () => void;
     goBack: () => void;

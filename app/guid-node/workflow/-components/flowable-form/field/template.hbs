@@ -1,4 +1,10 @@
-<div class="form-group {{if this.hasError 'has-error'}}" ...attributes>
+<div
+    class="form-group {{if this.hasError 'has-error'}}"
+    style={{this.widthStyle}}
+    {{did-insert this.onFieldInsert}}
+    {{will-destroy this.onFieldDestroy}}
+    ...attributes
+>
     {{#if this.isExpression}}
         {{#if this.hasProgressSteps}}
             {{#if this.remainingExpressionText}}
@@ -45,22 +51,40 @@
                 </label>
             </div>
         {{else if this.isSelect}}
-            <select
-                id={{this.fieldId}}
-                class="form-control"
-                disabled={{this.isReadOnly}}
-                required={{this.isRequired}}
-                {{on "change" this.handleChange}}
-            >
-                <option value="">{{t 'workflow.console.tasks.dialog.selectPlaceholder'}}</option>
-                {{#if this.hasOptions}}
+            {{#if this.isFreetext}}
+                <input
+                    id={{this.fieldId}}
+                    type="text"
+                    class="form-control"
+                    list="{{this.fieldId}}-options"
+                    value={{this.stringValue}}
+                    disabled={{this.isReadOnly}}
+                    required={{this.isRequired}}
+                    {{on "input" this.handleChange}}
+                />
+                <datalist id="{{this.fieldId}}-options">
                     {{#each this.optionsWithValue as |item|}}
-                        <option value={{item.value}} selected={{eq item.value this.stringValue}}>
-                            {{or item.option.name item.value}}
-                        </option>
+                        <option value={{or item.option.name item.value}} />
                     {{/each}}
-                {{/if}}
-            </select>
+                </datalist>
+            {{else}}
+                <select
+                    id={{this.fieldId}}
+                    class="form-control"
+                    disabled={{this.isReadOnly}}
+                    required={{this.isRequired}}
+                    {{on "change" this.handleChange}}
+                >
+                    <option value="">{{t 'workflow.console.tasks.dialog.selectPlaceholder'}}</option>
+                    {{#if this.hasOptions}}
+                        {{#each this.optionsWithValue as |item|}}
+                            <option value={{item.value}} selected={{eq item.value this.stringValue}}>
+                                {{or item.option.name item.value}}
+                            </option>
+                        {{/each}}
+                    {{/if}}
+                </select>
+            {{/if}}
         {{else if this.isRadio}}
             {{#each this.optionsWithValue as |item|}}
                 <div class="radio">
@@ -148,6 +172,7 @@
                 @fields={{this.arrayInputFields}}
                 @value={{this.currentValue}}
                 @node={{@node}}
+                @fieldHints={{this.arrayFieldHints}}
                 @onChange={{this.handleArrayInputChange}}
                 @disabled={{this.isReadOnly}}
             />
@@ -170,6 +195,31 @@
                 required={{this.isRequired}}
                 {{on "change" this.handleChange}}
             />
+        {{else if this.hasSuggestion}}
+            <div local-class="typeahead-container">
+                <input
+                    id={{this.fieldId}}
+                    type="text"
+                    class="form-control"
+                    value={{this.stringValue}}
+                    disabled={{this.isReadOnly}}
+                    required={{this.isRequired}}
+                    {{on "input" this.onTypeaheadInput}}
+                    {{on "blur" this.onTypeaheadBlur}}
+                />
+                {{#if this.showSuggestions}}
+                    <ul local-class="typeahead-dropdown">
+                        {{#each this.suggestionItems as |item|}}
+                            <li
+                                local-class="typeahead-item"
+                                {{on "mousedown" (fn this.onSuggestionSelect item.key)}}
+                            >
+                                {{{item.html}}}
+                            </li>
+                        {{/each}}
+                    </ul>
+                {{/if}}
+            </div>
         {{else}}
             <input
                 id={{this.fieldId}}

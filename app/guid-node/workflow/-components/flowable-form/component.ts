@@ -8,13 +8,23 @@ import {
     WorkflowTaskForm,
     WorkflowVariable,
 } from '../../types';
+import { FieldHint } from '../wizard-form/types';
 import { isValidFieldValue } from './field/component';
 import { FieldValueWithType } from './types';
+
+/**
+ * Interface for Field components to call back into their parent form.
+ * Provides setValue() for autofill: always goes through the view layer (View → Model).
+ */
+export interface FlowableFormContext {
+    setFieldValue(fieldId: string, valueWithType: FieldValueWithType): void;
+}
 
 interface FlowableFormArgs {
     form: WorkflowTaskForm;
     variables?: WorkflowVariable[];
     node?: Node;
+    fieldHints?: Record<string, FieldHint>;
     onChange: (variables: WorkflowVariable[], isValid: boolean) => void;
 }
 
@@ -38,9 +48,23 @@ export function resolveFlowableType(fieldType: string | undefined): string {
     return 'string';
 }
 
+interface FieldHandle {
+    setValue(valueWithType: FieldValueWithType): void;
+}
+
 export default class FlowableForm extends Component<FlowableFormArgs> {
     @tracked fieldValues: Record<string, FieldValueWithType> = {};
     @tracked updatedFieldValues: Record<string, FieldValueWithType> = {};
+
+    private fieldRegistry = new Map<string, FieldHandle>();
+
+    get formContext(): FlowableFormContext {
+        return {
+            setFieldValue: (fieldId: string, valueWithType: FieldValueWithType) => {
+                this.fieldRegistry.get(fieldId)!.setValue(valueWithType);
+            },
+        };
+    }
 
     get fields(): WorkflowTaskField[] {
         return this.args.form.fields || [];
@@ -95,6 +119,16 @@ export default class FlowableForm extends Component<FlowableFormArgs> {
         this.fieldValues = nextValues;
         this.updatedFieldValues = nextUpdatedValues;
         this.notifyChange();
+    }
+
+    @action
+    registerField(fieldId: string, handle: FieldHandle): void {
+        this.fieldRegistry.set(fieldId, handle);
+    }
+
+    @action
+    unregisterField(fieldId: string): void {
+        this.fieldRegistry.delete(fieldId);
     }
 
     @action

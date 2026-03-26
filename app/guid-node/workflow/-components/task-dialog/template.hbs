@@ -83,7 +83,7 @@
                             <button
                                 type="button"
                                 class="btn btn-primary"
-                                disabled={{not this.canComplete}}
+                                disabled={{or (not this.canComplete) (not this.wizardNav.canGoNext)}}
                                 {{on "click" this.wizardNav.submit}}
                             >
                                 {{t 'workflow.console.tasks.dialog.wizard.submit'}}
@@ -92,6 +92,7 @@
                             <button
                                 type="button"
                                 class="btn btn-primary"
+                                disabled={{not this.wizardNav.canGoNext}}
                                 {{on "click" this.wizardNav.goNext}}
                             >
                                 {{t 'workflow.console.tasks.dialog.wizard.next'}}

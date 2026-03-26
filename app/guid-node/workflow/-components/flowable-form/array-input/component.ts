@@ -5,6 +5,7 @@ import { tracked } from '@glimmer/tracking';
 import Node from 'ember-osf-web/models/node';
 
 import { WorkflowVariable } from '../../../types';
+import { FieldHint } from '../../wizard-form/types';
 import { resolveFlowableType } from '../component';
 import { FieldValueWithType, WorkflowTaskField } from '../types';
 
@@ -17,6 +18,7 @@ interface ArrayInputArgs {
     fields: WorkflowTaskField[];
     value: FieldValueWithType | undefined;
     node?: Node;
+    fieldHints?: Record<string, FieldHint>;
     disabled: boolean;
     onChange: (valueWithType: FieldValueWithType) => void;
 }
