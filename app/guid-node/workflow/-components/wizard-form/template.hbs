@@ -1,0 +1,10 @@
+<div {{did-insert this.initialize}} {{did-update this.initialize @form}}>
+    <h4>{{this.pageTitle}}</h4>
+
+    <GuidNode::Workflow::-Components::FlowableForm
+        @form={{this.currentPageForm}}
+        @variables={{this.currentPageVariables}}
+        @node={{@node}}
+        @onChange={{this.handlePageFieldChange}}
+    />
+</div>

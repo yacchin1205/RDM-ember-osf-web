@@ -2078,6 +2078,10 @@ workflow:
                 next: 'Next'
                 progressTitle: 'Progress'
                 submitting: 'Submitting...'
+                wizard:
+                    back: 'Back'
+                    next: 'Next'
+                    submit: 'Submit'
                 projectMetadataSelector:
                     loading: 'Loading metadata records...'
                     refresh: 'Refresh'
