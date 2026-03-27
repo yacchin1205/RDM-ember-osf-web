@@ -80,6 +80,7 @@ interface TaskFormFieldArgs {
     fieldHints?: Record<string, FieldHint>;
     formContext?: FlowableFormContext;
     onChange: (fieldId: string, valueWithType: FieldValueWithType) => void;
+    onLoadingChange?: (fieldId: string, isLoading: boolean) => void;
     onRegister?: (fieldId: string, handle: { setValue(v: FieldValueWithType): void }) => void;
     onUnregister?: (fieldId: string) => void;
 }
@@ -288,6 +289,11 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
     handleExportTargetChange(valueWithType: FieldValueWithType): void {
         this.updatedValue = valueWithType;
         this.args.onChange(this.args.field.id, valueWithType);
+    }
+
+    @action
+    handleLoadingChange(isLoading: boolean): void {
+        this.args.onLoadingChange?.(this.args.field.id, isLoading);
     }
 
     @action

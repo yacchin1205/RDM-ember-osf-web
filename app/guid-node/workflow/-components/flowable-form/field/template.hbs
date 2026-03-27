@@ -142,6 +142,7 @@
                 @multiSelect={{this.projectMetadataMultiSelect}}
                 @value={{this.currentValue}}
                 @onChange={{this.handleProjectMetadataSelection}}
+                @onLoadingChange={{this.handleLoadingChange}}
                 @disabled={{this.isReadOnly}}
             />
         {{else if this.isFileMetadataSelector}}
@@ -151,6 +152,7 @@
                 @multiSelect={{this.fileMetadataMultiSelect}}
                 @value={{this.currentValue}}
                 @onChange={{this.handleFileMetadataSelection}}
+                @onLoadingChange={{this.handleLoadingChange}}
                 @disabled={{this.isReadOnly}}
             />
         {{else if this.isFileSelector}}
@@ -158,6 +160,7 @@
                 @node={{@node}}
                 @value={{this.currentValue}}
                 @onChange={{this.handleFileSelectorChange}}
+                @onLoadingChange={{this.handleLoadingChange}}
                 @disabled={{this.isReadOnly}}
             />
         {{else if this.isFileUploader}}
@@ -168,6 +171,7 @@
                 @acceptExtensions={{this.fileUploaderPlaceholder.acceptExtensions}}
                 @value={{this.currentValue}}
                 @onChange={{this.handleFileUploaderChange}}
+                @onLoadingChange={{this.handleLoadingChange}}
                 @disabled={{this.isReadOnly}}
             />
         {{else if this.isExportTarget}}
@@ -175,6 +179,7 @@
                 @node={{@node}}
                 @value={{this.currentValue}}
                 @onChange={{this.handleExportTargetChange}}
+                @onLoadingChange={{this.handleLoadingChange}}
                 @disabled={{this.isReadOnly}}
             />
         {{else if this.isArrayInput}}

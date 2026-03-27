@@ -30,6 +30,7 @@ export interface FieldHintUI {
 }
 
 export interface FieldHint {
+    visible?: string | boolean;
     ui?: FieldHintUI;
     suggestion?: SuggestionConfig[];
 }

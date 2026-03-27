@@ -34,6 +34,7 @@ export default class WizardForm extends Component<WizardFormArgs> {
     @tracked visitedPageIds: Set<string> = new Set();
     @tracked pageTitle = '';
     @tracked currentPageValid = true;
+    @tracked currentPageLoading = false;
 
     private allFieldValues: Record<string, FieldValueWithType> = {};
     private draftDebounceTimer: ReturnType<typeof setTimeout> | null = null;
@@ -44,6 +45,10 @@ export default class WizardForm extends Component<WizardFormArgs> {
 
     get fieldHints() {
         return this.wizard.fieldHints;
+    }
+
+    get fieldContext(): Record<string, unknown> {
+        return this.getFieldContext();
     }
 
     get allowBack(): boolean {
@@ -115,11 +120,12 @@ export default class WizardForm extends Component<WizardFormArgs> {
     }
 
     @action
-    handlePageFieldChange(pageVariables: WorkflowVariable[], isValid: boolean): void {
+    handlePageFieldChange(pageVariables: WorkflowVariable[], isValid: boolean, isLoading: boolean): void {
         for (const v of pageVariables) {
             this.allFieldValues[v.name] = { value: v.value, type: v.type };
         }
         this.currentPageValid = isValid;
+        this.currentPageLoading = isLoading;
         this.emitNavigation();
         this.scheduleDraftSave();
         this.emitAllVariables();
@@ -188,7 +194,7 @@ export default class WizardForm extends Component<WizardFormArgs> {
             isFirstPage: idx <= 0,
             isLastPage: idx >= pages.length - 1,
             allowBack: this.allowBack,
-            canGoNext: this.currentPageValid,
+            canGoNext: this.currentPageValid && !this.currentPageLoading,
             progressSteps: buildProgressTree(
                 this.wizard.pages,
                 this.currentPageId,

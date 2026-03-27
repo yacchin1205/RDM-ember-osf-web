@@ -22,6 +22,7 @@ interface FileUploaderArgs {
     acceptExtensions: string[];
     value: FieldValueWithType | undefined;
     onChange: (valueWithType: FieldValueWithType) => void;
+    onLoadingChange?: (isLoading: boolean) => void;
     disabled: boolean;
 }
 
@@ -101,7 +102,10 @@ export default class FileUploader extends Component<FileUploaderArgs> {
 
     @action
     initialize() {
-        this.setupFolder.perform();
+        this.args.onLoadingChange?.(true);
+        this.setupFolder.perform().finally(() => {
+            this.args.onLoadingChange?.(false);
+        });
     }
 
     // --- Folder setup ---

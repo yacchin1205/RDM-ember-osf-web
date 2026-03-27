@@ -37,6 +37,7 @@ interface ProjectMetadataSelectorArgs {
     multiSelect: boolean;
     value: FieldValueWithType | undefined;
     onChange: (valueWithType: FieldValueWithType) => void;
+    onLoadingChange?: (isLoading: boolean) => void;
     disabled: boolean;
 }
 
@@ -113,7 +114,10 @@ export default class ProjectMetadataSelector extends Component<ProjectMetadataSe
     initialize() {
         if (!this.isInitialized) {
             this.isInitialized = true;
-            this.loadMetadataRecords.perform();
+            this.args.onLoadingChange?.(true);
+            this.loadMetadataRecords.perform().finally(() => {
+                this.args.onLoadingChange?.(false);
+            });
         }
     }
 

@@ -53,6 +53,7 @@ interface FileMetadataSelectorArgs {
     multiSelect: boolean;
     value: FieldValueWithType | undefined;
     onChange: (valueWithType: FieldValueWithType) => void;
+    onLoadingChange?: (isLoading: boolean) => void;
     disabled: boolean;
 }
 
@@ -201,7 +202,10 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
     initialize() {
         if (!this.isInitialized) {
             this.isInitialized = true;
-            this.loadFileMetadata.perform();
+            this.args.onLoadingChange?.(true);
+            this.loadFileMetadata.perform().finally(() => {
+                this.args.onLoadingChange?.(false);
+            });
         }
     }
 

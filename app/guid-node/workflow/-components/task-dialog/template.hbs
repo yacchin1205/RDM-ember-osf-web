@@ -74,6 +74,7 @@
                             <button
                                 type="button"
                                 class="btn btn-default"
+                                disabled={{@isSubmitting}}
                                 {{on "click" this.wizardNav.goBack}}
                             >
                                 {{t 'workflow.console.tasks.dialog.wizard.back'}}
@@ -83,10 +84,15 @@
                             <button
                                 type="button"
                                 class="btn btn-primary"
-                                disabled={{or (not this.canComplete) (not this.wizardNav.canGoNext)}}
+                                disabled={{or (not this.canComplete) (not this.wizardNav.canGoNext) @isSubmitting}}
                                 {{on "click" this.wizardNav.submit}}
                             >
-                                {{t 'workflow.console.tasks.dialog.wizard.submit'}}
+                                {{#if @isSubmitting}}
+                                    <i class="fa fa-spinner fa-spin"></i>
+                                    {{t 'workflow.console.tasks.dialog.submitting'}}
+                                {{else}}
+                                    {{t 'workflow.console.tasks.dialog.submit'}}
+                                {{/if}}
                             </button>
                         {{else}}
                             <button
