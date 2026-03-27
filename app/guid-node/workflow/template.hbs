@@ -47,6 +47,31 @@
         </li>
     </ul>
 
+    {{#if this.pendingTemplates.length}}
+        <div class="alert alert-info" data-test-workflow-pending-banner>
+            <strong>{{t 'workflow.console.pendingTemplates.heading'}}</strong>
+            {{#each this.pendingTemplates as |entry|}}
+                <div style="margin-top: 6px;">
+                    <span>{{entry.displayLabel}}</span>
+                    <button
+                        type="button"
+                        class="btn btn-xs btn-primary"
+                        {{on "click" (fn this.acceptPending entry)}}
+                    >
+                        {{t 'workflow.console.pendingTemplates.activate'}}
+                    </button>
+                    <button
+                        type="button"
+                        class="btn btn-xs btn-default"
+                        {{on "click" (fn this.dismissPending entry)}}
+                    >
+                        {{t 'workflow.console.pendingTemplates.dismiss'}}
+                    </button>
+                </div>
+            {{/each}}
+        </div>
+    {{/if}}
+
     {{#if (eq this.activeTab 'start')}}
         <div class="panel panel-default" data-test-workflow-start-panel>
             <div class="panel-heading clearfix">

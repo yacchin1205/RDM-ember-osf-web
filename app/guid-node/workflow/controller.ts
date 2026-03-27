@@ -10,6 +10,7 @@ import CurrentUser from 'ember-osf-web/services/current-user';
 import pathJoin from 'ember-osf-web/utils/path-join';
 
 import {
+    PendingTemplate,
     TaskDialogSubmission,
     WorkflowActivationApiResponse,
     WorkflowRouteModel,
@@ -116,6 +117,7 @@ export default class GuidNodeWorkflowController extends Controller {
     @service intl!: Intl;
 
     @tracked templates: WorkflowTemplate[] = [];
+    @tracked pendingTemplates: PendingTemplate[] = [];
     @tracked templatesError: string | null = null;
     @tracked isRefreshing = false;
 
@@ -233,10 +235,38 @@ export default class GuidNodeWorkflowController extends Controller {
         return (this.node && this.node.title) || this.intl.t('workflow.console.heading') as string;
     }
 
+    @action
+    async acceptPending(entry: PendingTemplate): Promise<void> {
+        await this.currentUser.authenticatedAJAX({
+            url: `${this.apiBaseUrl}templates/${entry.id}/activation/`,
+            type: 'PUT',
+            data: JSON.stringify({ is_enabled: true }),
+            contentType: 'application/json',
+        });
+        this.pendingTemplates = this.pendingTemplates.filter(t => t.id !== entry.id);
+        const response: { data: WorkflowActivationApiResponse[] } = await this.currentUser.authenticatedAJAX({
+            url: `${this.apiBaseUrl}activations/`,
+            type: 'GET',
+        });
+        this.templates = normalizeTemplates(response.data);
+    }
+
+    @action
+    async dismissPending(entry: PendingTemplate): Promise<void> {
+        await this.currentUser.authenticatedAJAX({
+            url: `${this.apiBaseUrl}templates/${entry.id}/activation/`,
+            type: 'PUT',
+            data: JSON.stringify({ is_dismissed: true }),
+            contentType: 'application/json',
+        });
+        this.pendingTemplates = this.pendingTemplates.filter(t => t.id !== entry.id);
+    }
+
     initialize(model: WorkflowRouteModel, hash: string): void {
         this.node = model.node;
         this.apiBaseUrl = ensureTrailingSlash(model.apiBaseUrl);
         this.templates = model.templates;
+        this.pendingTemplates = model.pendingTemplates;
         this.templatesError = model.templatesError || null;
 
         this.runStatusLabels = {

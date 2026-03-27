@@ -1969,6 +1969,10 @@ workflow:
     console:
         heading: 'Workflow console'
         description: 'Start workflows registered for this project and manage their runs.'
+        pendingTemplates:
+            heading: 'Available workflows'
+            activate: 'Activate'
+            dismiss: 'Dismiss'
         startSectionTitle: 'Start a workflow'
         workflowLabel: 'Workflow'
         selectPrompt: 'Select a workflow...'
