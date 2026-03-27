@@ -1,5 +1,5 @@
 {{#if @open}}
-    <div class="modal fade in workflow-task-dialog" tabindex="-1" role="dialog" aria-modal="true" style="display: block;">
+    <div class="modal fade in workflow-task-dialog" tabindex="-1" role="dialog" aria-modal="true" style="display: block; z-index: 1030;">
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -121,5 +121,5 @@
             </div>
         </div>
     </div>
-    <div class="modal-backdrop fade in"></div>
+    <div class="modal-backdrop fade in" style="z-index: 1020;"></div>
 {{/if}}

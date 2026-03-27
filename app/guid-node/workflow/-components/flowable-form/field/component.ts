@@ -11,7 +11,8 @@ import { parseProgressSteps, ProgressStep } from '../../progress-sidebar/utils';
 import { FlowableFormContext, resolveFlowableType } from '../component';
 import { FieldValueWithType, WorkflowTaskField, WorkflowTaskFieldOption } from '../types';
 import {
-    extractArrayInput, extractExportTarget, extractFileMetadata, extractFileSelector, extractProjectMetadata,
+    extractArrayInput, extractExportTarget, extractFileMetadata, extractFileSelector, extractFileUploader,
+    extractProjectMetadata,
 } from '../utils';
 
 function renderTemplateAsHtml(tmpl: string, value: Record<string, any>): ReturnType<typeof htmlSafe> {
@@ -278,6 +279,12 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
     }
 
     @action
+    handleFileUploaderChange(valueWithType: FieldValueWithType): void {
+        this.updatedValue = valueWithType;
+        this.args.onChange(this.args.field.id, valueWithType);
+    }
+
+    @action
     handleExportTargetChange(valueWithType: FieldValueWithType): void {
         this.updatedValue = valueWithType;
         this.args.onChange(this.args.field.id, valueWithType);
@@ -297,13 +304,21 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
         return current ? current.value : null;
     }
 
-    get hasError(): boolean {
+    get hasRequiredError(): boolean {
         if (!this.isRequired) {
             return false;
         }
         const val = this.displayValue;
-        const isValid = isValidFieldValue(this.args.field, val);
-        return !isValid;
+        return !isValidFieldValue(this.args.field, val);
+    }
+
+    get hasCustomError(): boolean {
+        const current = this.updatedValue || this.currentValue;
+        return current !== undefined && current !== null && current.valid === false;
+    }
+
+    get hasError(): boolean {
+        return this.hasRequiredError || this.hasCustomError;
     }
     get type(): string {
         return this.args.field.type;
@@ -382,7 +397,7 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
         if (this.isProjectMetadataSelector || this.isArrayInput) {
             return false;
         }
-        if (this.isFileSelector || this.isExportTarget) {
+        if (this.isFileSelector || this.isFileUploader || this.isExportTarget) {
             return false;
         }
         return this.type === 'multi-line-text' || this.type === 'textarea';
@@ -390,6 +405,14 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
 
     get isFileSelector(): boolean {
         return extractFileSelector(this.args.field);
+    }
+
+    get fileUploaderPlaceholder() {
+        return extractFileUploader(this.args.field);
+    }
+
+    get isFileUploader(): boolean {
+        return this.fileUploaderPlaceholder !== null;
     }
 
     get isExportTarget(): boolean {

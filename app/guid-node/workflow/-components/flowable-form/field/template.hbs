@@ -160,6 +160,16 @@
                 @onChange={{this.handleFileSelectorChange}}
                 @disabled={{this.isReadOnly}}
             />
+        {{else if this.isFileUploader}}
+            <GuidNode::Workflow::-Components::FlowableForm::FileUploader
+                @node={{@node}}
+                @fieldId={{this.args.field.id}}
+                @path={{this.fileUploaderPlaceholder.path}}
+                @acceptExtensions={{this.fileUploaderPlaceholder.acceptExtensions}}
+                @value={{this.currentValue}}
+                @onChange={{this.handleFileUploaderChange}}
+                @disabled={{this.isReadOnly}}
+            />
         {{else if this.isExportTarget}}
             <GuidNode::Workflow::-Components::FlowableForm::ExportTarget
                 @node={{@node}}
@@ -233,7 +243,7 @@
             />
         {{/if}}
 
-        {{#if this.hasError}}
+        {{#if this.hasRequiredError}}
             <span class="help-block">{{t 'workflow.console.tasks.dialog.fieldRequired'}}</span>
         {{/if}}
     {{/if}}

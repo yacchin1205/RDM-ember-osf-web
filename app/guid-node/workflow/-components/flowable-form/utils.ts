@@ -64,6 +64,38 @@ export interface ArrayInputPlaceholder {
     fields: WorkflowTaskField[];
 }
 
+export interface FileUploaderPlaceholder {
+    path: string;
+    acceptExtensions: string[];
+}
+
+export function extractFileUploader(field: WorkflowTaskField): FileUploaderPlaceholder | null {
+    if (field.type !== 'multi-line-text') {
+        return null;
+    }
+    const { placeholder } = field;
+    if (!placeholder) {
+        return null;
+    }
+    const match = placeholder.match(/^_FILE_UPLOADER\((.+)\)$/);
+    if (!match) {
+        return null;
+    }
+    const raw = match[1];
+    const segments = raw.split(',').map(s => s.trim());
+    const extStart = segments.findIndex(s => s.startsWith('.'));
+    let path: string;
+    let acceptExtensions: string[];
+    if (extStart === -1) {
+        path = raw.trim();
+        acceptExtensions = [];
+    } else {
+        path = segments.slice(0, extStart).join(',').trim();
+        acceptExtensions = segments.slice(extStart).map(e => e.toLowerCase());
+    }
+    return { path, acceptExtensions };
+}
+
 export function extractArrayInput(field: WorkflowTaskField): ArrayInputPlaceholder | null {
     if (field.type !== 'multi-line-text') {
         return null;

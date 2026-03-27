@@ -78,10 +78,13 @@ export default class FlowableForm extends Component<FlowableFormArgs> {
         return this.fields
             .filter(field => this.isSubmittableField(field))
             .every(field => {
+                const fieldValue = this.updatedFieldValues[field.id];
+                if (fieldValue && fieldValue.valid === false) {
+                    return false;
+                }
                 if (!field.required) {
                     return true;
                 }
-                const fieldValue = this.updatedFieldValues[field.id];
                 const value = fieldValue && fieldValue.value;
                 return isValidFieldValue(field, value);
             });
