@@ -200,7 +200,7 @@
                 <button
                     type="button"
                     class="btn btn-default btn-xs"
-                    {{on "click" this.refreshRuns}}
+                    {{on "click" this.refreshAll}}
                     disabled={{this.isRefreshingRuns}}
                 >
                     <i class="fa fa-refresh {{if this.isRefreshingRuns 'fa-spin'}}"></i>
@@ -330,7 +330,7 @@
                 <button
                     type="button"
                     class="btn btn-default btn-xs"
-                    {{on "click" this.refreshTasks}}
+                    {{on "click" this.refreshAll}}
                     disabled={{this.isRefreshingTasks}}
                 >
                     <i class="fa fa-refresh {{if this.isRefreshingTasks 'fa-spin'}}"></i>

@@ -6,6 +6,7 @@ import config from 'ember-get-config';
 
 import Intl from 'ember-intl/services/intl';
 import Node from 'ember-osf-web/models/node';
+import { Permission } from 'ember-osf-web/models/osf-model';
 import CurrentUser from 'ember-osf-web/services/current-user';
 import pathJoin from 'ember-osf-web/utils/path-join';
 
@@ -154,7 +155,7 @@ export default class GuidNodeWorkflowController extends Controller {
             return [];
         }
         const currentNodeId = this.node.id;
-        const hasAdminPermission = Boolean(this.node && this.node.userHasAdminPermission);
+        const hasAdminPermission = this.node.currentUserPermissions?.includes(Permission.Admin) ?? false;
         const filtered = this.hideCompletedRuns
             ? this.runs.filter(run => run.status === 'running')
             : this.runs;
@@ -163,6 +164,9 @@ export default class GuidNodeWorkflowController extends Controller {
             const canCancel = hasAdminPermission && !isCompleted && run.node_id === currentNodeId;
             return {
                 ...run,
+                started_at: this.formatDate(run.started_at),
+                created: this.formatDate(run.created),
+                completed_at: this.formatDate(run.completed_at),
                 projectUrl: pathJoin(config.OSF.url, run.node_id),
                 isCurrentProject: run.node_id === currentNodeId,
                 canCancel,
@@ -189,6 +193,8 @@ export default class GuidNodeWorkflowController extends Controller {
         const currentNodeId = this.node.id;
         return this.tasks.map(task => ({
             ...task,
+            created: this.formatDate(task.created),
+            due: this.formatDate(task.due),
             canComplete: task.can_complete !== false,
             assigneeDisplay: this.assigneeLabel(task.assignee),
             projectUrl: pathJoin(config.OSF.url, task.node_id),
@@ -220,7 +226,7 @@ export default class GuidNodeWorkflowController extends Controller {
     }
 
     get canStartWorkflow(): boolean {
-        return Boolean(this.node && this.node.userHasWritePermission);
+        return this.node?.currentUserPermissions?.includes(Permission.Write) ?? false;
     }
 
     get selectedTemplate(): WorkflowTemplate | undefined {
@@ -407,7 +413,7 @@ export default class GuidNodeWorkflowController extends Controller {
     toggleHideCompletedRuns(event: Event): void {
         const target = event.target as HTMLInputElement | null;
         this.hideCompletedRuns = Boolean(target && target.checked);
-        this.refreshRuns();
+        this.refreshAll();
     }
 
     @action
@@ -415,7 +421,7 @@ export default class GuidNodeWorkflowController extends Controller {
         const target = event.target as HTMLSelectElement | null;
         if (target) {
             this.runsLimit = parseInt(target.value, 10);
-            this.refreshRuns();
+            this.refreshAll();
         }
     }
 
@@ -423,7 +429,7 @@ export default class GuidNodeWorkflowController extends Controller {
     toggleHideCompletedTasks(event: Event): void {
         const target = event.target as HTMLInputElement | null;
         this.hideCompletedTasks = Boolean(target && target.checked);
-        this.refreshTasks();
+        this.refreshAll();
     }
 
     @action
@@ -431,8 +437,13 @@ export default class GuidNodeWorkflowController extends Controller {
         const target = event.target as HTMLSelectElement | null;
         if (target) {
             this.tasksLimit = parseInt(target.value, 10);
-            this.refreshTasks();
+            this.refreshAll();
         }
+    }
+
+    @action
+    async refreshAll(): Promise<void> {
+        await Promise.all([this.refreshRuns(), this.refreshTasks()]);
     }
 
     @action
@@ -512,7 +523,7 @@ export default class GuidNodeWorkflowController extends Controller {
             });
 
             this.closeCancelDialog();
-            await this.refreshRuns();
+            await this.refreshAll();
         } catch (error) {
             this.cancelRunError = extractMessage(
                 error,
@@ -579,6 +590,8 @@ export default class GuidNodeWorkflowController extends Controller {
             if (!data) {
                 throw new Error('Task payload not found.');
             }
+            data.created = this.formatDate(data.created);
+            data.due = this.formatDate(data.due);
             this.selectedTask = data;
         } catch (error) {
             if (isAjaxError(error)) {
@@ -632,7 +645,7 @@ export default class GuidNodeWorkflowController extends Controller {
             await this.pollJobStatus(response.data.status_url);
 
             this.taskActionSuccess = this.intl.t('workflow.console.tasks.submitSuccess') as string;
-            await this.refreshTasks();
+            await this.refreshAll();
 
             const nextTask = this.tasksWithActions.find(
                 task => task.process_instance_id === processInstanceId && task.canComplete,
@@ -723,7 +736,7 @@ export default class GuidNodeWorkflowController extends Controller {
             await this.pollJobStatus(response.data.status_url);
 
             this.submitSuccess = this.intl.t('workflow.console.startSuccess') as string;
-            await Promise.all([this.refreshTasks(), this.refreshRuns()]);
+            await this.refreshAll();
             const hasAssignedTasks = this.tasksWithActions.some(task => task.canComplete);
             if (hasAssignedTasks) {
                 this.activeTab = 'tasks';
