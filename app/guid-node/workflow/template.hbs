@@ -47,7 +47,7 @@
         </li>
     </ul>
 
-    {{#if this.pendingTemplates.length}}
+    {{#if (and this.pendingTemplates.length this.canStartWorkflow)}}
         <div class="alert alert-info" data-test-workflow-pending-banner>
             <strong>{{t 'workflow.console.pendingTemplates.heading'}}</strong>
             {{#each this.pendingTemplates as |entry|}}
