@@ -39,7 +39,6 @@ interface FileMetadataEntry {
     lastPartDepth: number;
     folder: boolean;
     title: string | null;
-    manager: string | null;
     url: string;
     style: string;
     visible: boolean;
@@ -133,14 +132,12 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
         }
 
         // Create a map of file metadata by path
-        const metadataMap: {[key: string]: { title: string | null; manager: string | null; urlpath: string }} = {};
+        const metadataMap: {[key: string]: { title: string | null; urlpath: string }} = {};
         this.metadataNodeProject.files.forEach((entry: FileEntry) => {
             const item = entry.items.find(it => it.schema === this.schemaId);
             if (item) {
                 const titleJa = item.data['grdm-file:title-ja'];
                 const titleEn = item.data['grdm-file:title-en'];
-                const managerJa = item.data['grdm-file:data-man-name-ja'];
-                const managerEn = item.data['grdm-file:data-man-name-en'];
 
                 let title = null;
                 if (titleJa && titleJa.value) {
@@ -149,14 +146,7 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
                     title = titleEn.value;
                 }
 
-                let manager = null;
-                if (managerJa && managerJa.value) {
-                    manager = managerJa.value;
-                } else if (managerEn && managerEn.value) {
-                    manager = managerEn.value;
-                }
-
-                metadataMap[entry.path] = { title, manager, urlpath: entry.urlpath };
+                metadataMap[entry.path] = { title, urlpath: entry.urlpath };
             }
         });
 
@@ -182,7 +172,6 @@ export default class FileMetadataSelector extends Component<FileMetadataSelector
                 lastPartDepth: parts.length,
                 folder,
                 title: metadata ? metadata.title : null,
-                manager: metadata ? metadata.manager : null,
                 url: metadata ? `${pathJoin(baseURL, metadata.urlpath)}#edit-metadata` : '',
                 style: `margin: 0 0 0 ${parts.length * 20 + (folder ? 0 : 24)}px`,
                 visible: [...parts.slice(0, parts.length - 1).keys()]
