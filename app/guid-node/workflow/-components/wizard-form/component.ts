@@ -86,9 +86,9 @@ export default class WizardForm extends Component<WizardFormArgs> {
         if (taskId) {
             const draft = loadDraft(taskId, formKey);
             if (draft) {
-                for (const [id, val] of Object.entries(draft.fieldValues)) {
+                for (const [id, fv] of Object.entries(draft.fieldValues)) {
                     if (id in nextValues) {
-                        nextValues[id] = { ...nextValues[id], value: val };
+                        nextValues[id] = { value: fv.value, type: fv.type };
                     }
                 }
                 restoredPageId = draft.currentPageId;
@@ -306,9 +306,9 @@ export default class WizardForm extends Component<WizardFormArgs> {
         if (!taskId) {
             return;
         }
-        const values: Record<string, unknown> = {};
+        const values: Record<string, { value: unknown; type: string }> = {};
         for (const [id, fv] of Object.entries(this.allFieldValues)) {
-            values[id] = fv.value;
+            values[id] = { value: fv.value, type: fv.type };
         }
         saveDraft(taskId, this.args.form.key || '', this.currentPageId, values);
     }

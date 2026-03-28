@@ -2085,7 +2085,7 @@ workflow:
                 wizard:
                     back: 'Back'
                     next: 'Next'
-                    submit: 'Submit'
+
                 projectMetadataSelector:
                     loading: 'Loading metadata records...'
                     refresh: 'Refresh'

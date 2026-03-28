@@ -1,10 +1,15 @@
 const PREFIX = 'rdm-wizard:';
 const TTL_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
 
+interface DraftFieldValue {
+    value: unknown;
+    type: string;
+}
+
 interface WizardDraft {
     formKey: string;
     currentPageId: string;
-    fieldValues: Record<string, unknown>;
+    fieldValues: Record<string, DraftFieldValue>;
     savedAt: number;
 }
 
@@ -16,7 +21,7 @@ export function saveDraft(
     taskId: string,
     formKey: string,
     currentPageId: string,
-    fieldValues: Record<string, unknown>,
+    fieldValues: Record<string, DraftFieldValue>,
 ): void {
     try {
         const draft: WizardDraft = {

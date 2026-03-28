@@ -7,6 +7,7 @@ import { htmlSafe } from '@ember/template';
 
 import { WorkflowVariable } from '../../../types';
 import { FieldHint, SuggestionConfig } from '../../wizard-form/types';
+import { evaluateTemplate, hasTemplateDirectives } from '../../wizard-form/template-evaluator';
 import { parseProgressSteps, ProgressStep } from '../../progress-sidebar/utils';
 import { FlowableFormContext, resolveFlowableType } from '../component';
 import { FieldValueWithType, WorkflowTaskField, WorkflowTaskFieldOption } from '../types';
@@ -79,6 +80,7 @@ interface TaskFormFieldArgs {
     node?: any;
     fieldHints?: Record<string, FieldHint>;
     formContext?: FlowableFormContext;
+    fieldContext?: Record<string, unknown>;
     onChange: (fieldId: string, valueWithType: FieldValueWithType) => void;
     onLoadingChange?: (fieldId: string, isLoading: boolean) => void;
     onRegister?: (fieldId: string, handle: { setValue(v: FieldValueWithType): void }) => void;
@@ -549,7 +551,8 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
         const field = this.args.field as unknown as { expression?: string };
         const expression = field.expression || '';
 
-        return expression.replace(/\$\{([^}]+)\}/g, (_match, varName) => { // tslint:disable-line:variable-name
+        // Step 1: ${...} (Flowable UEL) resolution
+        const uelResolved = expression.replace(/\$\{([^}]+)\}/g, (_match, varName) => {
             const trimmed = varName.trim();
             const variable = this.args.variables.find(v => v.name === trimmed);
             if (variable) {
@@ -561,6 +564,18 @@ export default class TaskFormField extends Component<TaskFormFieldArgs> {
             }
             return '';
         });
+
+        // Step 2: {{ }} / {% %} template directives (client-side)
+        if (!hasTemplateDirectives(uelResolved)) {
+            return uelResolved;
+        }
+        // Build context from variables (tracked via currentPageVariables)
+        // rather than fieldContext (not tracked by Glimmer).
+        const ctx: Record<string, unknown> = {};
+        for (const v of this.args.variables) {
+            ctx[v.name] = v.value;
+        }
+        return evaluateTemplate(uelResolved, ctx);
     }
 
     get hyperlinkUrl(): string {
