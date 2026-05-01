@@ -35,12 +35,12 @@ export const trimEdges = (s: string): TrimEdgesResult => {
     let leading = '';
     let trailing = '';
 
-    while (/^[([]/.test(core)) {
+    while (/^[(<[{【（「『〔]/.test(core)) {
         leading += core.charAt(0);
         core = core.slice(1);
     }
 
-    while (/[.,!?)\]]$/.test(core)) {
+    while (/[.,!?)\]}】）」』〕、。]$/.test(core)) {
         trailing = core.slice(-1) + trailing;
         core = core.slice(0, -1);
     }

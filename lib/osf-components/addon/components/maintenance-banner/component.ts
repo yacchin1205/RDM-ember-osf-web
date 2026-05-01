@@ -115,46 +115,60 @@ export default class MaintenanceBanner extends Component {
                 }
 
                 // scheme:// (loose handling, e.g. htp://)
-                if (/^[a-zA-Z]+:\/\//.test(core)) {
+                const schemeIdx = core.search(/[a-zA-Z]+:\/\//);
+                if (schemeIdx >= 0) {
+                    const textBefore = core.slice(0, schemeIdx);
+                    const urlCandidate = core.slice(schemeIdx);
+
                     try {
-                        const fake = core.replace(/^([a-zA-Z]+):\/\//, 'http://');
+                        const fake = urlCandidate.replace(/^([a-zA-Z]+):\/\//, 'http://');
                         const u = new URL(fake);
 
                         if (isValidDomain(u.hostname)) {
-                            return `${escapeHTML(leading)}<a href="${escapeHTML(core)}" rel="nofollow">`
-                            + `${escapeHTML(core)}</a>${escapeHTML(trailing)}`;
+                            return `${escapeHTML(leading)}${escapeHTML(textBefore)}`
+                                + `<a href="${escapeHTML(urlCandidate)}" rel="nofollow">`
+                                + `${escapeHTML(urlCandidate)}</a>${escapeHTML(trailing)}`;
                         }
                     } catch {
                         // ignore invalid URL parsing
                     }
 
                     // fallback: link the prefix part (no strict domain validation)
-                    const match = core.match(/^([a-zA-Z]+:\/\/([a-zA-Z0-9-]+))/);
+                    const match = urlCandidate.match(/^([a-zA-Z]+:\/\/([a-zA-Z0-9-]+))/);
                     if (match) {
                         const full = match[1];
                         const host = match[2];
 
                         // reject invalid host patterns
                         if (!host.startsWith('-') && /^[a-zA-Z0-9-]+$/.test(host)) {
-                            const rest = core.slice(full.length);
-                            return `${escapeHTML(leading)}<a href="${escapeHTML(full)}" rel="nofollow">`
-                            + `${escapeHTML(full)}</a>${escapeHTML(rest + trailing)}`;
+                            const rest = urlCandidate.slice(full.length);
+                            return `${escapeHTML(leading)}${escapeHTML(textBefore)}`
+                                + `<a href="${escapeHTML(full)}" rel="nofollow">`
+                                + `${escapeHTML(full)}</a>${escapeHTML(rest + trailing)}`;
                         }
                     }
 
-                    return escapeHTML(chunk);
+                    return `${escapeHTML(leading)}${escapeHTML(core)}${escapeHTML(trailing)}`;
                 }
 
                 // domain (e.g. abc.com, www.google.com)
-                const domainMatch = core.match(/^((?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,})(?=$|[^a-zA-Z0-9-])/);
-                if (domainMatch) {
-                    const domain = domainMatch[1];
-                    const host = domain.replace(/^www\./, '');
+                const domainIdx = core.search(/(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/);
+                if (domainIdx >= 0) {
+                    const textBefore = core.slice(0, domainIdx);
+                    const urlCandidate = core.slice(domainIdx);
 
-                    if (isValidDomain(host)) {
-                        const rest = core.slice(domain.length);
-                        return `${escapeHTML(leading)}<a href="http://${escapeHTML(domain)}" rel="nofollow">`
-                        + `${escapeHTML(domain)}</a>${escapeHTML(rest + trailing)}`;
+                    const domainMatchRegex = /^((?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,})(?=$|[^a-zA-Z0-9-])/;
+                    const domainMatch = urlCandidate.match(domainMatchRegex);
+                    if (domainMatch) {
+                        const domain = domainMatch[1];
+                        const host = domain.replace(/^www\./, '');
+
+                        if (isValidDomain(host)) {
+                            const rest = urlCandidate.slice(domain.length);
+                            return `${escapeHTML(leading)}${escapeHTML(textBefore)}`
+                                + `<a href="http://${escapeHTML(domain)}" rel="nofollow">`
+                                + `${escapeHTML(domain)}</a>${escapeHTML(rest + trailing)}`;
+                        }
                     }
                 }
 
