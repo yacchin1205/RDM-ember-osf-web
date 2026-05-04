@@ -6,10 +6,6 @@ export const escapeHTML = (s: string): string => (
         .replace(/'/g, '&#39;')
 );
 
-export const isEmail = (s: string): boolean => (
-    /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(s)
-);
-
 export const isValidDomain = (host: string): boolean => {
     if (!/^[a-zA-Z0-9.-]+$/.test(host)) { return false; }
     if (host.includes('..')) { return false; }

@@ -1,6 +1,5 @@
 import {
     escapeHTML,
-    isEmail,
     isValidDomain,
     trimEdges,
 } from 'ember-osf-web/utils/string-utils';
@@ -21,21 +20,6 @@ module('Unit | Utility | string-utils', () => {
 
         for (const [input, expected] of cases) {
             assert.strictEqual(escapeHTML(input), expected);
-        }
-    });
-
-    test('isEmail validates email correctly', assert => {
-        const cases: Array<[string, boolean]> = [
-            ['test@example.com', true],
-            ['user.name+tag@gmail.com', true],
-            ['invalid-email', false],
-            ['abc@', false],
-            ['@domain.com', false],
-            ['abc@domain', false],
-        ];
-
-        for (const [input, expected] of cases) {
-            assert.strictEqual(isEmail(input), expected);
         }
     });
 

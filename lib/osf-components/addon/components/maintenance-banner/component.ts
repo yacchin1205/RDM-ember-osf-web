@@ -14,7 +14,6 @@ import CurrentUser from 'ember-osf-web/services/current-user';
 
 import {
     escapeHTML,
-    isEmail,
     isValidDomain,
     trimEdges,
 } from 'ember-osf-web/utils/string-utils';
@@ -109,67 +108,38 @@ export default class MaintenanceBanner extends Component {
                 // extract surrounding punctuation
                 const { leading, core, trailing } = trimEdges(chunk);
 
-                if (isEmail(core)) {
-                    return `${escapeHTML(leading)}<a href="mailto:${escapeHTML(core)}">`
-                        + `${escapeHTML(core)}</a>${escapeHTML(trailing)}`;
-                }
-
-                // scheme:// (loose handling, e.g. htp://)
-                const schemeIdx = core.search(/[a-zA-Z]+:\/\//);
+                // https:// or http:// URLs only
+                const schemeIdx = core.search(/https?:\/\//);
                 if (schemeIdx >= 0) {
                     const textBefore = core.slice(0, schemeIdx);
-                    const urlCandidate = core.slice(schemeIdx);
+                    const rest = core.slice(schemeIdx);
+
+                    // Extract URL portion: stop at whitespace, HTML chars, and Japanese brackets
+                    const urlMatch = /^(https?:\/\/[^\s<>"'【（「『〔】）」』〕、。]*)/.exec(rest);
+                    if (!urlMatch) {
+                        return escapeHTML(leading + core + trailing);
+                    }
+
+                    const urlRaw = urlMatch[1];
+                    const textAfter = rest.slice(urlRaw.length);
+
+                    // Strip trailing ASCII punctuation and unbalanced brackets from URL
+                    const { core: urlFinal, trailing: urlTrailing } = trimEdges(urlRaw);
 
                     try {
-                        const fake = urlCandidate.replace(/^([a-zA-Z]+):\/\//, 'http://');
-                        const u = new URL(fake);
+                        const u = new URL(urlFinal);
 
                         if (isValidDomain(u.hostname)) {
                             return `${escapeHTML(leading)}${escapeHTML(textBefore)}`
-                                + `<a href="${escapeHTML(urlCandidate)}" rel="nofollow">`
-                                + `${escapeHTML(urlCandidate)}</a>${escapeHTML(trailing)}`;
+                                + `<a href="${escapeHTML(urlFinal)}" rel="nofollow">`
+                                + `${escapeHTML(urlFinal)}</a>`
+                                + `${escapeHTML(urlTrailing + textAfter + trailing)}`;
                         }
                     } catch {
                         // ignore invalid URL parsing
                     }
 
-                    // fallback: link the prefix part (no strict domain validation)
-                    const match = urlCandidate.match(/^([a-zA-Z]+:\/\/([a-zA-Z0-9-]+))/);
-                    if (match) {
-                        const full = match[1];
-                        const host = match[2];
-
-                        // reject invalid host patterns
-                        if (!host.startsWith('-') && /^[a-zA-Z0-9-]+$/.test(host)) {
-                            const rest = urlCandidate.slice(full.length);
-                            return `${escapeHTML(leading)}${escapeHTML(textBefore)}`
-                                + `<a href="${escapeHTML(full)}" rel="nofollow">`
-                                + `${escapeHTML(full)}</a>${escapeHTML(rest + trailing)}`;
-                        }
-                    }
-
                     return `${escapeHTML(leading)}${escapeHTML(core)}${escapeHTML(trailing)}`;
-                }
-
-                // domain (e.g. abc.com, www.google.com)
-                const domainIdx = core.search(/(?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,}/);
-                if (domainIdx >= 0) {
-                    const textBefore = core.slice(0, domainIdx);
-                    const urlCandidate = core.slice(domainIdx);
-
-                    const domainMatchRegex = /^((?:www\.)?[a-zA-Z0-9-]+\.[a-zA-Z]{2,})(?=$|[^a-zA-Z0-9-])/;
-                    const domainMatch = urlCandidate.match(domainMatchRegex);
-                    if (domainMatch) {
-                        const domain = domainMatch[1];
-                        const host = domain.replace(/^www\./, '');
-
-                        if (isValidDomain(host)) {
-                            const rest = urlCandidate.slice(domain.length);
-                            return `${escapeHTML(leading)}${escapeHTML(textBefore)}`
-                                + `<a href="http://${escapeHTML(domain)}" rel="nofollow">`
-                                + `${escapeHTML(domain)}</a>${escapeHTML(rest + trailing)}`;
-                        }
-                    }
                 }
 
                 return escapeHTML(chunk);
