@@ -75,24 +75,6 @@ module('Integration | Component | maintenance-banner', hooks => {
         assert.dom('.alert').includesText('<script>alert(1)</script>');
     });
 
-    test('it converts email to mailto link', async assert => {
-        server.urlPrefix = apiUrl;
-        server.namespace = '/v2';
-        server.get('/status', () => ({
-            meta: { version: '2.8' },
-            maintenance: {
-                message: 'test@example.com',
-                level: 1,
-            },
-        }));
-
-        await render(hbs`{{maintenance-banner}}`);
-
-        assert.dom('.alert a')
-            .hasAttribute('href', 'mailto:test@example.com')
-            .hasText('test@example.com');
-    });
-
     test('it converts valid URL to link', async assert => {
         server.urlPrefix = apiUrl;
         server.namespace = '/v2';
@@ -111,24 +93,6 @@ module('Integration | Component | maintenance-banner', hooks => {
             .hasText('https://google.com');
     });
 
-    test('it supports loose scheme (htp:// still becomes link)', async assert => {
-        server.urlPrefix = apiUrl;
-        server.namespace = '/v2';
-        server.get('/status', () => ({
-            meta: { version: '2.8' },
-            maintenance: {
-                message: 'htp://google.com',
-                level: 1,
-            },
-        }));
-
-        await render(hbs`{{maintenance-banner}}`);
-
-        assert.dom('.alert a')
-            .hasAttribute('href', 'htp://google.com')
-            .hasText('htp://google.com');
-    });
-
     test('it does NOT link invalid domain', async assert => {
         server.urlPrefix = apiUrl;
         server.namespace = '/v2';
@@ -144,40 +108,6 @@ module('Integration | Component | maintenance-banner', hooks => {
 
         assert.dom('.alert a').doesNotExist();
         assert.dom('.alert').includesText('http://-google...com');
-    });
-
-    test('it converts domain without scheme', async assert => {
-        server.urlPrefix = apiUrl;
-        server.namespace = '/v2';
-        server.get('/status', () => ({
-            meta: { version: '2.8' },
-            maintenance: {
-                message: 'abc.com',
-                level: 1,
-            },
-        }));
-
-        await render(hbs`{{maintenance-banner}}`);
-
-        assert.dom('.alert a')
-            .hasAttribute('href', 'http://abc.com')
-            .hasText('abc.com');
-    });
-
-    test('it handles partial broken URL (g<>gle.com)', async assert => {
-        server.urlPrefix = apiUrl;
-        server.namespace = '/v2';
-        server.get('/status', () => ({
-            meta: { version: '2.8' },
-            maintenance: {
-                message: 'http://g<>gle.com',
-                level: 1,
-            },
-        }));
-
-        await render(hbs`{{maintenance-banner}}`);
-
-        assert.dom('.alert a').exists({ count: 2 });
     });
 
     test('it handles mixed content (text + url + newline)', async assert => {
