@@ -215,4 +215,18 @@ export default class NewProjectModal extends Component {
     searchNodes(this: NewProjectModal, searchTerm: string) {
         return this.get('searchUserNodesTask').perform(searchTerm);
     }
+
+    @action
+    handleKeydown(event: KeyboardEvent & {
+        isComposing?: boolean;
+        keyCode?: number; }) {
+        const isIME = event.isComposing || event.keyCode === 229;
+        if (isIME) {
+            return;
+        }
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            this.create();
+        }
+    }
 }
