@@ -217,14 +217,16 @@ export default class NewProjectModal extends Component {
     }
 
     @action
-    handleKeydown(event: KeyboardEvent & {
-        isComposing?: boolean;
-        keyCode?: number; }) {
+    handleKeydown(_: string, event: KeyboardEvent & { isComposing?: boolean }) {
+        if (!event) {
+            return;
+        }
+
         const isIME = event.isComposing || event.keyCode === 229;
         if (isIME) {
             return;
         }
-        if (event.key === 'Enter') {
+        if (event.key === 'Enter' && this.nodeTitle && this.nodeTitle.trim()) {
             event.preventDefault();
             this.create();
         }
